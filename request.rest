@@ -1,0 +1,34 @@
+### Add a new recipe
+POST http://localhost:3000/recipes/
+Content-Type: application/json
+
+{
+  "recipeBookId": "693042979a28b3e672ca719e",
+  "createdBy": "693041739a28b3e672ca7192",
+  "title": "פילה סלמון עם חמאה ושום",
+  "description": "מתכון מהיר וטעים לסלמון במחבת",
+  "categories": ["דגים", "ארוחת ערב", "קל"],
+  "prepTimeMinutes": 10,
+  "cookTimeMinutes": 15,
+  "totalTimeMinutes": 25,
+  "difficulty": "easy",
+  "ingredients": [
+    { "name": "פילה סלמון", "quantity": 2, "unit": "חתיכות", "notes": null },
+    { "name": "חמאה", "quantity": 50, "unit": "גרם", "notes": null },
+    { "name": "שיני שום", "quantity": 3, "unit": "יחידות", "notes": "כתושות" },
+    { "name": "מלח", "quantity": 1, "unit": "לפי הטעם", "notes": null },
+    { "name": "פלפל שחור", "quantity": 1, "unit": "לפי הטעם", "notes": null }
+  ],
+  "steps": [
+    { "index": 1, "instruction": "לחמם חמאה במחבת על אש בינונית.", "durationMinutes": 2 },
+    { "index": 2, "instruction": "להוסיף שום כתוש ולערבב.", "durationMinutes": 1 },
+    { "index": 3, "instruction": "להניח את הסלמון עם העור כלפי מטה.", "durationMinutes": 7 },
+    { "index": 4, "instruction": "להפוך ולטגן עוד כמה דקות עד רכות.", "durationMinutes": 5 }
+  ],
+  "notes": "להגיש עם לימון טרי מעל.",
+  "coverImageUrl": null,
+  "sourceType": "manual",
+  "status": "published",
+  "createdAt": "2025-01-03T17:00:00.000Z",
+  "updatedAt": "2025-01-03T17:00:00.000Z"
+}
