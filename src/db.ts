@@ -1,30 +1,23 @@
-// src/db.ts
-import mongoose from "mongoose";
-import dotenv from "dotenv";
+import mongoose from 'mongoose';
 
-dotenv.config();
+export async function connectDB(): Promise<void> {
+    const mongoUri = process.env.MONGODB_URI;
 
-const MONGO_URI = process.env.MONGODB_URI ?? '';
+    if (!mongoUri) {
+        console.error('Missing MONGO_URI in environment variables');
+        process.exit(1);
+    }
 
-if (!MONGO_URI) {
-  throw new Error("MONGO_URI is not defined in .env");
-}
+    const dbName = process.env.DB_NAME || 'recipe_app';
 
-export async function connectToMongo() {
-  try {
-    await mongoose.connect(MONGO_URI); // בלי אופציות ישנות
-    console.log("Connected to MongoDB");
+    try {
+        await mongoose.connect(mongoUri, {
+            dbName
+        });
 
-    mongoose.connection.once("open", () => {
-      console.log("MongoDB connection is open ✅");
-    });
-
-    mongoose.connection.on("error", (err) => {
-      console.error("MongoDB connection error", err);
-    });
-
-  } catch (err) {
-    console.error("MongoDB connection failed:", err);
-    throw err;
-  }
+        console.log(`Connected to MongoDB (db: ${dbName})`);
+    } catch (error) {
+        console.error('Failed to connect to MongoDB:', error);
+        process.exit(1);
+    }
 }
