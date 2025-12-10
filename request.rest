@@ -1,23 +1,24 @@
 ### Add a new recipe
-POST http://localhost:3000/recipes/
+POST http://localhost:3000/api/recipes
 Content-Type: application/json
 
 {
   "recipeBookId": "693042979a28b3e672ca719e",
   "createdBy": "693041739a28b3e672ca7192",
-  "title": "פילה סלמון עם חמאה ושום",
+  "title": "פסטה שמנת למחיקה",
   "description": "מתכון מהיר וטעים לסלמון במחבת",
-  "categories": ["דגים", "ארוחת ערב", "קל"],
+  "categories": ["פסטה", "איטלקי", "קל"],
   "prepTimeMinutes": 10,
   "cookTimeMinutes": 15,
   "totalTimeMinutes": 25,
   "difficulty": "easy",
   "ingredients": [
-    { "name": "פילה סלמון", "quantity": 2, "unit": "חתיכות", "notes": null },
+    { "name": "פסטה", "quantity": 2, "unit": "חתיכות", "notes": null },
     { "name": "חמאה", "quantity": 50, "unit": "גרם", "notes": null },
     { "name": "שיני שום", "quantity": 3, "unit": "יחידות", "notes": "כתושות" },
     { "name": "מלח", "quantity": 1, "unit": "לפי הטעם", "notes": null },
-    { "name": "פלפל שחור", "quantity": 1, "unit": "לפי הטעם", "notes": null }
+    { "name": "שמנת מתוקה", "quantity": 1, "unit": "לפי הטעם", "notes": null },
+    { "name": "פטריות", "quantity": 1, "unit": "לפי הטעם", "notes": null }
   ],
   "steps": [
     { "index": 1, "instruction": "לחמם חמאה במחבת על אש בינונית.", "durationMinutes": 2 },
@@ -32,3 +33,35 @@ Content-Type: application/json
   "createdAt": "2025-01-03T17:00:00.000Z",
   "updatedAt": "2025-01-03T17:00:00.000Z"
 }
+
+
+### Get all recipes
+GET http://localhost:3000/api/recipes
+Content-Type: application/json
+
+### Update a recipe
+PUT http://localhost:3000/api/recipes/69397e25cf7235a17b24a273
+Content-Type: application/json
+
+{
+  "title": "פסטה שמנת מעודכנת",
+  "difficulty": "medium",
+  "ingredients": [
+    { "name": "פסטה", "quantity": 250, "unit": "g" },
+    { "name": "שמנת מתוקה 38%", "quantity": 4, "unit": "tbsp" }
+  ],
+  "steps": [
+    { "index": 1, "instruction": "להרתיח פסטה", "durationMinutes": 9 },
+    { "index": 2, "instruction": "להוסיף שמנת", "durationMinutes": 4 }
+  ],
+  "createdBy": "6740b9c7f1e8c0a7c9a1d234"
+}
+
+### Get Recipe By ID
+GET http://localhost:3000/api/recipes/69397e25cf7235a17b24a273
+
+### Get Recipes By User ID
+GET http://localhost:3000/api/recipes/user/6740b9c7f1e8c0a7c9a1d234
+
+### Delete a recipe
+DELETE http://localhost:3000/api/recipes/6939875abe918bb694ffd41f
