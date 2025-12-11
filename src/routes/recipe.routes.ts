@@ -1,8 +1,8 @@
 // src/modules/recipes/recipe.routes.ts
 import { Router } from 'express';
-import { RecipeDAL } from '../modules/recpies/recipe.dal';
-import { RecipeService } from '../modules/recpies/recipe.service';
-import { RecipeController } from '../modules/recpies/recipe.controller';
+import { RecipeDAL } from '../modules/recipes/recipe.dal';
+import { RecipeService } from '../modules/recipes/recipe.service';
+import { RecipeController } from '../modules/recipes/recipe.controller';
 
 const router = Router();
 
