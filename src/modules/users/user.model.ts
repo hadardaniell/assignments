@@ -63,7 +63,6 @@ const userSchema = new Schema<User>(
   }
 );
 
-// לא מחזירים את ה-passwordHash ב-JSON
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     delete ret.passwordHash;
