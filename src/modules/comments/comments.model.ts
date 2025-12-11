@@ -1,54 +1,20 @@
-import { Schema, model, Document, Types } from 'mongoose';
+import { Schema, model, Types, Document } from 'mongoose';
 
 export interface Comment extends Document {
   recipeId: Types.ObjectId;
   userId: Types.ObjectId;
   text: string;
   createdAt: Date;
-  updatedAt?: Date | null;
+  updatedAt: Date | null;
 }
 
-const CommentSchema = new Schema<Comment>(
-  {
-    recipeId: {
-      type: Schema.Types.ObjectId,
-      ref: 'Recipe',
-      required: true
-    },
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    text: {
-      type: String,
-      required: true,
-      minlength: 1
-    },
-    createdAt: {
-      type: Date,
-      required: true,
-      default: () => new Date()
-    },
-    updatedAt: {
-      type: Date,
-      default: null
-    }
-  },
-  {
-    timestamps: { createdAt: false, updatedAt: false }
-  }
-);
-
-CommentSchema.pre('findOneAndUpdate', async function () {
-  this.set({ updatedAt: new Date() });
+const CommentSchema = new Schema<Comment>({
+  recipeId: { type: Schema.Types.ObjectId, required: true, ref: 'Recipe' },
+  userId: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  text: { type: String, required: true },
+  createdAt: { type: Date, required: true, default: () => new Date() },
+  updatedAt: { type: Date, default: null }
 });
 
-CommentSchema.pre('save', async function () {
-  if (!this.createdAt) {
-    this.createdAt = new Date();
-  }
-});
-
-export const CommentModel = model<Comment>('Comment', CommentSchema);
+const CommentModel = model<Comment>('Comment', CommentSchema);
 export default CommentModel;
