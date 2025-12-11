@@ -87,21 +87,21 @@ Content-Type: application/json
 ###
 
 ### Get a single comment by ID (existing comment)
-  GET http://localhost:3000/api/comments/693abd9975cbb7c19312784b
-  Content-Type: application/json
+GET http://localhost:3000/api/comments/693ace3c35dacdb6f309fa23
+Content-Type: application/json
 
 ###
 
 ### Update a comment (existing comment)
-PUT http://localhost:3000/api/comments/693abd9975cbb7c19312784b
+PUT http://localhost:3000/api/comments/693ad26fe603e38e2b741560
 Content-Type: application/json
 
 {
-  "content": "עדכנתי את ההערה, יצא אפילו יותר טוב!"
+  "text": "this is my changed comment"
 }
 
 ###
 
 ### Delete a comment (existing comment)
-DELETE http://localhost:3000/api/comments/693abd9975cbb7c19312784b
+DELETE http://localhost:3000/api/comments/693ad26fe603e38e2b741560
 Content-Type: application/json

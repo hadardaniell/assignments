@@ -10,7 +10,6 @@ const dal = new RecipeDAL();
 const service = new RecipeService(dal);
 const controller = new RecipeController(service);
 
-
 /**
  * @openapi
  * /api/recipes:
@@ -46,6 +45,25 @@ router.get('/', controller.getRecipes);
 
 /**
  * @openapi
+ * /api/recipes/user/{userId}:
+ *   get:
+ *     summary: Get all recipes created by a specific user
+ *     tags:
+ *       - Recipes
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: List of user recipes
+ */
+router.get('/user/:userId', controller.getRecipesByUser);
+
+/**
+ * @openapi
  * /api/recipes/{id}:
  *   get:
  *     summary: Get a recipe by ID
@@ -64,25 +82,6 @@ router.get('/', controller.getRecipes);
  *         description: Recipe not found
  */
 router.get('/:id', controller.getRecipeById);
-
-/**
- * @openapi
- * /api/recipes/user/{userId}:
- *   get:
- *     summary: Get all recipes created by a specific user
- *     tags:
- *       - Recipes
- *     parameters:
- *       - in: path
- *         name: userId
- *         required: true
- *         schema:
- *           type: string
- *     responses:
- *       200:
- *         description: List of user recipes
- */
-router.get('/user/:userId', controller.getRecipesByUser);
 
 /**
  * @openapi
@@ -131,7 +130,5 @@ router.put('/:id', controller.updateRecipe);
  *         description: Recipe not found
  */
 router.delete('/:id', controller.deleteRecipe);
-
-
 
 export default router;

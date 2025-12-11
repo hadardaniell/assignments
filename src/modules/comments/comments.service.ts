@@ -25,12 +25,14 @@ export class CommentsService {
   }
 
   async updateComment(id: string, input: UpdateCommentDTO): Promise<Comment | null> {
-    const update: any = { ...input };
+    const update: any = { ...input, updatedAt: new Date() }; // <-- add updatedAt
+
     if (input.recipeId) update.recipeId = new Types.ObjectId(input.recipeId);
     if (input.createdBy) update.createdBy = new Types.ObjectId(input.createdBy);
 
     return this.dal.updateById(id, update);
-  }
+}
+
 
   async deleteComment(id: string): Promise<Comment | null> {
     return this.dal.deleteById(id);
