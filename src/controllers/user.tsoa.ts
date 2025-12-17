@@ -1,17 +1,17 @@
 import { Body, Controller, Get, Post, Put, Delete, Route, Tags, Path } from 'tsoa';
 import { UserDTO, UpdateUserDTO, SafeUser } from '../modules/users/users.types';
-
+import {
+  createUserService,
+  getAllUsersService,
+  getUserByIdService,
+  updateUserService,
+  deleteUserService,
+} from '../modules/users/user.service';
 import { AppError } from '../common/errors/app-error';
-  
-import { UserService } from '../modules/users/user.service';
 
 @Route('users')
 @Tags('Users')
 export class UsersController extends Controller {
-
-  constructor(private readonly service: UserService) {
-    super();
-  }
 
   // Create a new user
   @Post('/')
@@ -19,7 +19,7 @@ export class UsersController extends Controller {
     @Body() body: UserDTO
   ): Promise<SafeUser> {
     try {
-      const user = await this.service.createUserService(body);
+      const user = await createUserService(body);
       this.setStatus(201); // 201 Created
       return user;
     } catch (err: any) {
@@ -42,7 +42,7 @@ export class UsersController extends Controller {
   @Get('/')
   public async getUsers(): Promise<SafeUser[]> {
     try {
-      return await this.service.getAllUsersService();
+      return await getAllUsersService();
     } catch (err: any) {
       if (err instanceof AppError) {
         this.setStatus(err.statusCode);
@@ -65,7 +65,7 @@ export class UsersController extends Controller {
     @Path() id: string
   ): Promise<SafeUser> {
     try {
-      return await this.service.getUserByIdService(id);
+      return await getUserByIdService(id);
     } catch (err: any) {
       if (err instanceof AppError) {
         this.setStatus(err.statusCode);
@@ -89,7 +89,7 @@ export class UsersController extends Controller {
     @Body() body: UpdateUserDTO
   ): Promise<SafeUser> {
     try {
-      return await this.service.updateUserService(id, body);
+      return await updateUserService(id, body);
     } catch (err: any) {
       if (err instanceof AppError) {
         this.setStatus(err.statusCode);
@@ -112,7 +112,7 @@ export class UsersController extends Controller {
     @Path() id: string
   ): Promise<void> {
     try {
-      await this.service.deleteUserService(id);
+      await deleteUserService(id);
       this.setStatus(204);
       return;
     } catch (err: any) {

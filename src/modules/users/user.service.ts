@@ -1,43 +1,48 @@
-import { UserDTO, UpdateUserDTO, SafeUser } from './users.types'; 
+import { UserDTO, UpdateUserDTO, SafeUser } from './users.types'; // או ../types/users.types לפי המבנה שלך
+import {
+  createUserDAL,
+  findAllUsersDAL,
+  findUserByEmailDAL,
+  findUserByIdDAL,
+  updateUserDAL,
+  deleteUserDAL,
+} from './users.dal';
 import { AppError } from '../../common';
-import { UserRepo } from './users.repo';
 
-export class UserService {
-  constructor(private userRepo: UserRepo) {}
+const toSafeUser = (user: any): SafeUser => {
+  const obj = user.toObject ? user.toObject() : user;
+  const { passwordHash, __v, ...clean } = obj;
+  return clean as SafeUser;
+};
 
-  private toSafeUser(user: any): SafeUser {
-    const obj = user.toObject ? user.toObject() : user;
-    const { passwordHash, __v, ...clean } = obj;
-    return clean as SafeUser;
-  };
-async createUserService(input: UserDTO): Promise<SafeUser> {
-  const existing = await this.userRepo.findUserByEmailDAL(input.email);
+export const createUserService = async (input: UserDTO): Promise<SafeUser> => {
+  const existing = await findUserByEmailDAL(input.email);
   if (existing) {
     throw new AppError(409, 'User with this email already exists', 'EMAIL_TAKEN');
   }
 
-  const user = await this.userRepo.createUserDAL(input);
-  return this.toSafeUser(user);
+  const user = await createUserDAL(input);
+  return toSafeUser(user);
 };
 
-async getAllUsersService(): Promise<SafeUser[]> {
-  const users = await this.userRepo.findAllUsersDAL();
-  return users.map(user => this.toSafeUser(user));
+export const getAllUsersService = async (): Promise<SafeUser[]> => {
+  const users = await findAllUsersDAL();
+  return users.map(toSafeUser);
 };
 
-async getUserByIdService(id: string): Promise<SafeUser> {
-  const user = await this.userRepo.findUserByIdDAL(id);
+export const getUserByIdService = async (id: string): Promise<SafeUser> => {
+  const user = await findUserByIdDAL(id);
   if (!user) {
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
   }
-  return this.toSafeUser(user);
+  return toSafeUser(user);
 };
 
-async updateUserService(
+export const updateUserService = async (
   id: string,
   updates: UpdateUserDTO
-): Promise<SafeUser>{
-  const updated = await this.userRepo.updateUserDAL(id, {
+): Promise<SafeUser> => {
+  const updated = await updateUserDAL(id, {
     ...updates,
     updatedAt: new Date(),
   });
@@ -46,15 +51,12 @@ async updateUserService(
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
   }
 
-  return this.toSafeUser(updated);
+  return toSafeUser(updated);
 };
 
-async deleteUserService(id: string): Promise<void> {
-  const deleted = await this.userRepo.deleteUserDAL(id);
+export const deleteUserService = async (id: string): Promise<void> => {
+  const deleted = await deleteUserDAL(id);
   if (!deleted) {
     throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
   }
 };
-}
-
-
