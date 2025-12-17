@@ -1,6 +1,6 @@
 import { Types } from 'mongoose';
 import { Recipe } from './recpies.model';
-import { RecipeDAL } from './recipe.dal';
+import { RecipeRepo } from './recipe.repo';
 import {
     RecipeDTO,
     UpdateRecipeDTO,
@@ -8,12 +8,12 @@ import {
 } from './recipe.types';
 
 export class RecipeService {
-    constructor(private readonly dal: RecipeDAL) { }
+    constructor(private readonly recipeRepo: RecipeRepo) { }
 
     async createRecipe(userId: string, input: RecipeDTO): Promise<Recipe> {
         const createdBy = new Types.ObjectId(userId);
 
-        return this.dal.create({
+        return this.recipeRepo.create({
             recipeBookId: new Types.ObjectId(input.recipeBookId),
             createdBy,
             originalRecipeId: input.originalRecipeId
@@ -37,15 +37,15 @@ export class RecipeService {
     }
 
     async getRecipeById(id: string): Promise<Recipe | null> {
-        return this.dal.findById(id);
+        return this.recipeRepo.findById(id);
     }
 
     async getRecipesByUserId(userId: string) {
-        return this.dal.findMany({ createdBy: userId });
+        return this.recipeRepo.findMany({ createdBy: userId });
     }
 
     async listRecipes(filter: RecipeFilterDTO): Promise<Recipe[]> {
-        return this.dal.findMany(filter);
+        return this.recipeRepo.findMany(filter);
     }
 
     async updateRecipe(
@@ -65,10 +65,10 @@ export class RecipeService {
             update.sourceId = new Types.ObjectId(input.sourceId);
         }
 
-        return this.dal.updateById(id, update);
+        return this.recipeRepo.updateById(id, update);
     }
 
     async deleteRecipe(id: string): Promise<Recipe | null> {
-        return this.dal.deleteById(id);
+        return this.recipeRepo.deleteById(id);
     }
 }
