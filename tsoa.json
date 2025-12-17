@@ -1,0 +1,19 @@
+{
+  "entryFile": "src/app.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+
+  "controllerPathGlobs": [
+    "src/controllers/**/*.tsoa.ts"
+  ],
+
+  "spec": {
+    "outputDirectory": "src/swagger",
+    "specVersion": 3,
+    "basePath": "/api"
+  },
+
+  "routes": {
+    "routesDir": "src/routes-tsoa",
+    "basePath": "/api"
+  }
+}

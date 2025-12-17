@@ -1,15 +1,18 @@
 import express from 'express';
 import recipeRouter from './routes/recipe.routes';
+// import userRouter from './routes/user.tsoa';
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './config/swagger';
-import commentsRouter from './routes/comments.routes';
+import { RegisterRoutes } from "./routes-tsoa/routes"; 
+import swaggerDoc from './swagger/swagger.json';
+
 
 const app = express();
 
 app.use(express.json());
 
 app.use('/api/recipes', recipeRouter);
-app.use('/api/comments', commentsRouter);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
+RegisterRoutes(app); 
 
 export default app;
