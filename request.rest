@@ -65,3 +65,43 @@ GET http://localhost:3000/api/recipes/user/6740b9c7f1e8c0a7c9a1d234
 
 ### Delete a recipe
 DELETE http://localhost:3000/api/recipes/6939875abe918bb694ffd41f
+
+
+#################### Comments ####################
+### Create a new comment (new test comment)
+POST http://localhost:3000/api/comments
+Content-Type: application/json
+
+{
+  "recipeId": "6930442a9a28b3e672ca71b6",
+  "content": "זאת ההערה החדשה של אלון",
+  "createdBy": "693041739a28b3e672ca7192"
+}
+
+###
+
+### Get all comments for a specific recipe
+GET http://localhost:3000/api/comments/recipe/6930442a9a28b3e672ca71b6
+Content-Type: application/json
+
+###
+
+### Get a single comment by ID (existing comment)
+GET http://localhost:3000/api/comments/693ace3c35dacdb6f309fa23
+Content-Type: application/json
+
+###
+
+### Update a comment (existing comment)
+PUT http://localhost:3000/api/comments/693ad26fe603e38e2b741560
+Content-Type: application/json
+
+{
+  "text": "this is my changed comment"
+}
+
+###
+
+### Delete a comment (existing comment)
+DELETE http://localhost:3000/api/comments/693ad26fe603e38e2b741560
+Content-Type: application/json
