@@ -67,6 +67,7 @@ GET http://localhost:3000/api/recipes/getRecipesByUser/6740b9c7f1e8c0a7c9a1d234
 DELETE http://localhost:3000/api/recipes/deleteRecipe/6939875abe918bb694ffd41f
 
 
+
 #################### Comments ####################
 ### Create a new comment (new test comment)
 POST http://localhost:3000/api/comments
