@@ -39,4 +39,3 @@ export class UserRepo {
     return UserModel.findByIdAndDelete(id).exec();
   };
 }
-

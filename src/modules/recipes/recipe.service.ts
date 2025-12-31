@@ -1,12 +1,12 @@
 import { Types } from 'mongoose';
 import { Recipe } from './recpies.model';
-import { RecipeRepo } from './recipe.repo';
 import {
     RecipeDTO,
     UpdateRecipeDTO,
     RecipeFilterDTO
 } from './recipe.types';
 import { toRecipeDTO } from './recipe.mapper';
+import { RecipeRepo } from './resipes.repo';
 
 export class RecipeService {
     private readonly recipeRepo: RecipeRepo = new RecipeRepo();
