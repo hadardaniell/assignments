@@ -110,6 +110,243 @@
 			},
 			"UpdateUserDTO": {
 				"$ref": "#/components/schemas/Partial_UserDTO_"
+			},
+			"Difficulty": {
+				"type": "string",
+				"enum": [
+					"easy",
+					"medium",
+					"hard"
+				]
+			},
+			"IngredientInput": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"quantity": {
+						"type": "number",
+						"format": "double"
+					},
+					"unit": {
+						"type": "string"
+					},
+					"notes": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StepInput": {
+				"properties": {
+					"index": {
+						"type": "number",
+						"format": "double"
+					},
+					"instruction": {
+						"type": "string"
+					},
+					"durationMinutes": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"instruction"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SourceType": {
+				"type": "string",
+				"enum": [
+					"ai",
+					"manual",
+					"import"
+				]
+			},
+			"RecipeStatus": {
+				"type": "string",
+				"enum": [
+					"draft",
+					"published"
+				]
+			},
+			"RecipeDTO": {
+				"properties": {
+					"Id": {
+						"type": "string"
+					},
+					"recipeBookId": {
+						"type": "string"
+					},
+					"originalRecipeId": {
+						"type": "string",
+						"nullable": true
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string",
+						"nullable": true
+					},
+					"categories": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"prepTimeMinutes": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"cookTimeMinutes": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"totalTimeMinutes": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"difficulty": {
+						"$ref": "#/components/schemas/Difficulty"
+					},
+					"ingredients": {
+						"items": {
+							"$ref": "#/components/schemas/IngredientInput"
+						},
+						"type": "array"
+					},
+					"steps": {
+						"items": {
+							"$ref": "#/components/schemas/StepInput"
+						},
+						"type": "array"
+					},
+					"notes": {
+						"type": "string",
+						"nullable": true
+					},
+					"coverImageUrl": {
+						"type": "string",
+						"nullable": true
+					},
+					"sourceType": {
+						"$ref": "#/components/schemas/SourceType"
+					},
+					"sourceId": {
+						"type": "string",
+						"nullable": true
+					},
+					"status": {
+						"$ref": "#/components/schemas/RecipeStatus"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"recipeBookId",
+					"title",
+					"ingredients",
+					"steps"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_RecipeDTO_": {
+				"properties": {
+					"Id": {
+						"type": "string"
+					},
+					"recipeBookId": {
+						"type": "string"
+					},
+					"originalRecipeId": {
+						"type": "string"
+					},
+					"title": {
+						"type": "string"
+					},
+					"description": {
+						"type": "string"
+					},
+					"categories": {
+						"items": {
+							"type": "string"
+						},
+						"type": "array"
+					},
+					"prepTimeMinutes": {
+						"type": "number",
+						"format": "double"
+					},
+					"cookTimeMinutes": {
+						"type": "number",
+						"format": "double"
+					},
+					"totalTimeMinutes": {
+						"type": "number",
+						"format": "double"
+					},
+					"difficulty": {
+						"$ref": "#/components/schemas/Difficulty"
+					},
+					"ingredients": {
+						"items": {
+							"$ref": "#/components/schemas/IngredientInput"
+						},
+						"type": "array"
+					},
+					"steps": {
+						"items": {
+							"$ref": "#/components/schemas/StepInput"
+						},
+						"type": "array"
+					},
+					"notes": {
+						"type": "string"
+					},
+					"coverImageUrl": {
+						"type": "string"
+					},
+					"sourceType": {
+						"$ref": "#/components/schemas/SourceType"
+					},
+					"sourceId": {
+						"type": "string"
+					},
+					"status": {
+						"$ref": "#/components/schemas/RecipeStatus"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
 			}
 		},
 		"securitySchemes": {}
@@ -123,7 +360,7 @@
 		"contact": {}
 	},
 	"paths": {
-		"/users": {
+		"/users/createUser": {
 			"post": {
 				"operationId": "CreateUser",
 				"responses": {
@@ -153,7 +390,9 @@
 						}
 					}
 				}
-			},
+			}
+		},
+		"/users/getUsers": {
 			"get": {
 				"operationId": "GetUsers",
 				"responses": {
@@ -178,7 +417,7 @@
 				"parameters": []
 			}
 		},
-		"/users/{id}": {
+		"/users/getUserById/{id}": {
 			"get": {
 				"operationId": "GetUserById",
 				"responses": {
@@ -207,7 +446,9 @@
 						}
 					}
 				]
-			},
+			}
+		},
+		"/users/updateUser/{id}": {
 			"put": {
 				"operationId": "UpdateUser",
 				"responses": {
@@ -246,7 +487,9 @@
 						}
 					}
 				}
-			},
+			}
+		},
+		"/users/deleteUser/{id}": {
 			"delete": {
 				"operationId": "DeleteUser",
 				"responses": {
@@ -256,6 +499,261 @@
 				},
 				"tags": [
 					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/recipes/createRecipe": {
+			"post": {
+				"operationId": "CreateRecipe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RecipeDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RecipeDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/recipes/getRecipeById/{id}": {
+			"get": {
+				"operationId": "GetRecipeById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/RecipeDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/recipes/getRecipes": {
+			"get": {
+				"operationId": "GetRecipes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "recipeBookId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "difficulty",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/recipes/getRecipesByUser/{userId}": {
+			"get": {
+				"operationId": "GetRecipesByUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/recipes/updateRecipe/{id}": {
+			"put": {
+				"operationId": "UpdateRecipe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RecipeDTO"
+										},
+										{}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Partial_RecipeDTO_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/recipes/deleteRecipe/{id}": {
+			"delete": {
+				"operationId": "DeleteRecipe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RecipeDTO"
+										},
+										{}
+									]
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
 				],
 				"security": [],
 				"parameters": [

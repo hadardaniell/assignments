@@ -3,7 +3,7 @@ import RecipeModel, { Recipe } from './recpies.model';
 import { RecipeFilterDTO } from './recipe.types';
 import _mongoose from 'mongoose';
 
-export class RecipeDAL {
+export class RecipeRepo {
   async create(data: Partial<Recipe>): Promise<Recipe> {
     const recipe = new RecipeModel(data);
     return recipe.save();

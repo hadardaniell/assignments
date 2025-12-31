@@ -1,19 +1,20 @@
 import { Types } from 'mongoose';
 import { Recipe } from './recpies.model';
-import { RecipeDAL } from './recipe.dal';
 import {
     RecipeDTO,
     UpdateRecipeDTO,
     RecipeFilterDTO
 } from './recipe.types';
+import { toRecipeDTO } from './recipe.mapper';
+import { RecipeRepo } from './resipes.repo';
 
 export class RecipeService {
-    constructor(private readonly dal: RecipeDAL) { }
+    private readonly recipeRepo: RecipeRepo = new RecipeRepo();
 
-    async createRecipe(userId: string, input: RecipeDTO): Promise<Recipe> {
+    async createRecipe(userId: string, input: RecipeDTO): Promise<RecipeDTO> {
         const createdBy = new Types.ObjectId(userId);
 
-        return this.dal.create({
+        const recipe = await this.recipeRepo.create({
             recipeBookId: new Types.ObjectId(input.recipeBookId),
             createdBy,
             originalRecipeId: input.originalRecipeId
@@ -33,26 +34,30 @@ export class RecipeService {
             sourceType: input.sourceType ?? 'manual',
             sourceId: input.sourceId ? new Types.ObjectId(input.sourceId) : null,
             status: input.status ?? 'draft'
-        } as any);
+        } as Partial<Recipe>);
+        return toRecipeDTO(recipe);
     }
 
-    async getRecipeById(id: string): Promise<Recipe | null> {
-        return this.dal.findById(id);
+    async getRecipeById(id: string): Promise<RecipeDTO | null> {
+        const recipe = await this.recipeRepo.findById(id);
+        return recipe ? toRecipeDTO(recipe) : null;
     }
 
     async getRecipesByUserId(userId: string) {
-        return this.dal.findMany({ createdBy: userId });
+        const recipes = await this.recipeRepo.findMany({ createdBy: userId });
+        return recipes.map(toRecipeDTO);
     }
 
-    async listRecipes(filter: RecipeFilterDTO): Promise<Recipe[]> {
-        return this.dal.findMany(filter);
+    async listRecipes(filter: RecipeFilterDTO): Promise<RecipeDTO[]> {
+        const recipes = await this.recipeRepo.findMany(filter);
+        return recipes.map(toRecipeDTO);
     }
 
     async updateRecipe(
         id: string,
         userId: string,
         input: UpdateRecipeDTO
-    ): Promise<Recipe | null> {
+    ): Promise<RecipeDTO | null> {
         const update: any = { ...input };
 
         if (input.recipeBookId) {
@@ -65,10 +70,12 @@ export class RecipeService {
             update.sourceId = new Types.ObjectId(input.sourceId);
         }
 
-        return this.dal.updateById(id, update);
+        const recipe = await this.recipeRepo.updateById(id, update);
+        return recipe ? toRecipeDTO(recipe) : null;
     }
 
-    async deleteRecipe(id: string): Promise<Recipe | null> {
-        return this.dal.deleteById(id);
+    async deleteRecipe(id: string): Promise<RecipeDTO | null> {
+        const recipe = await this.recipeRepo.deleteById(id);
+        return recipe ? toRecipeDTO(recipe) : null;
     }
 }
