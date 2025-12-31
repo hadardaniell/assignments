@@ -14,7 +14,7 @@ export class UsersController extends Controller {
   }
 
   // Create a new user
-  @Post('/')
+  @Post('createUser')
   public async createUser(
     @Body() body: UserDTO
   ): Promise<SafeUser> {
@@ -39,7 +39,7 @@ export class UsersController extends Controller {
   }
 
   // Get all users
-  @Get('/')
+  @Get('getUsers')
   public async getUsers(): Promise<SafeUser[]> {
     try {
       return await this.service.getAllUsersService();
@@ -60,7 +60,7 @@ export class UsersController extends Controller {
   }
 
   // Get user by ID
-  @Get('{id}')
+  @Get('getUserById/{id}')
   public async getUserById(
     @Path() id: string
   ): Promise<SafeUser> {
@@ -83,7 +83,7 @@ export class UsersController extends Controller {
   }
 
   // Update user by ID
-  @Put('{id}')
+  @Put('updateUser/{id}')
   public async updateUser(
     @Path() id: string,
     @Body() body: UpdateUserDTO
@@ -107,7 +107,7 @@ export class UsersController extends Controller {
   }
 
   // Delete user by ID
-  @Delete('{id}')
+  @Delete('deleteUser/{id}')
   public async deleteUser(
     @Path() id: string
   ): Promise<void> {
