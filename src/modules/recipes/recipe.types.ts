@@ -16,6 +16,7 @@ export interface StepInput {
 }
 
 export interface RecipeDTO {
+  Id?: string;
   recipeBookId: string;
   originalRecipeId?: string | null;
   title: string;
@@ -33,6 +34,8 @@ export interface RecipeDTO {
   sourceId?: string | null;
   status?: RecipeStatus;
   createdBy?: string;
+  createdAt?: string;
+  updatedAt?: string | null;
 }
 
 export type UpdateRecipeDTO = Partial<RecipeDTO>;

@@ -3,7 +3,7 @@ import { AppError } from '../../common';
 import { UserRepo } from './users.repo';
 
 export class UserService {
-  constructor(private userRepo: UserRepo) {}
+  private readonly userRepo: UserRepo = new UserRepo();
 
   private toSafeUser(user: any): SafeUser {
     const obj = user.toObject ? user.toObject() : user;

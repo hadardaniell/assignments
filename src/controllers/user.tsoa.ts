@@ -8,10 +8,7 @@ import { UserService } from '../modules/users/user.service';
 @Route('users')
 @Tags('Users')
 export class UsersController extends Controller {
-
-  constructor(private readonly service: UserService) {
-    super();
-  }
+  private readonly service: UserService = new UserService();
 
   // Create a new user
   @Post('createUser')
@@ -32,9 +29,7 @@ export class UsersController extends Controller {
       }
 
       this.setStatus(500);
-      throw {
-        message: 'Internal server error',
-      };
+      throw err;
     }
   }
 
@@ -53,9 +48,7 @@ export class UsersController extends Controller {
       }
 
       this.setStatus(500);
-      throw {
-        message: 'Internal server error',
-      };
+      throw err;
     }
   }
 
@@ -76,9 +69,7 @@ export class UsersController extends Controller {
       }
 
       this.setStatus(500);
-      throw {
-        message: 'Internal server error',
-      };
+      throw err;
     }
   }
 
@@ -100,9 +91,7 @@ export class UsersController extends Controller {
       }
 
       this.setStatus(500);
-      throw {
-        message: 'Internal server error',
-      };
+      throw err;
     }
   }
 
@@ -125,9 +114,7 @@ export class UsersController extends Controller {
       }
 
       this.setStatus(500);
-      throw {
-        message: 'Internal server error',
-      };
+      throw err;
     }
   }
 }

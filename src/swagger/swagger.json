@@ -179,6 +179,9 @@
 			},
 			"RecipeDTO": {
 				"properties": {
+					"Id": {
+						"type": "string"
+					},
 					"recipeBookId": {
 						"type": "string"
 					},
@@ -249,6 +252,13 @@
 					},
 					"createdBy": {
 						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -262,6 +272,9 @@
 			},
 			"Partial_RecipeDTO_": {
 				"properties": {
+					"Id": {
+						"type": "string"
+					},
 					"recipeBookId": {
 						"type": "string"
 					},
@@ -323,6 +336,12 @@
 						"$ref": "#/components/schemas/RecipeStatus"
 					},
 					"createdBy": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string"
+					},
+					"updatedAt": {
 						"type": "string"
 					}
 				},
@@ -502,7 +521,9 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/RecipeDTO"
+								}
 							}
 						}
 					}
@@ -532,7 +553,9 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"$ref": "#/components/schemas/RecipeDTO"
+								}
 							}
 						}
 					}
@@ -562,7 +585,9 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {},
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
 									"type": "array"
 								}
 							}
@@ -636,7 +661,9 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {},
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
 									"type": "array"
 								}
 							}
@@ -667,7 +694,14 @@
 						"description": "Ok",
 						"content": {
 							"application/json": {
-								"schema": {}
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RecipeDTO"
+										},
+										{}
+									]
+								}
 							}
 						}
 					}
@@ -702,8 +736,20 @@
 			"delete": {
 				"operationId": "DeleteRecipe",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"anyOf": [
+										{
+											"$ref": "#/components/schemas/RecipeDTO"
+										},
+										{}
+									]
+								}
+							}
+						}
 					}
 				},
 				"tags": [

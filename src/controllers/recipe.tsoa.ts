@@ -18,20 +18,19 @@ import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 @Route('recipes')
 @Tags('Recipes')
 export class RecipeController extends Controller {
-  constructor(private readonly service: RecipeService) {
-    super();
-  }
+
+  private readonly service: RecipeService = new RecipeService();
 
   // POST /api/recipes
   @Post('createRecipe')
   public async createRecipe(
     @Body() body: RecipeDTO
-  ): Promise<any> {
+  ): Promise<RecipeDTO> {
     try {
       const userId = body.createdBy ?? '';
 
       if (!userId) {
-        throw new AppError('createdBy is required', 400);
+        throw new AppError(400,'createdBy is required');
       }
 
       const recipe = await this.service.createRecipe(userId, body);
@@ -44,7 +43,7 @@ export class RecipeController extends Controller {
       }
 
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 
@@ -52,7 +51,7 @@ export class RecipeController extends Controller {
   @Get('getRecipeById/{id}')
   public async getRecipeById(
     @Path() id: string
-  ): Promise<any> {
+  ): Promise<RecipeDTO> {
     try {
       const recipe = await this.service.getRecipeById(id);
 
@@ -68,7 +67,7 @@ export class RecipeController extends Controller {
       }
 
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 
@@ -81,7 +80,7 @@ export class RecipeController extends Controller {
     @Query() search?: string,
     @Query() skip?: number,
     @Query() limit?: number
-  ): Promise<any[]> {
+  ): Promise<RecipeDTO[]> {
     try {
       const filter: RecipeFilterDTO = {
         recipeBookId,
@@ -95,7 +94,7 @@ export class RecipeController extends Controller {
       return await this.service.listRecipes(filter);
     } catch (err: any) {
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 
@@ -103,7 +102,7 @@ export class RecipeController extends Controller {
   @Get('getRecipesByUser/{userId}')
   public async getRecipesByUser(
     @Path() userId: string
-  ): Promise<any[]> {
+  ): Promise<RecipeDTO[]> {
     try {
       if (!userId) {
         throw new AppError(400, 'userId is required');
@@ -117,7 +116,7 @@ export class RecipeController extends Controller {
       }
 
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 
@@ -126,7 +125,7 @@ export class RecipeController extends Controller {
   public async updateRecipe(
     @Path() id: string,
     @Body() body: Partial<RecipeDTO>
-  ): Promise<any> {
+  ): Promise<RecipeDTO | void> {
     try {
       const userId = body.createdBy ?? '';
 
@@ -148,7 +147,7 @@ export class RecipeController extends Controller {
       }
 
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 
@@ -156,7 +155,7 @@ export class RecipeController extends Controller {
   @Delete('deleteRecipe/{id}')
   public async deleteRecipe(
     @Path() id: string
-  ): Promise<void> {
+  ): Promise<RecipeDTO | void> {
     try {
       const recipe = await this.service.deleteRecipe(id);
 
@@ -173,7 +172,7 @@ export class RecipeController extends Controller {
       }
 
       this.setStatus(500);
-      throw { message: 'Internal server error' };
+      throw err;
     }
   }
 }
