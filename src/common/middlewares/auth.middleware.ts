@@ -1,8 +1,9 @@
 // src/middlewares/auth.middleware.ts
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { RevokedTokenModel } from "../modules/auth/revokedToken.model";
 
-export function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
   if (!header?.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Unauthorized", code: "UNAUTHORIZED" });
@@ -15,9 +16,15 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   }
 
   try {
+    // בדיקה אם הטוקן בבלאק ליסט
+    const revoked = await RevokedTokenModel.findOne({ token });
+    if (revoked) {
+      return res.status(401).json({ message: "Token revoked", code: "TOKEN_REVOKED" });
+    }
+
     const payload = jwt.verify(token, secret) as any;
     (req as any).userId = payload?.sub;
-    return next();
+    next();
   } catch {
     return res.status(401).json({ message: "Invalid token", code: "INVALID_TOKEN" });
   }
