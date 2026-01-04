@@ -11,7 +11,7 @@ export class UserRepo {
     });
     return user;
   };
-  
+
   async findUserByEmailDAL(email: string): Promise<User | null> {
     return UserModel.findOne({ email }).exec();
   };
@@ -20,10 +20,14 @@ export class UserRepo {
     return UserModel.findById(id).exec();
   };
 
-  async findAllUsersDAL(): Promise<User[]>{
+  async findAllUsersDAL(): Promise<User[]> {
     return UserModel.find({}).exec();
   };
-  
+
+  async findUserByEmailWithPasswordDAL(email: string) {
+    return UserModel.findOne({ email: email.toLowerCase().trim() }).select("+passwordHash");
+  }
+
   async updateUserDAL(
     id: string,
     updates: UpdateUserDTO & { updatedAt?: Date }

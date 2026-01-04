@@ -55,6 +55,15 @@ export class UserService {
       throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
     }
   };
+
+  async getUserByEmailService(email: string): Promise<SafeUser | null> {
+    const user = await this.userRepo.findUserByEmailDAL(email);
+    return user ? this.toSafeUser(user) : null;
+  }
+
+  async getUserByEmailWithPasswordService(email: string): Promise<any | null> {
+    return this.userRepo.findUserByEmailWithPasswordDAL(email);
+  }
 }
 
 
