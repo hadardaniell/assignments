@@ -59,4 +59,21 @@ export class AuthController extends Controller {
             throw err;
         }
     }
+
+    @Security("bearerAuth")
+  @Post("logout")
+  public async logout(@Request() req: any): Promise<{ message: string }> {
+    try {
+      // אפשר פה להוסיף blacklist אם רוצים
+      this.setStatus(200);
+      return { message: "Logged out successfully" };
+    } catch (err: any) {
+      if (err instanceof AppError) {
+        this.setStatus(err.statusCode);
+        throw { message: err.message, code: err.code };
+      }
+      this.setStatus(500);
+      throw err;
+    }
+  }
 }

@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import { AppError } from "../../common";
 import { UserService } from "../users/user.service";
 import { AuthResponse, LoginDTO, RegisterDTO } from "./auth.types";
+import { RevokedTokenModel } from "./revokedToken.model";
 
 export class AuthService {
   private readonly users: UserService = new UserService();
@@ -69,4 +70,12 @@ export class AuthService {
     if (!userId) throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
     return this.users.getUserByIdService(userId);
   }
+
+  public async logout(token: string) {
+  const decoded: any = jwt.decode(token);
+  if (!decoded?.exp) return; // אין Expiration? לא מוסיפים
+
+  const expiresAt = new Date(decoded.exp * 1000);
+  await RevokedTokenModel.create({ token, expiresAt });
+}
 }

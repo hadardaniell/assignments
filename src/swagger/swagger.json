@@ -348,6 +348,44 @@
 				"type": "object",
 				"description": "Make all properties in T optional"
 			},
+			"CommentDTO": {
+				"properties": {
+					"recipeId": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"recipeId",
+					"content",
+					"createdBy"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_CommentDTO_": {
+				"properties": {
+					"recipeId": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"UpdateCommentDTO": {
+				"$ref": "#/components/schemas/Partial_CommentDTO_"
+			},
 			"AuthResponse": {
 				"properties": {
 					"user": {
@@ -830,6 +868,168 @@
 				]
 			}
 		},
+		"/comments/create": {
+			"post": {
+				"operationId": "CreateComment",
+				"responses": {
+					"201": {
+						"description": "Created",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CommentDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/comments/getCommentById/{commentId}": {
+			"get": {
+				"operationId": "GetCommentById",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "commentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/comments/recipe/getCommentsByRecipe/{recipeId}": {
+			"get": {
+				"operationId": "GetCommentsByRecipe",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CommentDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "recipeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/comments/update/{commentId}": {
+			"put": {
+				"operationId": "UpdateComment",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommentDTO"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "commentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateCommentDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/comments/delete/{commentId}": {
+			"delete": {
+				"operationId": "DeleteComment",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Comments"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "commentId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/auth/register": {
 			"post": {
 				"operationId": "Register",
@@ -904,6 +1104,40 @@
 							"application/json": {
 								"schema": {
 									"$ref": "#/components/schemas/SafeUser"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
 								}
 							}
 						}
