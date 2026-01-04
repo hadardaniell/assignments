@@ -1,19 +1,24 @@
 {
   "entryFile": "src/app.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-
   "controllerPathGlobs": [
     "src/controllers/**/*.tsoa.ts"
   ],
-
   "spec": {
-    "outputDirectory": "src/swagger",
     "specVersion": 3,
-    "basePath": "/api"
+    "outputDirectory": "src/swagger",
+    "basePath": "/api",
+    "securityDefinitions": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
   },
-
   "routes": {
     "routesDir": "src/routes-tsoa",
-    "basePath": "/api"
+    "basePath": "/api",
+    "authenticationModule": "./src/common/middlewares/expressAuthentication.ts"
   }
 }
