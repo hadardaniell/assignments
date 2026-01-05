@@ -1,5 +1,8 @@
 import { Request } from "express";
 import jwt from "jsonwebtoken";
+import { AuthService } from "../../modules/auth/auth.service"; // תתאימי נתיב אם צריך
+
+const authService = new AuthService();
 
 export async function expressAuthentication(
   request: Request,
@@ -22,10 +25,15 @@ export async function expressAuthentication(
   }
 
   try {
+    const blacklisted = await authService.isTokenBlacklisted(token);
+    if (blacklisted) {
+      return Promise.reject({ status: 401, message: "Token revoked", code: "TOKEN_REVOKED" });
+    }
+
     const payload = jwt.verify(token, secret) as any;
 
     return { userId: payload.sub };
-  } catch {
+  } catch (err) {
     return Promise.reject({ status: 401, message: "Invalid token", code: "INVALID_TOKEN" });
   }
 }
