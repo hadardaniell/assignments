@@ -1,7 +1,7 @@
 // src/middlewares/auth.middleware.ts
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { RevokedTokenModel } from "../modules/auth/revokedToken.model";
+import { BlacklistedTokenModel } from "../../modules/auth/blacklistedTokens.model";
 
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const header = req.headers.authorization;
@@ -16,8 +16,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
   }
 
   try {
-    // בדיקה אם הטוקן בבלאק ליסט
-    const revoked = await RevokedTokenModel.findOne({ token });
+    const revoked = await BlacklistedTokenModel.findOne({ token });
     if (revoked) {
       return res.status(401).json({ message: "Token revoked", code: "TOKEN_REVOKED" });
     }
