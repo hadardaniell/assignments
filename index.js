@@ -1,6 +1,6 @@
 import concurrently from 'concurrently';
 
 concurrently([
-    {command: 'npm run dev', name: 'server', cwd: './server', prefixColor: 'pink'},
-   // {command: 'npm run dev', name: 'client', cwd: './client', prefixColor: 'green'},
+    {command: 'npm run dev', name: 'server', cwd: './server', prefixColor: 'blue'},
+    {command: 'npm run dev', name: 'client', cwd: './client/recipeApp', prefixColor: 'green'},
 ])
