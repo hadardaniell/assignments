@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post, Request, Route, Security, Tags } from "tsoa";
-
 import { AppError } from "../common";
 import { AuthService } from "../modules/auth/auth.service";
 import { AuthResponse, LoginDTO, RegisterDTO } from "../modules/auth/auth.types";
@@ -17,12 +16,9 @@ export class AuthController extends Controller {
             this.setStatus(201);
             return result;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
-            throw err;
+            const status = err.statusCode || 500;
+            this.setStatus(status);
+            throw { message: err.message, code: err.code || "REGISTRATION_ERROR" };
         }
     }
 
@@ -33,12 +29,10 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
-            throw err;
+            // Service returns 401 for invalid credentials
+            const status = err.statusCode || 401;
+            this.setStatus(status);
+            throw { message: err.message, code: err.code || "AUTH_ERROR" };
         }
     }
 
@@ -51,12 +45,8 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return user;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
-            throw err;
+            this.setStatus(err.statusCode || 401);
+            throw { message: err.message, code: err.code || "UNAUTHORIZED" };
         }
     }
 
@@ -64,23 +54,14 @@ export class AuthController extends Controller {
     @Post("logout")
     public async logout(@Request() req: any): Promise<{ message: string }> {
         try {
-            const header = req.headers?.authorization;
-            if (!header?.startsWith("Bearer ")) {
-                throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
-            }
-
-            const token = header.slice("Bearer ".length).trim();
+            const authHeader = req.headers.authorization;
+            const token = authHeader.split(" ")[1];
             await this.service.logout(token);
-
             this.setStatus(200);
             return { message: "Logged out successfully" };
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
-            throw err;
+            this.setStatus(err.statusCode || 500);
+            throw { message: err.message, code: err.code };
         }
     }
 }

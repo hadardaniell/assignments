@@ -142,18 +142,28 @@ const models: TsoaRoute.Models = {
             "recipeId": {"dataType":"string","required":true},
             "content": {"dataType":"string","required":true},
             "createdBy": {"dataType":"string","required":true},
+            "id": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
         },
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Partial_CommentDTO_": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"recipeId":{"dataType":"string"},"content":{"dataType":"string"},"createdBy":{"dataType":"string"}},"validators":{}},
+    "CreateCommentRequest": {
+        "dataType": "refObject",
+        "properties": {
+            "recipeId": {"dataType":"string","required":true},
+            "content": {"dataType":"string","required":true},
+            "createdBy": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UpdateCommentDTO": {
-        "dataType": "refAlias",
-        "type": {"ref":"Partial_CommentDTO_","validators":{}},
+        "dataType": "refObject",
+        "properties": {
+            "content": {"dataType":"string","required":true},
+        },
+        "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AuthResponse": {
@@ -525,7 +535,7 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsCommentsController_createComment: Record<string, TsoaRoute.ParameterSchema> = {
-                input: {"in":"body","name":"input","required":true,"ref":"CommentDTO"},
+                input: {"in":"body","name":"input","required":true,"ref":"CreateCommentRequest"},
         };
         app.post('/api/comments/create',
             ...(fetchMiddlewares<RequestHandler>(CommentsController)),
