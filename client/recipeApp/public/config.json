@@ -1,0 +1,4 @@
+{
+  "apiBaseUrl": "https://localhost:3000/api",
+  "environment": "dev"
+}
