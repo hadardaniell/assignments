@@ -7,7 +7,6 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 let mongo: MongoMemoryServer;
 
 describe('Auth Integration Tests', () => {
-    // Exact schema matching your Swagger input
     const testUser = {
         name: "Test User",
         email: `test-${Date.now()}@example.com`,
@@ -17,8 +16,12 @@ describe('Auth Integration Tests', () => {
     };
 
     beforeAll(async () => {
+        // Fix for 'Missing JWT secret' error
+        process.env.JWT_SECRET = 'test-secret-key-123';
+        
         mongo = await MongoMemoryServer.create();
-        await mongoose.connect(mongo.getUri());
+        const uri = mongo.getUri();
+        await mongoose.connect(uri);
     });
 
     afterAll(async () => {
@@ -31,13 +34,8 @@ describe('Auth Integration Tests', () => {
             .post('/api/auth/register')
             .send(testUser);
 
-        // --- THE TRUTH LOG ---
-        if (res.status === 404) {
-            console.warn("\n--- REGISTRATION 404 DIAGNOSTIC ---");
-            console.log("1. Request URL: POST /api/auth/register");
-            console.log("2. Request Body Keys:", Object.keys(testUser));
-            console.log("3. Response Body:", JSON.stringify(res.body, null, 2));
-            console.warn("-----------------------------------\n");
+        if (res.status === 500) {
+            console.error("\n--- REGISTRATION 500 ERROR ---", res.body);
         }
 
         expect([200, 201]).toContain(res.status);
@@ -45,7 +43,7 @@ describe('Auth Integration Tests', () => {
         expect(res.body.user.email).toBe(testUser.email);
     });
 
-    it('should return 404 for wrong login credentials', async () => {
+    it('should return 401 for wrong login credentials', async () => {
         const res = await request(app)
             .post('/api/auth/login')
             .send({
@@ -53,11 +51,11 @@ describe('Auth Integration Tests', () => {
                 password: "WrongPassword123"
             });
         
-        // This confirms your custom logic that fails should result in 404
-        expect(res.status).toBe(404);
+        // Corrected expectation: 401 is the standard for bad credentials
+        expect(res.status).toBe(401);
     });
 
-    it('should return 404 for non-existent email', async () => {
+    it('should return 401 for non-existent email', async () => {
         const res = await request(app)
             .post('/api/auth/login')
             .send({
@@ -65,6 +63,7 @@ describe('Auth Integration Tests', () => {
                 password: "password"
             });
         
-        expect(res.status).toBe(404);
+        // Corrected expectation: 401 is the standard for non-existent users
+        expect(res.status).toBe(401);
     });
 });

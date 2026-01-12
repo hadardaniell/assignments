@@ -1,67 +1,48 @@
-import { Body, Controller, Get, Post, Request, Route, Security, Tags } from "tsoa";
-import { AppError } from "../common";
-import { AuthService } from "../modules/auth/auth.service";
-import { AuthResponse, LoginDTO, RegisterDTO } from "../modules/auth/auth.types";
-import { SafeUser } from "../modules/users/users.types";
+import { 
+  Controller, 
+  Route, 
+  Post, 
+  Body, 
+  SuccessResponse, 
+  Tags,
+  Request
+} from 'tsoa';
+import { AuthService } from '../modules/auth/auth.service';
+import { RegisterDTO, LoginDTO, AuthResponse } from '../modules/auth/auth.types';
+import { Request as ExRequest } from 'express';
 
 @Route("auth")
 @Tags("Auth")
 export class AuthController extends Controller {
-    private readonly service: AuthService = new AuthService();
+  private readonly authService = new AuthService();
 
-    @Post("register")
-    public async register(@Body() body: RegisterDTO): Promise<AuthResponse> {
-        try {
-            const result = await this.service.register(body);
-            this.setStatus(201);
-            return result;
-        } catch (err: any) {
-            const status = err.statusCode || 500;
-            this.setStatus(status);
-            throw { message: err.message, code: err.code || "REGISTRATION_ERROR" };
-        }
-    }
+  @Post("register")
+  @SuccessResponse("201", "Created")
+  public async register(
+    @Body() requestBody: RegisterDTO
+  ): Promise<AuthResponse> {
+    this.setStatus(201);
+    return this.authService.register(requestBody);
+  }
 
-    @Post("login")
-    public async login(@Body() body: LoginDTO): Promise<AuthResponse> {
-        try {
-            const result = await this.service.login(body);
-            this.setStatus(200);
-            return result;
-        } catch (err: any) {
-            // Service returns 401 for invalid credentials
-            const status = err.statusCode || 401;
-            this.setStatus(status);
-            throw { message: err.message, code: err.code || "AUTH_ERROR" };
-        }
-    }
+  @Post("login")
+  @SuccessResponse("200", "OK")
+  public async login(
+    @Body() requestBody: LoginDTO
+  ): Promise<AuthResponse> {
+    return this.authService.login(requestBody);
+  }
 
-    @Security("bearerAuth")
-    @Get("me")
-    public async me(@Request() req: any): Promise<SafeUser> {
-        try {
-            const userId = req.user?.userId;
-            const user = await this.service.me(userId);
-            this.setStatus(200);
-            return user;
-        } catch (err: any) {
-            this.setStatus(err.statusCode || 401);
-            throw { message: err.message, code: err.code || "UNAUTHORIZED" };
-        }
+  @Post("logout")
+  @SuccessResponse("204", "No Content")
+  public async logout(
+    @Request() request: ExRequest
+  ): Promise<void> {
+    const authHeader = request.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      await this.authService.logout(token);
     }
-
-    @Security("bearerAuth")
-    @Post("logout")
-    public async logout(@Request() req: any): Promise<{ message: string }> {
-        try {
-            const authHeader = req.headers.authorization;
-            const token = authHeader.split(" ")[1];
-            await this.service.logout(token);
-            this.setStatus(200);
-            return { message: "Logged out successfully" };
-        } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
-            throw { message: err.message, code: err.code };
-        }
-    }
+    this.setStatus(204);
+  }
 }
