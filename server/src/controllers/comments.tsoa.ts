@@ -10,13 +10,9 @@ import {
   Body,
   SuccessResponse,
 } from 'tsoa';
-// import { CommentsService } from './comments.service';
-// import { CommentDTO, UpdateCommentDTO } from './comments.types';
-import { Comment } from '../modules/comments/comments.model';
-// import { AppError } from '../../common/errors/app-error';
 import { CommentsService } from '../modules/comments/comments.service';
 import { AppError } from '../common';
-import { CommentDTO, UpdateCommentDTO } from '../modules/comments/comments.types';
+import { CommentDTO, CreateCommentRequest, UpdateCommentDTO } from '../modules/comments/comments.types';
 
 @Route('comments')
 @Tags('Comments')
@@ -27,9 +23,9 @@ export class CommentsController extends Controller {
 
   @Post('create')
   @SuccessResponse('201', 'Created')
-  public async createComment(@Body() input: CommentDTO): Promise<CommentDTO> {
-    if (!input.recipeId || !input.createdBy) {
-      throw new AppError(400, 'recipeId and createdBy are required');
+  public async createComment(@Body() input: CreateCommentRequest): Promise<CommentDTO> {
+    if (!input.recipeId || !input.createdBy || !input.content) {
+      throw new AppError(400, 'recipeId, createdBy, and content are required');
     }
 
     const comment = await this.service.createComment(input);

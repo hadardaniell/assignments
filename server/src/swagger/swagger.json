@@ -349,6 +349,37 @@
 				"description": "Make all properties in T optional"
 			},
 			"CommentDTO": {
+				"description": "The full comment object returned by the API.",
+				"properties": {
+					"recipeId": {
+						"type": "string"
+					},
+					"content": {
+						"type": "string"
+					},
+					"createdBy": {
+						"type": "string"
+					},
+					"id": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"recipeId",
+					"content",
+					"createdBy",
+					"id",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateCommentRequest": {
+				"description": "Request body for creating a comment.\r\nTSOA uses this to build the POST Swagger model.",
 				"properties": {
 					"recipeId": {
 						"type": "string"
@@ -368,23 +399,18 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Partial_CommentDTO_": {
+			"UpdateCommentDTO": {
+				"description": "Request body for updating a comment.\r\nOnly 'content' is allowed here.",
 				"properties": {
-					"recipeId": {
-						"type": "string"
-					},
 					"content": {
-						"type": "string"
-					},
-					"createdBy": {
 						"type": "string"
 					}
 				},
+				"required": [
+					"content"
+				],
 				"type": "object",
-				"description": "Make all properties in T optional"
-			},
-			"UpdateCommentDTO": {
-				"$ref": "#/components/schemas/Partial_CommentDTO_"
+				"additionalProperties": false
 			},
 			"AuthResponse": {
 				"properties": {
@@ -795,12 +821,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/RecipeDTO"
-										},
-										{}
-									]
+									"$ref": "#/components/schemas/RecipeDTO"
 								}
 							}
 						}
@@ -836,20 +857,8 @@
 			"delete": {
 				"operationId": "DeleteRecipe",
 				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"anyOf": [
-										{
-											"$ref": "#/components/schemas/RecipeDTO"
-										},
-										{}
-									]
-								}
-							}
-						}
+					"204": {
+						"description": "No content"
 					}
 				},
 				"tags": [
@@ -893,7 +902,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/CommentDTO"
+								"$ref": "#/components/schemas/CreateCommentRequest"
 							}
 						}
 					}

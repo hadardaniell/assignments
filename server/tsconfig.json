@@ -1,28 +1,35 @@
 {
   "compilerOptions": {
     "target": "ES2021",
-    "module": "commonjs",
-
-    "rootDir": "src",
-    "outDir": "dist",
-
+    "module": "CommonJS",
     "moduleResolution": "node",
+    
+    /* 1. Base URL and Paths allow cross-folder imports without errors */
+    "baseUrl": "./",
+    "paths": {
+      "*": ["node_modules/*", "src/*"]
+    },
+
+    /* 2. Output and Root settings */
+    "outDir": "dist",
     "esModuleInterop": true,
     "resolveJsonModule": true,
 
+    /* 3. Strictness & Security */
     "strict": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
 
+    /* 4. TSOA Requirements */
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
 
-    "types": ["node"]
+    "types": ["node", "jest"]
   },
   "include": [
     "src/**/*.ts",
-    "tests/**/*.ts"
+    "routes-tsoa/**/*.ts"
   ],
   "exclude": [
     "node_modules",
