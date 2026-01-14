@@ -4,21 +4,24 @@ import { AppError } from '../errors/app-error';
 
 export const errorMiddleware = (
   err: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction
 ) => {
-  console.error(err);
+  // Log the error for debugging
+  if (process.env.NODE_ENV !== 'test') {
+    console.error(`[Error] ${req.method} ${req.path}:`, err);
+  }
 
-  // TSOA validation errors
+  // 1. TSOA validation errors
   if (err instanceof ValidateError) {
-    return res.status(422).json({
+    return res.status(400).json({
       message: 'Validation Failed',
       details: err.fields,
     });
   }
 
-  // AppError (business errors)
+  // 2. AppError (business errors)
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
       message: err.message,
@@ -26,19 +29,10 @@ export const errorMiddleware = (
     });
   }
 
-  // Errors thrown as plain objects from controllers
-  if (typeof err === 'object' && err !== null) {
-    const e = err as any;
-
-    if (e.message) {
-      return res.status(e.statusCode ?? e.status ?? 500).json({
-        message: e.message,
-        code: e.code,
-      });
-    }
-  }
-
-  return res.status(500).json({
-    message: 'Internal server error',
+  // 3. Generic Error objects or plain objects
+  const errorObj = err as any;
+  return res.status(errorObj.statusCode || errorObj.status || 500).json({
+    message: errorObj.message || 'Internal server error',
+    code: errorObj.code,
   });
 };

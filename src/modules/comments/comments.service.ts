@@ -1,17 +1,16 @@
 import { Types } from 'mongoose';
 import { CommentsDAL } from './comments.dal';
-import { Comment } from './comments.model';
-import { CommentDTO, UpdateCommentDTO } from './comments.types';
-import { toCommentDTO } from './comments.mapper'; // <-- כאן המיפר שלנו
+import { CommentDTO, CreateCommentRequest, UpdateCommentDTO } from './comments.types';
+import { toCommentDTO } from './comments.mapper';
 
 export class CommentsService {
   constructor(private readonly dal: CommentsDAL = new CommentsDAL()) {}
 
-  async createComment(input: CommentDTO): Promise<CommentDTO> {
+  async createComment(input: CreateCommentRequest): Promise<CommentDTO> {
     const comment = await this.dal.create({
       recipeId: new Types.ObjectId(input.recipeId),
-      userId: new Types.ObjectId(input.createdBy), // renamed to match validation
-      text: input.content,                           // renamed to match validation
+      userId: new Types.ObjectId(input.createdBy),
+      text: input.content,
       createdAt: new Date(),
       updatedAt: null
     } as any);
@@ -31,10 +30,10 @@ export class CommentsService {
   }
 
   async updateComment(id: string, input: UpdateCommentDTO): Promise<CommentDTO | null> {
-    const update: any = { ...input, updatedAt: new Date() };
-
-    if (input.recipeId) update.recipeId = new Types.ObjectId(input.recipeId);
-    if (input.createdBy) update.createdBy = new Types.ObjectId(input.createdBy);
+    const update: any = { 
+      text: input.content, 
+      updatedAt: new Date() 
+    };
 
     const updatedComment = await this.dal.updateById(id, update);
     if (!updatedComment) return null;
