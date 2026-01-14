@@ -1,0 +1,43 @@
+import { createBrowserRouter, Navigate } from "react-router-dom";
+// import { AppLayout } from "../layouts/AppLayout";
+// import { RequireAuth } from "./RequireAuth";
+
+import { LoginComponent } from "../features/auth/components/login";
+import { RegisterComponent } from "../features/auth/components/register";
+import { AuthPage } from "../features/auth/components/auth-conatiner";
+import { RequireAuth } from "./require-auth";
+import { AppLayout } from "../layouts/app-layout";
+import { ProfilePage } from "../features/profile/profile-page";
+
+// import { HomePage } from "../pages/HomePage";
+// import { FeedPage } from "../pages/FeedPage";
+// import { ProfilePage } from "../pages/ProfilePage";
+// import { CreateRecipePage } from "../pages/CreateRecipePage";
+
+export const router = createBrowserRouter([
+{
+    path: "/auth",
+    element: <AuthPage />,
+    children: [
+      { index: true, element: <Navigate to="login" replace /> }, // ✅ /auth -> /auth/login
+      { index: true, element: <Navigate to="register" replace /> }, // ✅ /auth -> /auth/register
+      { path: "login", element: <LoginComponent /> },
+      { path: "register", element: <RegisterComponent /> },
+    ],
+  },
+  {
+    element: <RequireAuth />,
+    children: [
+      {
+        path: "/",
+        element: <AppLayout />,
+        children: [
+        //   { index: true, element: <HomePage /> },
+        //   { path: "feed", element: <FeedPage /> },
+          { path: "profile", element: <ProfilePage /> },
+        //   { path: "recipes/new", element: <CreateRecipePage /> },
+        ],
+      },
+    ],
+  },
+]);

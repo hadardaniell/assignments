@@ -1,5 +1,5 @@
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, Outlet } from 'react-router-dom';
 import { LoginComponent } from './login';
 import { RegisterComponent } from './register';
 import { colors } from '../../../assets/_colors'; // הפלטה שהגדרת
@@ -27,16 +27,7 @@ export const AuthPage = () => {
             >
                 <Card sx={{ width: 400, padding: 3, borderRadius: 3, boxShadow: 0 }}>
                     <CardContent>
-                        <Routes>
-                            <Route
-                                path="login"
-                                element={<LoginComponent navigate={navigate} />}
-                            />
-                            <Route
-                                path="register"
-                                element={<RegisterComponent navigate={navigate} />}
-                            />
-                        </Routes>
+                        <Outlet /> 
                     </CardContent>
                 </Card>
             </Box>
@@ -55,7 +46,7 @@ export const AuthPage = () => {
                     height: '100%',
                     justifyContent: 'end',
                     lineHeight: 0.9,
- 
+
                 }}>
                     <AnimatedLetters text="Let's" />
                     <AnimatedLetters text="Make Some" />

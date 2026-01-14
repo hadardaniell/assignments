@@ -8,6 +8,9 @@ import { ConfigProvider } from './context/config.context.tsx';
 import { CacheProvider } from '@emotion/react';
 import { cacheRtl } from './rtl-cache.ts';
 import { initHttpClient } from './services/http-client.service.ts';
+import { router } from './router/index.tsx';
+import { RouterProvider } from 'react-router-dom';
+import { AuthProvider } from './context/auth.context.tsx';
 
 async function bootstrap() {
   await initHttpClient();
@@ -16,7 +19,9 @@ async function bootstrap() {
       <CacheProvider value={cacheRtl}>
         <ThemeProvider theme={theme}>
           <ConfigProvider>
-            <App />
+            <AuthProvider>
+             <RouterProvider router={router} />
+            </AuthProvider>
           </ConfigProvider>
         </ThemeProvider>
       </CacheProvider>
