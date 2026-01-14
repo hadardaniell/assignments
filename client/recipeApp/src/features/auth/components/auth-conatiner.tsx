@@ -16,7 +16,6 @@ export const AuthPage = () => {
             sx={{
                 backgroundColor: colors.YELLOW[500],
                 width: '100%'
-
             }}
         >
             {/* צד שמאל - כרטיס */}

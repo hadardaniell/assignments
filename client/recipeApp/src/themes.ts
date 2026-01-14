@@ -1,13 +1,6 @@
-// src/theme.ts
 import { createTheme } from '@mui/material/styles';
 import { colors } from './assets/_colors';
-import createCache from '@emotion/cache';
-import rtlPlugin from 'stylis-plugin-rtl';
 
-export const cacheRtl = createCache({
-  key: 'muirtl',
-  stylisPlugins: [rtlPlugin],
-});
 
 export const theme = createTheme({
     direction: "rtl",
