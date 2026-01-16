@@ -38,7 +38,6 @@ describe('Recipes Module Integration Tests', () => {
         const res = await request(app).post('/api/recipes/createRecipe').send(payload);
 
         expect([200, 201]).toContain(res.status);
-        // Matching your Mapper: it uses 'Id'
         createdRecipeId = res.body.Id; 
         expect(createdRecipeId).toBeDefined();
     });
@@ -52,7 +51,11 @@ describe('Recipes Module Integration Tests', () => {
     it('should update recipe', async () => {
         const res = await request(app)
             .put(`/api/recipes/updateRecipe/${createdRecipeId}`)
-            .send({ title: "מעודכן", createdBy: USER_ID });
+            .send({ 
+                title: "מעודכן", 
+                createdBy: USER_ID,
+                recipeBookId: RECIPE_BOOK_ID 
+            });
         
         expect(res.status).toBe(200);
         expect(res.body.title).toBe("מעודכן");

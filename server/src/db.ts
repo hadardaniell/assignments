@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
 export async function connectDB(): Promise<void> {
-    const mongoUri = process.env.MONGODB_URI;
+    const mongoUri = process.env.MONGODB_URI || process.env.MONGO_URI;
 
     if (!mongoUri) {
-        console.error('Missing MONGO_URI in environment variables');
+        console.error('Missing MONGODB_URI or MONGO_URI in environment variables');
         process.exit(1);
     }
 

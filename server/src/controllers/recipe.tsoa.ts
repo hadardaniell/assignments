@@ -8,6 +8,16 @@ import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
 
+    @Get('ai-search')
+    public async aiSearch(@Query() q: string): Promise<RecipeDTO[]> {
+        try {
+            return await this.service.searchRecipesWithAI(q);
+        } catch (err: any) {
+            this.setStatus(500);
+            throw err;
+        }
+    }
+
     @Post('createRecipe')
     public async createRecipe(@Body() body: RecipeDTO): Promise<RecipeDTO> {
         try {
@@ -43,12 +53,10 @@ export class RecipeController extends Controller {
         @Query() recipeBookId?: string,
         @Query() status?: any,
         @Query() difficulty?: any,
-        @Query() search?: string,
-        @Query() skip?: number,
-        @Query() limit?: number
+        @Query() search?: string
     ): Promise<RecipeDTO[]> {
         try {
-            const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
+            const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search };
             return await this.service.listRecipes(filter);
         } catch (err: any) {
             this.setStatus(500);
@@ -56,20 +64,10 @@ export class RecipeController extends Controller {
         }
     }
 
-    @Get('getRecipesByUser/{userId}')
-    public async getRecipesByUser(@Path() userId: string): Promise<RecipeDTO[]> {
-        try {
-            return await this.service.getRecipesByUserId(userId);
-        } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
-            throw err;
-        }
-    }
-
     @Put('updateRecipe/{id}')
     public async updateRecipe(@Path() id: string, @Body() body: Partial<RecipeDTO>): Promise<RecipeDTO> {
         try {
-            const userId = body.createdBy || ''; 
+            const userId = body.createdBy || '';
             const recipe = await this.service.updateRecipe(id, userId, body);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
