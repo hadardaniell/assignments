@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query } from 'tsoa';
+import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, Request } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
@@ -9,9 +9,14 @@ export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
 
     @Get('ai-search')
-    public async aiSearch(@Query() q: string): Promise<RecipeDTO[]> {
+    public async aiSearch(
+        @Query() q: string,
+        @Query() recipeBookId: string,
+        @Request() request: any
+    ): Promise<RecipeDTO[]> {
         try {
-            return await this.service.searchRecipesWithAI(q);
+            const userId = request.user?.id || 'anonymous';
+            return await this.service.searchRecipesWithAI(q, userId, recipeBookId);
         } catch (err: any) {
             this.setStatus(500);
             throw err;
