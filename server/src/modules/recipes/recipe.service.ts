@@ -1,25 +1,35 @@
 import { Types } from 'mongoose';
-import { Recipe } from './recpies.model';
-import {
-    RecipeDTO,
-    UpdateRecipeDTO,
-    RecipeFilterDTO
-} from './recipe.types';
+import { RecipeModel, Recipe } from './recpies.model';
+import { RecipeDTO, UpdateRecipeDTO, RecipeFilterDTO } from './recipe.types';
 import { toRecipeDTO } from './recipe.mapper';
 import { RecipeRepo } from './resipes.repo';
 import { AIService } from './ai.service';
+import { AppError } from '../../common';
 
 export class RecipeService {
     private readonly recipeRepo: RecipeRepo = new RecipeRepo();
     private readonly aiService: AIService = new AIService();
 
+    async toggleLike(recipeId: string, userId: string): Promise<boolean> {
+        const recipe = await RecipeModel.findById(recipeId);
+        if (!recipe) throw new AppError(404, 'Recipe not found');
+
+        const userObjectId = new Types.ObjectId(userId);
+        const hasLiked = recipe.likes?.some(id => id.equals(userObjectId));
+
+        if (hasLiked) {
+            await RecipeModel.findByIdAndUpdate(recipeId, { $pull: { likes: userObjectId } });
+            return false;
+        } else {
+            await RecipeModel.findByIdAndUpdate(recipeId, { $addToSet: { likes: userObjectId } });
+            return true;
+        }
+    }
+
     async searchRecipesWithAI(userQuery: string, userId: string, recipeBookId: string): Promise<RecipeDTO[]> {
         try {
             const generatedRecipes = await this.aiService.generateFullRecipe(userQuery);
-            
-            if (!generatedRecipes || !Array.isArray(generatedRecipes)) {
-                return [];
-            }
+            if (!generatedRecipes || !Array.isArray(generatedRecipes)) return [];
 
             return generatedRecipes.map((recipe, index) => ({
                 ...recipe,
@@ -30,10 +40,10 @@ export class RecipeService {
                 updatedAt: new Date().toISOString(),
                 sourceType: 'ai',
                 status: 'published',
+                likes: [],
                 originalRecipeId: null,
                 coverImageUrl: null
             }));
-
         } catch (error) {
             return [];
         }
@@ -41,13 +51,10 @@ export class RecipeService {
 
     async createRecipe(userId: string, input: RecipeDTO): Promise<RecipeDTO> {
         const createdBy = new Types.ObjectId(userId);
-
         const recipe = await this.recipeRepo.create({
-            recipeBookId: new Types.ObjectId(input.recipeBookId),
+            recipeBookId: input.recipeBookId ? new Types.ObjectId(input.recipeBookId) : undefined,
             createdBy,
-            originalRecipeId: input.originalRecipeId
-                ? new Types.ObjectId(input.originalRecipeId)
-                : null,
+            originalRecipeId: input.originalRecipeId ? new Types.ObjectId(input.originalRecipeId) : null,
             title: input.title,
             description: input.description ?? null,
             categories: input.categories ?? [],
@@ -61,7 +68,8 @@ export class RecipeService {
             coverImageUrl: input.coverImageUrl ?? null,
             sourceType: input.sourceType ?? 'manual',
             sourceId: input.sourceId ? new Types.ObjectId(input.sourceId) : null,
-            status: input.status ?? 'draft'
+            status: input.status ?? 'draft',
+            likes: []
         } as Partial<Recipe>);
         return toRecipeDTO(recipe);
     }
@@ -71,33 +79,14 @@ export class RecipeService {
         return recipe ? toRecipeDTO(recipe) : null;
     }
 
-    async getRecipesByUserId(userId: string) {
-        const recipes = await this.recipeRepo.findMany({ createdBy: userId });
-        return recipes.map(toRecipeDTO);
-    }
-
     async listRecipes(filter: RecipeFilterDTO): Promise<RecipeDTO[]> {
         const recipes = await this.recipeRepo.findMany(filter);
         return recipes.map(toRecipeDTO);
     }
 
-    async updateRecipe(
-        id: string,
-        userId: string,
-        input: UpdateRecipeDTO
-    ): Promise<RecipeDTO | null> {
+    async updateRecipe(id: string, userId: string, input: UpdateRecipeDTO): Promise<RecipeDTO | null> {
         const update: any = { ...input };
-
-        if (input.recipeBookId) {
-            update.recipeBookId = new Types.ObjectId(input.recipeBookId);
-        }
-        if (input.originalRecipeId) {
-            update.originalRecipeId = new Types.ObjectId(input.originalRecipeId);
-        }
-        if (input.sourceId) {
-            update.sourceId = new Types.ObjectId(input.sourceId);
-        }
-
+        if (input.recipeBookId) update.recipeBookId = new Types.ObjectId(input.recipeBookId);
         const recipe = await this.recipeRepo.updateById(id, update);
         return recipe ? toRecipeDTO(recipe) : null;
     }

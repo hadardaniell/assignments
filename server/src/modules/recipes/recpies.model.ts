@@ -39,6 +39,7 @@ export interface Recipe extends Document {
   sourceId?: Types.ObjectId | null;
   status?: 'draft' | 'published';
   stats?: Stats;
+  likes: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -82,6 +83,7 @@ const RecipeSchema = new Schema<Recipe>({
   sourceId: { type: Schema.Types.ObjectId, default: null },
   status: { type: String, enum: ['draft', 'published'], default: 'draft' },
   stats: { type: StatsSchema, default: () => ({}) },
+  likes: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
   createdAt: { type: Date, required: true, default: () => new Date() },
   updatedAt: { type: Date, required: true, default: () => new Date() }
 });

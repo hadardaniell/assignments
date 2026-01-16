@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query } from 'tsoa';
+import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
@@ -8,6 +8,46 @@ import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
 
+    @Post('{id}/image')
+    public async uploadImage(
+        @Path() id: string,
+        @UploadedFile() file: Express.Multer.File
+    ): Promise<{ url: string }> {
+        try {
+            if (!file) {
+                throw new AppError(400, 'File is required');
+            }
+
+            const fileName = file.filename || (file.path ? file.path.split(/[\\/]/).pop() : null) || file.originalname;
+            
+            if (!fileName) {
+                throw new AppError(500, 'Could not determine filename');
+            }
+
+            const imageUrl = `/uploads/${fileName}`;
+            await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
+            
+            return { url: imageUrl };
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
+
+    @Put('{id}/like')
+    public async toggleLike(
+        @Path() id: string,
+        @Query() userId: string
+    ): Promise<{ liked: boolean }> {
+        try {
+            const isLiked = await this.service.toggleLike(id, userId);
+            return { liked: isLiked };
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
+
     @Get('ai-search')
     public async aiSearch(
         @Query('query') query: string,
@@ -16,9 +56,7 @@ export class RecipeController extends Controller {
     ): Promise<RecipeDTO[]> {
         try {
             const finalUserId = userId || 'anonymous';
-            const finalBookId = recipeBookId || '';
-            
-            return await this.service.searchRecipesWithAI(query, finalUserId, finalBookId);
+            return await this.service.searchRecipesWithAI(query, finalUserId, recipeBookId || '');
         } catch (err: any) {
             this.setStatus(500);
             throw err;
@@ -29,9 +67,7 @@ export class RecipeController extends Controller {
     public async createRecipe(@Body() body: RecipeDTO): Promise<RecipeDTO> {
         try {
             const userId = body.createdBy;
-            if (!userId) {
-                throw new AppError(400, 'createdBy is required');
-            }
+            if (!userId) throw new AppError(400, 'createdBy is required');
             const recipe = await this.service.createRecipe(userId, body);
             this.setStatus(201);
             return recipe;
@@ -45,9 +81,7 @@ export class RecipeController extends Controller {
     public async getRecipeById(@Path() id: string): Promise<RecipeDTO> {
         try {
             const recipe = await this.service.getRecipeById(id);
-            if (!recipe) {
-                throw new AppError(404, 'Recipe not found');
-            }
+            if (!recipe) throw new AppError(404, 'Recipe not found');
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
@@ -76,9 +110,7 @@ export class RecipeController extends Controller {
         try {
             const userId = body.createdBy || '';
             const recipe = await this.service.updateRecipe(id, userId, body);
-            if (!recipe) {
-                throw new AppError(404, 'Recipe not found');
-            }
+            if (!recipe) throw new AppError(404, 'Recipe not found');
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
@@ -90,9 +122,7 @@ export class RecipeController extends Controller {
     public async deleteRecipe(@Path() id: string): Promise<void> {
         try {
             const recipe = await this.service.deleteRecipe(id);
-            if (!recipe) {
-                throw new AppError(404, 'Recipe not found');
-            }
+            if (!recipe) throw new AppError(404, 'Recipe not found');
             this.setStatus(204);
             return;
         } catch (err: any) {

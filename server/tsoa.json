@@ -19,6 +19,7 @@
   "routes": {
     "routesDir": "src/routes-tsoa",
     "basePath": "/api",
+    "esm": true,
     "authenticationModule": "./src/common/middlewares/expressAuthentication.ts"
   }
 }
