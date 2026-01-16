@@ -19,73 +19,67 @@ export class AIService {
 
         const prompt = `
             אתה שף מומחה. צור 5 מתכונים שונים, מקוריים ומפורטים בעברית עבור השאילתה: "${query}".
-            עבור כל מתכון, המצא שם של שף דמיוני שכתב אותו והכנס אותו לשדה "creatorName".
+            עבור כל מתכון, המצא שם של שף דמיוני והכנס אותו לשדה "creatorName".
             
-            החזר אך ורק מערך JSON (Array) המכיל 5 אובייקטים בפורמט הבא, ללא טקסט נוסף וללא Markdown:
+            החזר אך ורק מערך JSON (Array) המכיל 5 אובייקטים בפורמט הבא:
             [
               {
                 "title": "שם המתכון",
-                "description": "תיאור קצר ומגרה של המנה",
-                "creatorName": "שם השף הממציא",
+                "description": "תיאור קצר",
+                "creatorName": "שם השף",
                 "difficulty": "easy", 
                 "prepTimeMinutes": 15,
                 "cookTimeMinutes": 30,
                 "totalTimeMinutes": 45,
-                "categories": ["קטגוריה1", "קטגוריה2"],
+                "categories": ["קטגוריה"],
                 "ingredients": [
-                    {"name": "שם הרכיב", "quantity": 1, "unit": "יחידה", "notes": "הערה אופציונלית"}
+                    {"name": "שם הרכיב", "quantity": 1, "unit": "יחידה", "notes": ""}
                 ],
                 "steps": [
-                    {"index": 1, "instruction": "הוראת הכנה מפורטת", "durationMinutes": 5}
+                    {"index": 1, "instruction": "הוראה", "durationMinutes": 5}
                 ],
-                "notes": "טיפים להגשה או אחסון",
+                "notes": "טיפים",
                 "sourceType": "ai"
               }
             ]
+            חשוב: אל תוסיף הסברים, אל תוסיף Markdown, ואל תוסיף הערות בתוך ה-JSON. החזר רק את המערך.
         `;
 
         try {
             const response = await fetch(url, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    contents: [{
-                        parts: [{ text: prompt }]
-                    }]
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: {
+                        response_mime_type: "application/json"
+                    }
                 })
             });
 
             const data: any = await response.json();
 
-            if (!response.ok) {
-                console.error("Gemini API Error Response:", JSON.stringify(data, null, 2));
-                return null;
-            }
-
-            if (!data.candidates || !data.candidates[0].content || !data.candidates[0].content.parts) {
-                console.error("Unexpected AI response structure:", data);
+            if (!response.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
+                console.error("Gemini API Error or Empty Response");
                 return null;
             }
 
             let text = data.candidates[0].content.parts[0].text.trim();
 
-            text = text.replace(/```json/g, "").replace(/```/g, "").trim();
-            
             const start = text.indexOf('[');
             const end = text.lastIndexOf(']');
-            if (start !== -1 && end !== -1) {
-                text = text.substring(start, end + 1);
+            
+            if (start === -1 || end === -1) {
+                console.error("AI response is not a JSON array");
+                return null;
             }
 
-            const parsedRecipes = JSON.parse(text);
-            console.log(`AI Success: Generated ${parsedRecipes.length} different recipes for "${query}"`);
-            
-            return parsedRecipes;
+            text = text.substring(start, end + 1);
+
+            return JSON.parse(text);
 
         } catch (error) {
-            console.error("AIService Exception:", error);
+            console.error("AIService JSON Parse Error:", error);
             return null;
         }
     }

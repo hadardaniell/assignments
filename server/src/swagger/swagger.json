@@ -670,7 +670,7 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "q",
+						"name": "query",
 						"required": true,
 						"schema": {
 							"type": "string"
@@ -679,7 +679,15 @@
 					{
 						"in": "query",
 						"name": "recipeBookId",
-						"required": true,
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "userId",
+						"required": false,
 						"schema": {
 							"type": "string"
 						}

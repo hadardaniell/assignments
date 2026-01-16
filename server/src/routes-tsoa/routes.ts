@@ -350,9 +350,9 @@ export function RegisterRoutes(app: Router) {
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_aiSearch: Record<string, TsoaRoute.ParameterSchema> = {
-                q: {"in":"query","name":"q","required":true,"dataType":"string"},
-                recipeBookId: {"in":"query","name":"recipeBookId","required":true,"dataType":"string"},
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+                query: {"in":"query","name":"query","required":true,"dataType":"string"},
+                recipeBookId: {"in":"query","name":"recipeBookId","dataType":"string"},
+                userId: {"in":"query","name":"userId","dataType":"string"},
         };
         app.get('/api/recipes/ai-search',
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
