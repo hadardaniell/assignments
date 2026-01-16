@@ -1,29 +1,30 @@
 {
-  "name": "assignments",
+  "name": "assignments-root",
   "version": "1.0.0",
-  "description": "root-folder",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node index.js",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "tsoa:routes": "tsoa routes",
-    "tsoa:spec": "tsoa spec",
-    "pretest": "npm run tsoa:routes",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
-  },
+  "description": "Root folder for Recipe App - Full Stack Management",
   "type": "module",
-  "author": "",
-  "license": "ISC",
+  "private": true,
+  "scripts": {
+    "// --- פיתוח (הפעלה בו-זמנית) ---": "",
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client/recipeApp\"",
+    "// --- התקנה גורפת לכל הפרויקט ---": "",
+    "install-all": "npm install && npm install --prefix server && npm install --prefix client/recipeApp",
+    "// --- בדיקות (מריץ את ה-Jest שבתוך הסרבר) ---": "",
+    "test": "npm test --prefix server",
+    "// --- TSOA (עדכון ראוטים וסוואגר מרחוק) ---": "",
+    "tsoa:gen": "npm run tsoa:routes --prefix server && npm run tsoa:spec --prefix server",
+    "// --- ייצור (Production) כפי שנדרש במטלה ---": "",
+    "build": "npm run build --prefix server && npm run build --prefix client/recipeApp",
+    "start:prod": "cross-env NODE_ENV=production npm start --prefix server"
+  },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^7.3.7",
-    "axios": "^1.13.2",
+    "@google/generative-ai": "^0.24.1",
     "concurrently": "^9.2.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-router-dom": "^7.12.0"
+    "cross-env": "^7.0.3",
+    "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.8",
+    "@types/supertest": "^6.0.3"
   }
 }
