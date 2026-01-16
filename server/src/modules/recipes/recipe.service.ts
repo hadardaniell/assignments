@@ -13,29 +13,19 @@ export class RecipeService {
     private readonly recipeRepo: RecipeRepo = new RecipeRepo();
     private readonly aiService: AIService = new AIService();
 
-    /**
-     * מבצע חיפוש מתכונים באמצעות AI ומחזיר 5 תוצאות מפורטות
-     * @param userQuery השאילתה של המשתמש
-     * @param userId המזהה של המשתמש המחובר (עבור ה-createdBy)
-     * @param recipeBookId המזהה של ספר המתכונים (שדה חובה ב-DTO)
-     */
     async searchRecipesWithAI(userQuery: string, userId: string, recipeBookId: string): Promise<RecipeDTO[]> {
         try {
-            console.log(`מייצר 5 מתכוני AI עבור: ${userQuery}`);
-            
-            // קריאה לשירות ה-AI לקבלת 5 אובייקטים של מתכונים
             const generatedRecipes = await this.aiService.generateFullRecipe(userQuery);
             
             if (!generatedRecipes || !Array.isArray(generatedRecipes)) {
                 return [];
             }
 
-            // הפיכת המערך מה-AI למערך של RecipeDTO עם שדות המערכת
             return generatedRecipes.map((recipe, index) => ({
                 ...recipe,
-                Id: `ai-${Date.now()}-${index}`, // מזהה ייחודי זמני
-                recipeBookId: recipeBookId,      // משויך לספר המתכונים שנבחר
-                createdBy: userId,               // משויך למשתמש שביצע את החיפוש
+                Id: `ai-${Date.now()}-${index}`,
+                recipeBookId: recipeBookId,
+                createdBy: userId,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
                 sourceType: 'ai',
@@ -45,7 +35,6 @@ export class RecipeService {
             }));
 
         } catch (error) {
-            console.error("Error generating AI recipes:", error);
             return [];
         }
     }

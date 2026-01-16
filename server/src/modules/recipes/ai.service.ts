@@ -2,7 +2,6 @@ export class AIService {
     private readonly apiKey: string;
 
     constructor() {
-        // טעינת המפתח מקובץ ה-.env
         this.apiKey = process.env.GEMINI_API_KEY || '';
         
         if (!this.apiKey) {
@@ -10,22 +9,17 @@ export class AIService {
         }
     }
 
-    /**
-     * מייצר 5 מתכונים שונים ומפורטים על בסיס שאילתת משתמש.
-     * כל מתכון כולל שם שף דמיוני בשדה creatorName לטובת התצוגה ב-UI.
-     */
     public async generateFullRecipe(query: string) {
         if (!this.apiKey) {
             console.error("AI Service: Cannot proceed without API Key");
             return null;
         }
 
-        // שימוש במודל gemini-2.5-flash שנמצא זמין בהרשאות המפתח שלך
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
 
         const prompt = `
             אתה שף מומחה. צור 5 מתכונים שונים, מקוריים ומפורטים בעברית עבור השאילתה: "${query}".
-            עבור כל מתכון, המצא שם של שף דמיוני שכתב אותו (למשל: "שף אייל לוי", "סבתא ג'מילה", "שף יונתן רושפלד") והכנס אותו לשדה "creatorName".
+            עבור כל מתכון, המצא שם של שף דמיוני שכתב אותו והכנס אותו לשדה "creatorName".
             
             החזר אך ורק מערך JSON (Array) המכיל 5 אובייקטים בפורמט הבא, ללא טקסט נוסף וללא Markdown:
             [
@@ -70,7 +64,6 @@ export class AIService {
                 return null;
             }
 
-            // חילוץ הטקסט מתוך המבנה של Gemini
             if (!data.candidates || !data.candidates[0].content || !data.candidates[0].content.parts) {
                 console.error("Unexpected AI response structure:", data);
                 return null;
@@ -78,10 +71,8 @@ export class AIService {
 
             let text = data.candidates[0].content.parts[0].text.trim();
 
-            // ניקוי Markdown (תגיות ```json) במידה וה-AI הוסיף אותן
             text = text.replace(/```json/g, "").replace(/```/g, "").trim();
             
-            // וידוי שאנחנו חותכים רק את המערך (בין הסוגריים המרובעים)
             const start = text.indexOf('[');
             const end = text.lastIndexOf(']');
             if (start !== -1 && end !== -1) {

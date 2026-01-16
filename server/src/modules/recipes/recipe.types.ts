@@ -21,7 +21,7 @@ export interface RecipeDTO {
   originalRecipeId?: string | null;
   title: string;
   description?: string | null;
-  creatorName?: string; // <--- השדה החדש עבור ה-UI (שם השף או המשתמש)
+  creatorName?: string;
   categories?: string[];
   prepTimeMinutes?: number | null;
   cookTimeMinutes?: number | null;
@@ -34,7 +34,7 @@ export interface RecipeDTO {
   sourceType?: SourceType;
   sourceId?: string | null;
   status?: RecipeStatus;
-  createdBy?: string; // ה-ID הטכני של המשתמש
+  createdBy?: string;
   createdAt?: string;
   updatedAt?: string | null;
 }
