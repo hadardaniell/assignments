@@ -8,10 +8,10 @@ import path from 'path';
 import fs from 'fs';
 
 const app = express();
+const uploadDir = path.resolve(process.cwd(), 'uploads');
 
-const uploadDir = path.join(process.cwd(), 'uploads');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
+    fs.mkdirSync(uploadDir, { recursive: true });
 }
 
 app.use(cors({
@@ -21,7 +21,14 @@ app.use(cors({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// חשיפת הקבצים לצפייה
 app.use('/uploads', express.static(uploadDir));
+
+app.get('/', (req, res) => {
+  res.send('Server is running! Go to /docs for Swagger');
+});
+
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 RegisterRoutes(app); 

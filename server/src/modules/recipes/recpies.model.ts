@@ -18,6 +18,7 @@ export interface Stats {
   ratingsCount?: number | null;
   cookedCount?: number | null;
   viewsCount?: number | null;
+  likesCount?: number; // הוספנו מונה לייקים
 }
 
 export interface Recipe extends Document {
@@ -39,7 +40,6 @@ export interface Recipe extends Document {
   sourceId?: Types.ObjectId | null;
   status?: 'draft' | 'published';
   stats?: Stats;
-  likes: Types.ObjectId[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -61,7 +61,8 @@ const StatsSchema = new Schema<Stats>({
   avgRating: { type: Number, default: null },
   ratingsCount: { type: Number, default: 0 },
   cookedCount: { type: Number, default: 0 },
-  viewsCount: { type: Number, default: 0 }
+  viewsCount: { type: Number, default: 0 },
+  likesCount: { type: Number, default: 0 } // הגדרת ברירת מחדל למונה
 }, { _id: false });
 
 const RecipeSchema = new Schema<Recipe>({
@@ -83,7 +84,6 @@ const RecipeSchema = new Schema<Recipe>({
   sourceId: { type: Schema.Types.ObjectId, default: null },
   status: { type: String, enum: ['draft', 'published'], default: 'draft' },
   stats: { type: StatsSchema, default: () => ({}) },
-  likes: { type: [Schema.Types.ObjectId], ref: 'User', default: [] },
   createdAt: { type: Date, required: true, default: () => new Date() },
   updatedAt: { type: Date, required: true, default: () => new Date() }
 });

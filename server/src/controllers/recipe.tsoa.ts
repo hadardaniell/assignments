@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile } from 'tsoa';
+import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile, Patch } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
@@ -17,16 +17,12 @@ export class RecipeController extends Controller {
             if (!file) {
                 throw new AppError(400, 'File is required');
             }
-
             const fileName = file.filename || (file.path ? file.path.split(/[\\/]/).pop() : null) || file.originalname;
-            
             if (!fileName) {
                 throw new AppError(500, 'Could not determine filename');
             }
-
             const imageUrl = `/uploads/${fileName}`;
             await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
-            
             return { url: imageUrl };
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
@@ -34,7 +30,7 @@ export class RecipeController extends Controller {
         }
     }
 
-    @Put('{id}/like')
+    @Patch('{id}/like')
     public async toggleLike(
         @Path() id: string,
         @Query() userId: string
@@ -42,6 +38,28 @@ export class RecipeController extends Controller {
         try {
             const isLiked = await this.service.toggleLike(id, userId);
             return { liked: isLiked };
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
+
+    @Patch('{id}/view')
+    public async incrementViews(@Path() id: string): Promise<void> {
+        try {
+            await this.service.incrementViews(id);
+            this.setStatus(204);
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
+
+    @Patch('{id}/cooked')
+    public async incrementCooked(@Path() id: string): Promise<void> {
+        try {
+            await this.service.incrementCooked(id);
+            this.setStatus(204);
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
             throw err;

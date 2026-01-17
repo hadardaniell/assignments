@@ -1,5 +1,6 @@
 import { Types } from 'mongoose';
 import { RecipeModel, Recipe } from './recpies.model';
+import { LikeModel } from '../likes/like.model'; 
 import { RecipeDTO, UpdateRecipeDTO, RecipeFilterDTO } from './recipe.types';
 import { toRecipeDTO } from './recipe.mapper';
 import { RecipeRepo } from './resipes.repo';
@@ -15,15 +16,35 @@ export class RecipeService {
         if (!recipe) throw new AppError(404, 'Recipe not found');
 
         const userObjectId = new Types.ObjectId(userId);
-        const hasLiked = recipe.likes?.some(id => id.equals(userObjectId));
+        const recipeObjectId = new Types.ObjectId(recipeId);
 
-        if (hasLiked) {
-            await RecipeModel.findByIdAndUpdate(recipeId, { $pull: { likes: userObjectId } });
+        const existingLike = await LikeModel.findOne({ userId: userObjectId, recipeId: recipeObjectId });
+
+        if (existingLike) {
+            await LikeModel.deleteOne({ _id: existingLike._id });
+            await RecipeModel.findByIdAndUpdate(recipeId, { 
+                $inc: { "stats.likesCount": -1 } 
+            });
             return false;
         } else {
-            await RecipeModel.findByIdAndUpdate(recipeId, { $addToSet: { likes: userObjectId } });
+            await LikeModel.create({ userId: userObjectId, recipeId: recipeObjectId });
+            await RecipeModel.findByIdAndUpdate(recipeId, { 
+                $inc: { "stats.likesCount": 1 } 
+            });
             return true;
         }
+    }
+
+    async incrementViews(recipeId: string): Promise<void> {
+        await RecipeModel.findByIdAndUpdate(recipeId, {
+            $inc: { "stats.viewsCount": 1 }
+        });
+    }
+
+    async incrementCooked(recipeId: string): Promise<void> {
+        await RecipeModel.findByIdAndUpdate(recipeId, {
+            $inc: { "stats.cookedCount": 1 }
+        });
     }
 
     async searchRecipesWithAI(userQuery: string, userId: string, recipeBookId: string): Promise<RecipeDTO[]> {
@@ -40,9 +61,9 @@ export class RecipeService {
                 updatedAt: new Date().toISOString(),
                 sourceType: 'ai',
                 status: 'published',
-                likes: [],
                 originalRecipeId: null,
-                coverImageUrl: null
+                coverImageUrl: null,
+                stats: { likesCount: 0, viewsCount: 0, cookedCount: 0 }
             }));
         } catch (error) {
             return [];
@@ -69,7 +90,7 @@ export class RecipeService {
             sourceType: input.sourceType ?? 'manual',
             sourceId: input.sourceId ? new Types.ObjectId(input.sourceId) : null,
             status: input.status ?? 'draft',
-            likes: []
+            stats: { likesCount: 0, viewsCount: 0, cookedCount: 0, ratingsCount: 0, avgRating: 0 }
         } as Partial<Recipe>);
         return toRecipeDTO(recipe);
     }
