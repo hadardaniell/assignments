@@ -15,7 +15,7 @@ export class RecipeService {
         const createdBy = new Types.ObjectId(userId);
 
         const recipe = await this.recipeRepo.create({
-            recipeBookId: new Types.ObjectId(input.recipeBookId),
+            recipeBookId: input.recipeBookId ? new Types.ObjectId(input.recipeBookId) : null,
             createdBy,
             originalRecipeId: input.originalRecipeId
                 ? new Types.ObjectId(input.originalRecipeId)

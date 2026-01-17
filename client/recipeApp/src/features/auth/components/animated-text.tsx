@@ -37,7 +37,7 @@ export const AnimatedLetters: React.FC<AnimatedLettersProps> = ({ text }) => {
                     component="span"
                     sx={{
                         display: 'inline-block',
-                        color: grey[900],
+                        color: colors.BROWNKITCHEN.brownie,
                         fontWeight: 800,
                         transition: 'all 0.3s cubic-bezier(0.6, 0.4, 0, 1)',
                         fontSize: 'clamp(60px, 12vw, 100px)',

@@ -21,7 +21,7 @@ export interface Stats {
 }
 
 export interface Recipe extends Document {
-  recipeBookId: Types.ObjectId;
+  recipeBookId?: Types.ObjectId;
   createdBy: Types.ObjectId;
   originalRecipeId?: Types.ObjectId | null;
   title: string;
@@ -64,7 +64,7 @@ const StatsSchema = new Schema<Stats>({
 }, { _id: false });
 
 const RecipeSchema = new Schema<Recipe>({
-  recipeBookId: { type: Schema.Types.ObjectId, required: true, ref: 'RecipeBook' },
+  recipeBookId: { type: Schema.Types.ObjectId, ref: 'RecipeBook' },
   createdBy: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
   originalRecipeId: { type: Schema.Types.ObjectId, default: null, ref: 'Recipe' },
   title: { type: String, required: true },

@@ -17,7 +17,7 @@ export interface StepInput {
 
 export interface RecipeDTO {
   Id?: string;
-  recipeBookId: string;
+  recipeBookId?: string;
   originalRecipeId?: string | null;
   title: string;
   description?: string | null;
