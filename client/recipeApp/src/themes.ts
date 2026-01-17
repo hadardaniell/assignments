@@ -7,11 +7,11 @@ export const theme = createTheme({
     typography: { fontFamily: "Heebo, Open-Sans" },
     palette: {
         primary: {
-            main: colors.PINK[500],
-            light: colors.PINK[300],
-            dark: colors.PINK[600],
+            main: colors.BROWNKITCHEN.caramel,
+            light: colors.BROWNKITCHEN.cream,
+            dark: colors.BROWNKITCHEN.brownie,
             contrastText: '#fff',
-            ...colors.PINK, // מאפשר שימוש ב-100-900 ידנית
+            ...colors.BROWNKITCHEN, // מאפשר שימוש ב-100-900 ידנית
         },
         secondary: {
             main: colors.YELLOW[500],

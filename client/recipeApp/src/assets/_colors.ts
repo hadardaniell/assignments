@@ -1,3 +1,5 @@
+// import { green, pink, yellow } from "@mui/material/colors";
+
 // colors.ts
 export const colors = {
     ROSEPINK: {
@@ -64,6 +66,20 @@ export const colors = {
         neon_magenta: '#E040FB',   // מג’נטה חיה בלי להיות צורחת
         hot_pink: '#F24FA5',   // ורוד שמח וטרנדי
         crimson_red: '#EF445A'    // אדום חי, לא אגרסיבי
+    },
+    FUN:{
+        blue: '#0074ff',
+        pink: '#ff86bb',
+        yellow: '#ffd817',
+        egg: '#fdf8e5',
+        green: '#03b04e'
+    },
+    BROWNKITCHEN:{
+        cream: '#f3e9dc',
+        caramel: '#c08552',
+        brownie: '#5e3023',
+        coffee: '#895737',
+        olive: '#708238'
     }
 
 };

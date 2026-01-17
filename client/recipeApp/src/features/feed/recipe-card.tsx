@@ -1,4 +1,5 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography, Box, Chip } from "@mui/material";
+import noRecipeImg from "../../assets/images/no_recipe.jpg";
 
 export type RecipeCardModel = {
   _id: string;
@@ -26,7 +27,7 @@ export function RecipeCard({ recipe, onClick }: Props) {
         <CardMedia
           component="img"
           height="160"
-          image={recipe.imageUrl || "https://via.placeholder.com/600x400?text=Recipe"}
+          image={noRecipeImg}
           alt={recipe.title}
         />
         <CardContent>

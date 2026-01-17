@@ -1,6 +1,6 @@
-export type Difficulty = 'easy' | 'medium' | 'hard';
-export type RecipeStatus = 'draft' | 'published';
-export type SourceType = 'ai' | 'manual' | 'import';
+export type Difficulty = "easy" | "medium" | "hard";
+export type RecipeStatus = "draft" | "published";
+export type SourceType = "ai" | "manual" | "import";
 
 export interface IngredientInput {
   name: string;
@@ -38,17 +38,17 @@ export interface RecipeDTO {
   updatedAt?: string | null;
 }
 
-export type UpdateRecipeDTO = Partial<RecipeDTO>;
+export type DraftState = {
+  recipeBookId: string;
+  title: string;
+  description: string;
+  categories: string[];
+  prepTimeMinutes: string;
+  cookTimeMinutes: string;
+  difficulty: Difficulty | "";
+  coverImageUrl: string;
 
-export interface RecipeFilterDTO {
-  recipeBookId?: string;
-  createdBy?: string;
-  status?: RecipeStatus;
-  categories?: string[];
-  difficulty?: Difficulty;
-  search?: string;
-  skip?: number;
-  limit?: number;
-  sortBy?: 'createdAt' | 'updatedAt' | 'title';
-  sortOrder?: 'asc' | 'desc';
-}
+  ingredients: IngredientInput[];
+  steps: StepInput[];
+  notes: string;
+};

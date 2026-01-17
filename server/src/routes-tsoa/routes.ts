@@ -4,14 +4,14 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UsersController } from '../controllers/user.tsoa';
+import { UsersController } from './../controllers/user.tsoa';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RecipeController } from '../controllers/recipe.tsoa';
+import { RecipeController } from './../controllers/recipe.tsoa';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CommentsController } from '../controllers/comments.tsoa';
+import { CommentsController } from './../controllers/comments.tsoa';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from '../controllers/auth.tsoa';
-import { expressAuthentication } from '../common/middlewares/expressAuthentication';
+import { AuthController } from './../controllers/auth.tsoa';
+import { expressAuthentication } from './../common/middlewares/expressAuthentication';
 // @ts-ignore - no great way to install types from subpackage
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
 
@@ -108,7 +108,7 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "Id": {"dataType":"string"},
-            "recipeBookId": {"dataType":"string","required":true},
+            "recipeBookId": {"dataType":"string"},
             "originalRecipeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
