@@ -6,11 +6,12 @@ export interface UserSettings {
 
 export interface User extends Document {
   email: string;
-  passwordHash?: string;
+  passwordHash?: string; // הפיכת השדה לאופציונלי כדי לאפשר delete ב-transform
   name: string;
   avatarUrl?: string | null;
   role: 'admin' | 'user';
   settings?: UserSettings;
+  refreshTokens?: string[]; // הפיכת השדה לאופציונלי כדי לאפשר delete ב-transform
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -49,6 +50,10 @@ const userSchema = new Schema<User>(
         default: 'he',
       },
     },
+    refreshTokens: {
+      type: [String],
+      default: [],
+    },
     createdAt: {
       type: Date,
       required: true,
@@ -66,6 +71,7 @@ const userSchema = new Schema<User>(
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     delete ret.passwordHash;
+    delete ret.refreshTokens;
     return ret;
   },
 });

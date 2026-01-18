@@ -434,12 +434,16 @@
 					"user": {
 						"$ref": "#/components/schemas/SafeUser"
 					},
+					"refreshToken": {
+						"type": "string"
+					},
 					"token": {
 						"type": "string"
 					}
 				},
 				"required": [
 					"user",
+					"refreshToken",
 					"token"
 				],
 				"type": "object"
@@ -1378,6 +1382,47 @@
 				}
 			}
 		},
+		"/auth/refresh": {
+			"post": {
+				"operationId": "Refresh",
+				"responses": {
+					"200": {
+						"description": "OK",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "נתיב לחידוש ה-Access Token באמצעות ה-Refresh Token",
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refreshToken"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
 		"/auth/logout": {
 			"post": {
 				"operationId": "Logout",
@@ -1386,11 +1431,30 @@
 						"description": "No Content"
 					}
 				},
+				"description": "התנתקות: מחיקת ה-Refresh Token מה-DB כדי למנוע חידושים עתידיים",
 				"tags": [
 					"Auth"
 				],
 				"security": [],
-				"parameters": []
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"refreshToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"refreshToken"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
 			}
 		}
 	},

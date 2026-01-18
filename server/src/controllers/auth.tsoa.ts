@@ -33,16 +33,26 @@ export class AuthController extends Controller {
     return this.authService.login(requestBody);
   }
 
+  /**
+   * נתיב לחידוש ה-Access Token באמצעות ה-Refresh Token
+   */
+  @Post("refresh")
+  @SuccessResponse("200", "OK")
+  public async refresh(
+    @Body() body: { refreshToken: string }
+  ): Promise<AuthResponse> {
+    return this.authService.refresh(body.refreshToken);
+  }
+
+  /**
+   * התנתקות: מחיקת ה-Refresh Token מה-DB כדי למנוע חידושים עתידיים
+   */
   @Post("logout")
   @SuccessResponse("204", "No Content")
   public async logout(
-    @Request() request: ExRequest
+    @Body() body: { refreshToken: string }
   ): Promise<void> {
-    const authHeader = request.headers.authorization;
-    if (authHeader && authHeader.startsWith('Bearer ')) {
-      const token = authHeader.split(' ')[1];
-      await this.authService.logout(token);
-    }
+    await this.authService.logout(body.refreshToken);
     this.setStatus(204);
   }
 }

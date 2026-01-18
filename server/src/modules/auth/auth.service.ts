@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { AppError } from "../../common";
 import { UserService } from "../users/user.service";
+import { UserModel } from "../users/user.model";
 import { AuthResponse, LoginDTO, RegisterDTO } from "./auth.types";
 import { BlacklistedTokenRepo } from "./blacklistedToken.repo";
 
@@ -9,11 +10,17 @@ export class AuthService {
   private readonly users: UserService = new UserService();
   private readonly blacklistRepo: BlacklistedTokenRepo = new BlacklistedTokenRepo();
 
-  private signToken(userId: string): string {
+  // יצירת Access Token לזמן קצר (15 דקות)
+  private generateAccessToken(userId: string): string {
     const secret = process.env.JWT_SECRET;
-    if (!secret) {
-      throw new AppError(500, "Missing JWT secret", "JWT_SECRET_MISSING");
-    }
+    if (!secret) throw new AppError(500, "Missing JWT secret");
+    return jwt.sign({ sub: userId }, secret, { expiresIn: "15m" });
+  }
+
+  // יצירת Refresh Token לזמן ארוך (7 ימים)
+  private generateRefreshToken(userId: string): string {
+    const secret = process.env.JWT_REFRESH_SECRET;
+    if (!secret) throw new AppError(500, "Missing JWT Refresh secret");
     return jwt.sign({ sub: userId }, secret, { expiresIn: "7d" });
   }
 
@@ -22,7 +29,7 @@ export class AuthService {
     const name = body.name?.trim();
 
     if (!email || !body.password || !name) {
-      throw new AppError(400, "email, password, name are required", "VALIDATION_ERROR");
+      throw new AppError(400, "email, password, name are required");
     }
 
     const passwordHash = await bcrypt.hash(body.password, 10);
@@ -36,68 +43,78 @@ export class AuthService {
       settings: body.language ? { language: body.language } : undefined,
     } as any);
 
-    const userId = String((user as any)._id ?? (user as any).id);
-    const token = this.signToken(userId);
+    const userId = String(user._id);
+    const accessToken = this.generateAccessToken(userId);
+    const refreshToken = this.generateRefreshToken(userId);
 
-    return { token, user };
+    // שמירת ה-Refresh Token ב-DB
+    await UserModel.findByIdAndUpdate(userId, { $push: { refreshTokens: refreshToken } });
+
+    return { token: accessToken, refreshToken, user };
   }
 
   public async login(body: LoginDTO): Promise<AuthResponse> {
     const email = body.email?.trim().toLowerCase();
-    
     if (!email || !body.password) {
-      throw new AppError(400, "email and password are required", "VALIDATION_ERROR");
+      throw new AppError(400, "email and password are required");
     }
 
-    // 1. Get the user by email
     const userWithPassword = await this.users.getUserByEmailWithPasswordService(email);
-    
-    // If the email doesn't exist in DB, your test wants a 401
-    if (!userWithPassword) {
-      throw new AppError(401, "Invalid credentials");
-    }
+    if (!userWithPassword) throw new AppError(401, "Invalid credentials");
 
-    // 2. Check the password
     const isPasswordOk = await bcrypt.compare(body.password, userWithPassword.passwordHash);
-    
-    // If password is wrong, your test wants a 401
-    if (!isPasswordOk) {
-      throw new AppError(401, "Invalid credentials");
-    }
+    if (!isPasswordOk) throw new AppError(401, "Invalid credentials");
+
+    const userId = String(userWithPassword._id);
+    const accessToken = this.generateAccessToken(userId);
+    const refreshToken = this.generateRefreshToken(userId);
+
+    // שמירת ה-Refresh Token ב-DB
+    await UserModel.findByIdAndUpdate(userId, { $push: { refreshTokens: refreshToken } });
+
+    const safeUser = await this.users.getUserByIdService(userId);
+    return { token: accessToken, refreshToken, user: safeUser };
+  }
+
+  public async refresh(oldRefreshToken: string): Promise<AuthResponse> {
+    if (!oldRefreshToken) throw new AppError(401, "Refresh token is required");
 
     try {
-      // 3. Generate token and get the safe user object
-      const userId = String(userWithPassword._id ?? userWithPassword.id);
-      const token = this.signToken(userId);
-      
-      // If this specific call throws a 404 (because it's a shared method), 
-      // we catch it so the login endpoint returns 401 instead.
+      // 1. אימות ה-Refresh Token
+      const payload = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET!) as { sub: string };
+      const userId = payload.sub;
+
+      // 2. בדיקה אם הטוקן קיים במערך של המשתמש ב-DB
+      const user = await UserModel.findOne({ _id: userId, refreshTokens: oldRefreshToken });
+      if (!user) throw new AppError(401, "Invalid refresh token");
+
+      // 3. יצירת זוג טוקנים חדש (Rotation)
+      const newAccessToken = this.generateAccessToken(userId);
+      const newRefreshToken = this.generateRefreshToken(userId);
+
+      // 4. החלפת הישן בחדש ב-DB
+      await UserModel.findByIdAndUpdate(userId, {
+        $pull: { refreshTokens: oldRefreshToken },
+        $push: { refreshTokens: newRefreshToken }
+      });
+
       const safeUser = await this.users.getUserByIdService(userId);
-      
-      return { token, user: safeUser };
-    } catch (err: any) {
-      if (err.statusCode === 404) {
-        throw new AppError(401, "Invalid credentials");
-      }
-      throw err;
+      return { token: newAccessToken, refreshToken: newRefreshToken, user: safeUser };
+    } catch (err) {
+      throw new AppError(401, "Token expired or invalid");
     }
   }
 
-  public async me(userId: string) {
-    if (!userId) throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
-    return this.users.getUserByIdService(userId);
-  }
+  public async logout(refreshToken: string) {
+    if (!refreshToken) return;
 
-  public async logout(token: string) {
-    if (!token) return;
+    // מחיקת ה-Refresh Token מה-DB כדי שהמשתמש לא יוכל לחדש יותר את החיבור
+    await UserModel.findOneAndUpdate(
+      { refreshTokens: refreshToken },
+      { $pull: { refreshTokens: refreshToken } }
+    );
 
-    const decoded: any = jwt.decode(token);
-    const exp = decoded?.exp;
-
-    if (!exp || typeof exp !== "number") return;
-
-    const expiresAt = new Date(exp * 1000);
-    await this.blacklistRepo.addToBlacklistDAL(token, expiresAt);
+    // אופציונלי: הכנסת ה-Access Token לרשימה שחורה (דורש העברת ה-Access Token לפונקציה)
   }
 
   public async isTokenBlacklisted(token: string): Promise<boolean> {
