@@ -1,8 +1,9 @@
 import { Card, CardActionArea, CardContent, CardMedia, Typography, Box, Chip } from "@mui/material";
 import noRecipeImg from "../../assets/images/no_recipe.jpg";
+import { useNavigate } from "react-router-dom";
 
 export type RecipeCardModel = {
-  _id: string;
+  Id: string;
   title: string;
   imageUrl?: string | null;
   description?: string | null;
@@ -16,14 +17,20 @@ type Props = {
 };
 
 export function RecipeCard({ recipe, onClick }: Props) {
+  const navigate = useNavigate();
+
   const created =
     recipe.createdAt
       ? new Date(recipe.createdAt).toLocaleDateString("he-IL")
       : null;
 
+  function toRecipePage(id: string) {
+    navigate(`/recipe/${id}`);
+  }
+
   return (
-    <Card sx={{ borderRadius: 3 }}>
-      <CardActionArea onClick={() => onClick?.(recipe._id)}>
+    <Card sx={{ borderRadius: 3 }} onClick={() => toRecipePage(recipe.Id)}>
+      <CardActionArea>
         <CardMedia
           component="img"
           height="160"
@@ -51,7 +58,7 @@ export function RecipeCard({ recipe, onClick }: Props) {
             )}
 
             {!!recipe.tags?.length && (
-              <Chip size="small" label={recipe.tags[0]} sx={{background: "#cffafe", color: "#0891b2"}}/>
+              <Chip size="small" label={recipe.tags[0]} sx={{ background: "#cffafe", color: "#0891b2" }} />
             )}
           </Box>
         </CardContent>

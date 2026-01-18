@@ -9,6 +9,7 @@ import { RequireAuth } from "./require-auth";
 import { AppLayout } from "../layouts/app-layout";
 import { ProfilePage } from "../features/profile/profile-page";
 import { CreateRecipePage } from "../features/create-recipe/create-recipe-page";
+import RecipePage from "../features/recipe/recipe-container";
 
 // import { HomePage } from "../pages/HomePage";
 // import { FeedPage } from "../pages/FeedPage";
@@ -37,6 +38,7 @@ export const router = createBrowserRouter([
         //   { path: "feed", element: <FeedPage /> },
           { path: "profile", element: <ProfilePage /> },
           { path: "recipes/new", element: <CreateRecipePage /> },
+          { path: "recipe/:id", element: <RecipePage /> }
         ],
       },
     ],
