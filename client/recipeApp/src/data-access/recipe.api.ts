@@ -7,4 +7,5 @@ export const recipesApi = {
     getApi().get<RecipeCardModel[]>(`/recipes/getRecipesByUser/${userId}`),
   createRecipe: (body: RecipeDTO) => getApi().post<RecipeDTO>("/recipes/createRecipe", body),
   getRecipeById: (id: string) => getApi().get<RecipeDTO>(`/recipes/getRecipeById/${id}`),
+  deleteRecipeById: (id: string) => getApi().delete<void>(`/recipes/deleteRecipe/${id}`),
 };

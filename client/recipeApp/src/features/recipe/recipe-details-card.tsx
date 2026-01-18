@@ -13,9 +13,13 @@ import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
 import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartmentRounded";
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
 import type { Difficulty, RecipeDTO } from "../create-recipe/recipe.types";
 import { useMemo, useState } from "react";
 import { colors } from "../../assets/_colors";
+import { recipesApi } from "../../data-access/recipe.api";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth.context";
 
 function difficultyLabel(d?: Difficulty) {
   if (!d) return "—";
@@ -49,6 +53,7 @@ async function copyToClipboard(text: string) {
     return false;
   }
 }
+
 
 function MatchPill({
   icon,
@@ -86,9 +91,23 @@ export function RecipeDetailsCard({
   recipe: RecipeDTO;
   shareText: string;
 }) {
+  const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const { user } = useAuth();
+
+  const canDelete = recipe.createdBy === user?._id;
 
   const minutes = useMemo(() => totalMinutes(recipe), [recipe]);
+
+  async function deleteRecipeById(id: string) {
+    try {
+      await recipesApi.deleteRecipeById(id);
+      navigate(-1);
+    }
+    catch (e) {
+      console.error("Failed to delete recipe", e);
+    }
+  }
 
   return (
     <Card
@@ -113,16 +132,16 @@ export function RecipeDetailsCard({
             ) : null}
           </Box>
           <Stack direction="row" spacing={1} alignItems="center">
-            <Chip
-              variant="outlined"
-              label={recipe.status === "published" ? "פורסם" : "טיוטה"}
-              sx={{
-                fontWeight: 600,
-                borderColor: colors.BROWNKITCHEN.brownie,
-                color: colors.BROWNKITCHEN.brownie
-              }}>
-            </Chip>
-
+            {recipe.status === "draft" && (
+              <Chip
+                variant="outlined"
+                label={"טיוטה"}
+                sx={{
+                  fontWeight: 600,
+                  borderColor: colors.BROWNKITCHEN.brownie,
+                  color: colors.BROWNKITCHEN.brownie
+                }}></Chip>
+            )}
             <Tooltip title={copied ? "הועתק" : "העתק מתכון"}>
               <IconButton
                 onClick={async () => {
@@ -131,13 +150,24 @@ export function RecipeDetailsCard({
                   setTimeout(() => setCopied(false), 1200);
                 }}
                 sx={{
-                  border: "1px solid rgba(94,48,35,0.15)",
                   bgcolor: "rgba(255,255,255,0.70)",
                 }}
               >
                 <ContentCopyRoundedIcon />
               </IconButton>
             </Tooltip>
+            {canDelete && (
+              <Tooltip title={"מחיקת מתכון"}>
+                <IconButton
+                  onClick={async () => deleteRecipeById(recipe.Id!)}
+                sx={{
+                  bgcolor: "rgba(255,255,255,0.70)",
+                }}
+              >
+                <DeleteOutlineRounded />
+              </IconButton>
+            </Tooltip>
+            )}
           </Stack>
         </Stack>
 
