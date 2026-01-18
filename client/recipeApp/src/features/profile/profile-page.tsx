@@ -44,41 +44,14 @@ export function ProfilePage() {
     if (!user) {
         return <Box dir="rtl">לא מחובר/ת</Box>;
     }
-
-    // const recipes: RecipeCardModel[] = useMemo(
-    //     () => [
-    //         {
-    //             _id: "r1",
-    //             title: "פסטה שמנת פטריות",
-    //             description: "מהיר, טעים, מנחם",
-    //             imageUrl: "https://via.placeholder.com/600x400?text=Pasta",
-    //             createdAt: new Date(),
-    //             tags: ["איטלקי"],
-    //         },
-    //         {
-    //             _id: "r2",
-    //             title: "שקשוקה ביתית",
-    //             description: "עם פלפל חריף ובצל",
-    //             imageUrl: "https://via.placeholder.com/600x400?text=Shakshuka",
-    //             createdAt: new Date(),
-    //             tags: ["ישראלי"],
-    //         },
-    //     ],
-    //     []
-    // );
-
     const recipeCount = recipes.length;
-
-    // const [isEditing, setIsEditing] = useState(false);
-
-    // const onEdit = () => setIsEditing(true);
 
     const onRecipeClick = (id: string) => {
         console.log("open recipe", id);
     };
 
     return (
-        <Box dir="rtl">
+        <Box dir="rtl" sx={{ p: 3 }}>
             <ProfileCard user={user!} recipeCount={recipeCount} />
             <RecipesGrid recipes={recipes} onRecipeClick={(id) => onRecipeClick(id)} />
         </Box>
