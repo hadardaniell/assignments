@@ -1,6 +1,6 @@
 import { Avatar, Chip, Divider, Paper, Stack, Typography } from "@mui/material";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
-import type { StepInput } from "../create-recipe/recipe.types";
+import type { StepInput } from "../../types/recipe.types";
 import { useMemo } from "react";
 import { colors } from "../../assets/_colors";
 

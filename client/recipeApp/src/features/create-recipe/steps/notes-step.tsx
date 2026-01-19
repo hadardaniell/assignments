@@ -1,5 +1,5 @@
 import { Box, TextField } from "@mui/material";
-import type { DraftState } from "../recipe.types";
+import type { DraftState } from "../../../types/recipe.types";
 
 export function NotesStep({
   draft,

@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Box, Button, Card, CardContent, Divider, Step, StepLabel, Stepper, Typography } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import type { DraftState, RecipeDTO, RecipeStatus } from "./recipe.types";
+import type { DraftState, RecipeDTO, RecipeStatus } from "../../types/recipe.types";
 import { DetailsStep } from "./steps/detals-step";
 import { IngredientsStep } from "./steps/ingredients-step";
 import { PreparationStepsStep } from "./steps/preparationSteps-step";

@@ -1,7 +1,7 @@
 import { Box, Button, Card, CardContent, IconButton, MenuItem, TextField, Typography } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import type { DraftState, IngredientInput } from "../recipe.types";
+import type { DraftState, IngredientInput } from "../../../types/recipe.types";
 
 export function IngredientsStep({
     draft,

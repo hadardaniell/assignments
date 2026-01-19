@@ -1,5 +1,5 @@
 import { Box, Chip, MenuItem, TextField, Typography } from "@mui/material";
-import type { DraftState } from "../recipe.types";
+import type { DraftState } from "../../../types/recipe.types";
 import { colors } from "../../../assets/_colors";
 
 export function DetailsStep({

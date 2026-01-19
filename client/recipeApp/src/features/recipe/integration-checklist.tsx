@@ -7,7 +7,7 @@ import {
   Divider,
   Chip,
 } from "@mui/material";
-import type { IngredientInput } from "../create-recipe/recipe.types";
+import type { IngredientInput } from "../../types/recipe.types";
 import { useMemo, useState } from "react";
 
 function fmtIngredient(i: IngredientInput) {
