@@ -1,12 +1,14 @@
-import { Alert, Box, Container, Grid, Skeleton, Card } from "@mui/material";
+import { Alert, Box, Container, Grid, Skeleton, Card, Divider } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { RecipeDTO, IngredientInput } from "../create-recipe/recipe.types";
+import type { RecipeDTO, IngredientInput } from "../../types/recipe.types";
 import { colors } from "../../assets/_colors";
 import { RecipeDetailsCard } from "./recipe-details-card";
 import { IngredientsChecklist } from "./integration-checklist";
 import { StepsList } from "./steps-list";
 import { recipesApi } from "../../data-access/recipe.api";
+import { RecipeComments } from "./comments/recipe-comments";
+import { useAuth } from "../../context/auth.context";
 
 
 function fmtIngredient(i: IngredientInput) {
@@ -22,6 +24,8 @@ export default function RecipePage() {
   const [recipe, setRecipe] = useState<RecipeDTO | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { user } = useAuth();
 
   useEffect(() => {
     let alive = true;
@@ -114,12 +118,16 @@ export default function RecipePage() {
         py: { xs: 3, md: 5 },
       }}
     >
-      <Container maxWidth="lg" sx={{flexDirection: "column", direction: "rtl", gap: 2, display: "flex" }}>
-            <RecipeDetailsCard recipe={recipe} shareText={shareText} />
+      <Container maxWidth="lg" sx={{ flexDirection: "column", direction: "rtl", gap: 2, display: "flex" }}>
+        <RecipeDetailsCard recipe={recipe} shareText={shareText} />
 
-            <IngredientsChecklist ingredients={recipe.ingredients} />
+        <IngredientsChecklist ingredients={recipe.ingredients} />
 
-            <StepsList steps={recipe.steps} />
+        <StepsList steps={recipe.steps} />
+
+        <Divider sx={{ my: 2, borderColor: "rgba(94,48,35,0.10)" }} />
+
+        <RecipeComments recipeId={id!} currentUserId={user?._id!} />
       </Container>
     </Box>
   );

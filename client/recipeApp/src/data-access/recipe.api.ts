@@ -1,4 +1,4 @@
-import type { RecipeDTO } from "../features/create-recipe/recipe.types";
+import type { RecipeDTO } from "../types/recipe.types";
 import type { RecipeCardModel } from "../features/feed/recipe-card";
 import { getApi } from "../services";
 

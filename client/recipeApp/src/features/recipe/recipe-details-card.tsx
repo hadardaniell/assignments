@@ -14,7 +14,7 @@ import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartm
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
-import type { Difficulty, RecipeDTO } from "../create-recipe/recipe.types";
+import type { Difficulty, RecipeDTO } from "../../types/recipe.types";
 import { useMemo, useState } from "react";
 import { colors } from "../../assets/_colors";
 import { recipesApi } from "../../data-access/recipe.api";
