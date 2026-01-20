@@ -13,6 +13,7 @@ export class RecipeController extends Controller {
         try {
             const userId = body.createdBy;
             if (!userId) {
+                this.setStatus(400);
                 throw new AppError(400, 'createdBy is required');
             }
             const recipe = await this.service.createRecipe(userId, body);
@@ -20,7 +21,7 @@ export class RecipeController extends Controller {
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw { message: err.message, code: err.code || "CREATE_ERROR" };
+            throw err;
         }
     }
 
