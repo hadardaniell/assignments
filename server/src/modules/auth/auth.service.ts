@@ -93,6 +93,11 @@ export class AuthService {
     await this.refreshTokenRepo.revoke(refreshToken);
   }
 
+  public async me(userId: string) {
+    if (!userId) throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
+    return this.users.getUserByIdService(userId);
+  }
+
   public async isTokenBlacklisted(token: string): Promise<boolean> {
     if (!token) return false;
     return this.blacklistRepo.isBlacklistedDAL(token);

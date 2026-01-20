@@ -49,10 +49,6 @@ const userSchema = new Schema<User>(
         default: 'he',
       },
     },
-    refreshTokens: {
-      type: [String],
-      default: [],
-    },
     createdAt: {
       type: Date,
       required: true,
@@ -70,7 +66,6 @@ const userSchema = new Schema<User>(
 userSchema.set('toJSON', {
   transform: (_doc, ret) => {
     delete ret.passwordHash;
-    delete ret.refreshTokens;
     return ret;
   },
 });
