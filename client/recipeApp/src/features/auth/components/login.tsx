@@ -8,7 +8,7 @@ import '@fontsource/heebo/400.css';
 import '@fontsource/heebo/500.css';
 import '@fontsource/heebo/600.css';
 import { useAuth } from '../../../context/auth.context.tsx';
-import type { AuthResponse, LoginDTO } from '../auth.types';
+import type { AuthResponse, LoginDTO } from '../../../types/auth.types.ts';
 import { authApi } from '../../../data-access/auth.api';
 
 export const LoginComponent = () => {

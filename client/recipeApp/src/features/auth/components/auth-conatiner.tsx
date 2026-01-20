@@ -14,7 +14,7 @@ export const AuthPage = () => {
             minHeight="100vh"
             alignItems="center"
             sx={{
-                backgroundColor: colors.YELLOW[500],
+                backgroundColor: colors.BROWNKITCHEN.cream,
                 width: '100%'
             }}
         >

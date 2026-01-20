@@ -12,15 +12,19 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
-import { RecipeCard, type RecipeCardModel } from "../feed/recipe-card";
+import { RecipeCard, type RecipeCardModel } from "../../shared/recipe-card";
 import { RecipesGrid } from "./recipes-grid";
 import { ProfileCard } from "./profile-card";
-import type { User } from "../auth/auth.types";
+import type { User } from "../../types/auth.types";
 import { useAuth } from "../../context/auth.context";
 import { recipesApi } from "../../data-access/recipe.api";
+import { useNavigate } from "react-router-dom";
 
 export function ProfilePage() {
     const { user } = useAuth();
+    const { setUser } = useAuth();
+    const navigate = useNavigate();
+
     // const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
     const [loading, setLoading] = useState(false);
     const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
@@ -44,42 +48,19 @@ export function ProfilePage() {
     if (!user) {
         return <Box dir="rtl">לא מחובר/ת</Box>;
     }
-
-    // const recipes: RecipeCardModel[] = useMemo(
-    //     () => [
-    //         {
-    //             _id: "r1",
-    //             title: "פסטה שמנת פטריות",
-    //             description: "מהיר, טעים, מנחם",
-    //             imageUrl: "https://via.placeholder.com/600x400?text=Pasta",
-    //             createdAt: new Date(),
-    //             tags: ["איטלקי"],
-    //         },
-    //         {
-    //             _id: "r2",
-    //             title: "שקשוקה ביתית",
-    //             description: "עם פלפל חריף ובצל",
-    //             imageUrl: "https://via.placeholder.com/600x400?text=Shakshuka",
-    //             createdAt: new Date(),
-    //             tags: ["ישראלי"],
-    //         },
-    //     ],
-    //     []
-    // );
-
     const recipeCount = recipes.length;
 
-    // const [isEditing, setIsEditing] = useState(false);
-
-    // const onEdit = () => setIsEditing(true);
-
     const onRecipeClick = (id: string) => {
-        console.log("open recipe", id);
+        navigate('/recipe/' + id)
     };
 
     return (
-        <Box dir="rtl">
-            <ProfileCard user={user!} recipeCount={recipeCount} />
+        <Box dir="rtl" sx={{ p: 3 }}>
+            <ProfileCard
+                user={user}
+                recipeCount={recipeCount}
+                onUserUpdated={(updated) => setUser(updated)}
+            />
             <RecipesGrid recipes={recipes} onRecipeClick={(id) => onRecipeClick(id)} />
         </Box>
     );

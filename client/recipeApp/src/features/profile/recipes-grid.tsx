@@ -1,5 +1,5 @@
 import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
-import { RecipeCard, type RecipeCardModel } from "../feed/recipe-card";
+import { RecipeCard, type RecipeCardModel } from "../../shared/recipe-card";
 
 type Props = {
   recipes: RecipeCardModel[];
@@ -33,9 +33,7 @@ export function RecipesGrid({ recipes, onRecipeClick }: Props) {
       ) : (
         <Grid container spacing={2}>
           {recipes.map((r) => (
-            // <Grid key={r._id} xs={12} sm={6} md={4} lg={3}>
-              <RecipeCard recipe={r} onClick={(id) => onRecipeClick?.(id)} />
-            // </Grid>
+            <RecipeCard key={r.Id} recipe={r} onClick={(id) => onRecipeClick?.(id)} sx={{ width: "160px", direction: "rtl" }} />
           ))}
         </Grid>
       )}

@@ -262,7 +262,6 @@
 					}
 				},
 				"required": [
-					"recipeBookId",
 					"title",
 					"ingredients",
 					"steps"
