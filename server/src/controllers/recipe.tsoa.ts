@@ -20,7 +20,7 @@ export class RecipeController extends Controller {
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw err;
+            throw { message: err.message, code: err.code || "CREATE_ERROR" };
         }
     }
 
@@ -34,7 +34,7 @@ export class RecipeController extends Controller {
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw err;
+            throw { message: err.message, code: err.code || "NOT_FOUND" };
         }
     }
 
@@ -52,7 +52,7 @@ export class RecipeController extends Controller {
             return await this.service.listRecipes(filter);
         } catch (err: any) {
             this.setStatus(500);
-            throw err;
+            throw { message: err.message };
         }
     }
 
@@ -62,7 +62,7 @@ export class RecipeController extends Controller {
             return await this.service.getRecipesByUserId(userId);
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw err;
+            throw { message: err.message, code: err.code };
         }
     }
 
@@ -77,7 +77,7 @@ export class RecipeController extends Controller {
             return recipe;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw err;
+            throw { message: err.message, code: err.code };
         }
     }
 
@@ -92,7 +92,7 @@ export class RecipeController extends Controller {
             return;
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);
-            throw err;
+            throw { message: err.message, code: err.code };
         }
     }
 }
