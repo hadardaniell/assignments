@@ -1,0 +1,8 @@
+.muirtl-1ywqimw-MuiTypography-root {
+  direction: rtl !important;
+}
+
+button:focus,
+button:focus-visible {
+  outline: none !important;
+}
