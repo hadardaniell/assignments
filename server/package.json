@@ -9,7 +9,7 @@
     "tsoa:routes": "tsoa routes",
     "tsoa:spec": "tsoa spec",
     "pretest": "npm run tsoa:routes",
-    "test": "jest --runInBand",
+    "test": "jest --runInBand --coverage",
     "test:watch": "jest --watchAll"
   },
   "keywords": [],
