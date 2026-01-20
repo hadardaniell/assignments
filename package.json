@@ -1,29 +1,14 @@
 {
-  "name": "assignments",
-  "version": "1.0.0",
-  "description": "root-folder",
-  "main": "index.js",
-  "scripts": {
-    "dev": "node index.js",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "tsoa:routes": "tsoa routes",
-    "tsoa:spec": "tsoa spec",
-    "pretest": "npm run tsoa:routes",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --runInBand",
-    "test:watch": "node --experimental-vm-modules node_modules/jest/bin/jest.js --watchAll"
-  },
+  "name": "assignments-root",
+  "private": true,
   "type": "module",
-  "author": "",
-  "license": "ISC",
+  "scripts": {
+    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "test": "npm --prefix server test",
+    "test:watch": "npm --prefix server run test:watch"
+  },
   "dependencies": {
-    "@emotion/react": "^11.14.0",
-    "@emotion/styled": "^11.14.1",
-    "@mui/material": "^7.3.7",
-    "axios": "^1.13.2",
-    "concurrently": "^9.2.1",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
-    "react-router-dom": "^7.12.0"
+    "concurrently": "^9.2.1"
   }
 }
