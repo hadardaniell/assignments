@@ -38,6 +38,7 @@ export const router = createBrowserRouter([
         children: [
           // { index: true, element: <SearchPage /> },
           { path: "search", element: <SearchPage /> },
+          { path: "AI", element: <SearchPage /> },
           { path: "profile", element: <ProfilePage /> },
           { path: "recipes/new", element: <CreateRecipePage /> },
           { path: "recipes/:id/edit", element: <EditRecipePage /> },
