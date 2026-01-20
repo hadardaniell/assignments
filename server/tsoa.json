@@ -9,7 +9,7 @@
     "outputDirectory": "src/swagger",
     "basePath": "/api",
     "securityDefinitions": {
-      "bearerAuth": {
+      "jwt": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
@@ -19,6 +19,7 @@
   "routes": {
     "routesDir": "src/routes-tsoa",
     "basePath": "/api",
+    "esm": true,
     "authenticationModule": "./src/common/middlewares/expressAuthentication.ts"
   }
 }

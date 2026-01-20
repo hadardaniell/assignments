@@ -71,4 +71,22 @@ export class AuthController extends Controller {
             throw err;
         }
     }
+
+    @Post("refresh")
+    public async refresh(@Body() body: { refreshToken: string }): Promise<AuthResponse> {
+        try {
+            if (!body.refreshToken) {
+                throw new AppError(400, "Refresh token is required");
+            }
+
+            const result = await this.service.refresh(body.refreshToken);
+
+            this.setStatus(200);
+            return result;
+        } catch (err: any) {
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
+            throw err;
+        }
+    }
 }

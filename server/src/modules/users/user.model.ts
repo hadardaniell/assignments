@@ -6,7 +6,7 @@ export interface UserSettings {
 
 export interface User extends Document {
   email: string;
-  passwordHash?: string;
+  passwordHash?: string; // הפיכת השדה לאופציונלי כדי לאפשר delete ב-transform
   name: string;
   avatarUrl?: string | null;
   role: 'admin' | 'user';

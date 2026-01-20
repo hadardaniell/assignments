@@ -10,6 +10,7 @@ export class UserService {
     const { passwordHash, __v, ...clean } = obj;
     return clean as SafeUser;
   };
+
   async createUserService(input: UserDTO): Promise<SafeUser> {
     const existing = await this.userRepo.findUserByEmailDAL(input.email);
     if (existing) {
@@ -35,7 +36,7 @@ export class UserService {
 
   async updateUserService(
     id: string,
-    updates: UpdateUserDTO
+    updates: Partial<UpdateUserDTO> | { avatarUrl?: string }
   ): Promise<SafeUser> {
     const updated = await this.userRepo.updateUserDAL(id, {
       ...updates,
@@ -65,5 +66,3 @@ export class UserService {
     return this.userRepo.findUserByEmailWithPasswordDAL(email);
   }
 }
-
-

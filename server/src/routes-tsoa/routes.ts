@@ -4,16 +4,20 @@
 import type { TsoaRoute } from '@tsoa/runtime';
 import {  fetchMiddlewares, ExpressTemplateService } from '@tsoa/runtime';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { UsersController } from './../controllers/user.tsoa';
+import { UsersController } from './../controllers/user.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { RecipeController } from './../controllers/recipe.tsoa';
+import { RecipeController } from './../controllers/recipe.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { CommentsController } from './../controllers/comments.tsoa';
+import { LikesController } from './../controllers/like.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { AuthController } from './../controllers/auth.tsoa';
-import { expressAuthentication } from './../common/middlewares/expressAuthentication';
+import { CommentsController } from './../controllers/comments.tsoa.js';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { AuthController } from './../controllers/auth.tsoa.js';
+import { expressAuthentication } from './../common/middlewares/expressAuthentication.js';
 // @ts-ignore - no great way to install types from subpackage
 import type { Request as ExRequest, Response as ExResponse, RequestHandler, Router } from 'express';
+import multer from 'multer';
+
 
 const expressAuthenticationRecasted = expressAuthentication as (req: ExRequest, securityName: string, scopes?: string[], res?: ExResponse) => Promise<any>;
 
@@ -104,6 +108,17 @@ const models: TsoaRoute.Models = {
         "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["draft"]},{"dataType":"enum","enums":["published"]}],"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RecipeComment": {
+        "dataType": "refObject",
+        "properties": {
+            "userId": {"dataType":"string","required":true},
+            "userName": {"dataType":"string","required":true},
+            "text": {"dataType":"string","required":true},
+            "createdAt": {"dataType":"datetime","required":true},
+        },
+        "additionalProperties": false,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RecipeDTO": {
         "dataType": "refObject",
         "properties": {
@@ -112,6 +127,7 @@ const models: TsoaRoute.Models = {
             "originalRecipeId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "title": {"dataType":"string","required":true},
             "description": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
+            "creatorName": {"dataType":"string"},
             "categories": {"dataType":"array","array":{"dataType":"string"}},
             "prepTimeMinutes": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
             "cookTimeMinutes": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}]},
@@ -125,6 +141,8 @@ const models: TsoaRoute.Models = {
             "sourceId": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
             "status": {"ref":"RecipeStatus"},
             "createdBy": {"dataType":"string"},
+            "likes": {"dataType":"array","array":{"dataType":"string"}},
+            "comments": {"dataType":"array","array":{"dataType":"refObject","ref":"RecipeComment"}},
             "createdAt": {"dataType":"string"},
             "updatedAt": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
         },
@@ -133,7 +151,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_RecipeDTO_": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"Id":{"dataType":"string"},"recipeBookId":{"dataType":"string"},"originalRecipeId":{"dataType":"string"},"title":{"dataType":"string"},"description":{"dataType":"string"},"categories":{"dataType":"array","array":{"dataType":"string"}},"prepTimeMinutes":{"dataType":"double"},"cookTimeMinutes":{"dataType":"double"},"totalTimeMinutes":{"dataType":"double"},"difficulty":{"ref":"Difficulty"},"ingredients":{"dataType":"array","array":{"dataType":"refObject","ref":"IngredientInput"}},"steps":{"dataType":"array","array":{"dataType":"refObject","ref":"StepInput"}},"notes":{"dataType":"string"},"coverImageUrl":{"dataType":"string"},"sourceType":{"ref":"SourceType"},"sourceId":{"dataType":"string"},"status":{"ref":"RecipeStatus"},"createdBy":{"dataType":"string"},"createdAt":{"dataType":"string"},"updatedAt":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"Id":{"dataType":"string"},"recipeBookId":{"dataType":"string"},"originalRecipeId":{"dataType":"string"},"title":{"dataType":"string"},"description":{"dataType":"string"},"creatorName":{"dataType":"string"},"categories":{"dataType":"array","array":{"dataType":"string"}},"prepTimeMinutes":{"dataType":"double"},"cookTimeMinutes":{"dataType":"double"},"totalTimeMinutes":{"dataType":"double"},"difficulty":{"ref":"Difficulty"},"ingredients":{"dataType":"array","array":{"dataType":"refObject","ref":"IngredientInput"}},"steps":{"dataType":"array","array":{"dataType":"refObject","ref":"StepInput"}},"notes":{"dataType":"string"},"coverImageUrl":{"dataType":"string"},"sourceType":{"ref":"SourceType"},"sourceId":{"dataType":"string"},"status":{"ref":"RecipeStatus"},"createdBy":{"dataType":"string"},"likes":{"dataType":"array","array":{"dataType":"string"}},"comments":{"dataType":"array","array":{"dataType":"refObject","ref":"RecipeComment"}},"createdAt":{"dataType":"string"},"updatedAt":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "CommentDTO": {
@@ -168,7 +186,7 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AuthResponse": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"user":{"ref":"SafeUser","required":true},"token":{"dataType":"string","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"user":{"ref":"SafeUser","required":true},"refreshToken":{"dataType":"string","required":true},"token":{"dataType":"string","required":true}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "RegisterDTO": {
@@ -189,13 +207,14 @@ const templateService = new ExpressTemplateService(models, {"noImplicitAdditiona
 
 
 
-export function RegisterRoutes(app: Router) {
+export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof multer>}) {
 
     // ###########################################################################################################
     //  NOTE: If you do not see routes for all of your controllers in this file, then you might not have informed tsoa of where to look
     //      Please look into the "controllerPathGlobs" config option described in the readme: https://github.com/lukeautry/tsoa
     // ###########################################################################################################
 
+    const upload = opts?.multer ||  multer({"limits":{"fileSize":8388608}});
 
     
         const argsUsersController_createUser: Record<string, TsoaRoute.ParameterSchema> = {
@@ -307,6 +326,74 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'updateUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUsersController_updateProfile: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"avatarUrl":{"dataType":"string"},"name":{"dataType":"string"}}},
+        };
+        app.patch('/api/users/updateProfile/:id',
+            ...(fetchMiddlewares<RequestHandler>(UsersController)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.updateProfile)),
+
+            async function UsersController_updateProfile(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUsersController_updateProfile, request, response });
+
+                const controller = new UsersController();
+
+              await templateService.apiHandler({
+                methodName: 'updateProfile',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsUsersController_uploadAvatar: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+        };
+        app.post('/api/users/:id/uploadAvatar',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(UsersController)),
+            ...(fetchMiddlewares<RequestHandler>(UsersController.prototype.uploadAvatar)),
+
+            async function UsersController_uploadAvatar(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsUsersController_uploadAvatar, request, response });
+
+                const controller = new UsersController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadAvatar',
                 controller,
                 response,
                 next,
@@ -528,6 +615,107 @@ export function RegisterRoutes(app: Router) {
                 next,
                 validatedArgs,
                 successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecipeController_uploadImage: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+        };
+        app.post('/api/recipes/:id/image',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
+            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
+            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.uploadImage)),
+
+            async function RecipeController_uploadImage(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_uploadImage, request, response });
+
+                const controller = new RecipeController();
+
+              await templateService.apiHandler({
+                methodName: 'uploadImage',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_addLike: Record<string, TsoaRoute.ParameterSchema> = {
+                recipeId: {"in":"path","name":"recipeId","required":true,"dataType":"string"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.post('/api/likes/:recipeId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.addLike)),
+
+            async function LikesController_addLike(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_addLike, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'addLike',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 201,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_removeLike: Record<string, TsoaRoute.ParameterSchema> = {
+                recipeId: {"in":"path","name":"recipeId","required":true,"dataType":"string"},
+                request: {"in":"request","name":"request","required":true,"dataType":"object"},
+        };
+        app.delete('/api/likes/:recipeId',
+            authenticateMiddleware([{"jwt":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.removeLike)),
+
+            async function LikesController_removeLike(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_removeLike, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'removeLike',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: 200,
               });
             } catch (err) {
                 return next(err);
@@ -796,6 +984,36 @@ export function RegisterRoutes(app: Router) {
 
               await templateService.apiHandler({
                 methodName: 'logout',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_refresh: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refreshToken":{"dataType":"string","required":true}}},
+        };
+        app.post('/api/auth/refresh',
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.refresh)),
+
+            async function AuthController_refresh(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_refresh, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'refresh',
                 controller,
                 response,
                 next,

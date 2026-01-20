@@ -1,4 +1,3 @@
-// src/modules/auth/auth.types.ts
 import { SafeUser } from "../users/users.types";
 
 export type RegisterDTO = {
@@ -16,5 +15,6 @@ export type LoginDTO = {
 
 export type AuthResponse = {
   token: string;
+  refreshToken: string;
   user: SafeUser;
 };

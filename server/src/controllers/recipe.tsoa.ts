@@ -1,4 +1,4 @@
-import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query } from 'tsoa';
+import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
@@ -33,9 +33,9 @@ export class RecipeController extends Controller {
             }
             return recipe;
         } catch (err: any) {
-        const status = err.statusCode || err.status || 500;
-        this.setStatus(status);
-        throw err;
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
+            throw err;
         }
     }
 
@@ -70,7 +70,7 @@ export class RecipeController extends Controller {
     @Put('updateRecipe/{id}')
     public async updateRecipe(@Path() id: string, @Body() body: Partial<RecipeDTO>): Promise<RecipeDTO> {
         try {
-            const userId = body.createdBy || ''; 
+            const userId = body.createdBy || '';
             const recipe = await this.service.updateRecipe(id, userId, body);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
@@ -95,5 +95,19 @@ export class RecipeController extends Controller {
             this.setStatus(err.statusCode || 500);
             throw err;
         }
+    }
+
+    @Post('{id}/image')
+    public async uploadImage(
+        @Path() id: string,
+        @UploadedFile() file: Express.Multer.File
+    ): Promise<{ url: string }> {
+        if (!file) throw new AppError(400, 'File is required');
+
+        const fileName = file.filename || file.originalname;
+        const imageUrl = `/uploads/${fileName}`;
+
+        await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
+        return { url: imageUrl };
     }
 }

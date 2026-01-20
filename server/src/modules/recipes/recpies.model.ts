@@ -18,6 +18,8 @@ export interface Stats {
   ratingsCount?: number | null;
   cookedCount?: number | null;
   viewsCount?: number | null;
+  likesCount?: number;
+  commentsCount?: number; 
 }
 
 export interface Recipe extends Document {
@@ -60,7 +62,8 @@ const StatsSchema = new Schema<Stats>({
   avgRating: { type: Number, default: null },
   ratingsCount: { type: Number, default: 0 },
   cookedCount: { type: Number, default: 0 },
-  viewsCount: { type: Number, default: 0 }
+  viewsCount: { type: Number, default: 0 },
+  likesCount: { type: Number, default: 0 } // הגדרת ברירת מחדל למונה
 }, { _id: false });
 
 const RecipeSchema = new Schema<Recipe>({
