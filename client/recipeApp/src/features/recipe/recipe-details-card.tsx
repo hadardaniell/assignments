@@ -14,6 +14,7 @@ import LocalFireDepartmentRoundedIcon from "@mui/icons-material/LocalFireDepartm
 import BoltRoundedIcon from "@mui/icons-material/BoltRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import DeleteOutlineRounded from "@mui/icons-material/DeleteOutlineRounded";
+import EditIcon from '@mui/icons-material/Edit';
 import type { Difficulty, RecipeDTO } from "../../types/recipe.types";
 import { useMemo, useState } from "react";
 import { colors } from "../../assets/_colors";
@@ -97,7 +98,7 @@ export function RecipeDetailsCard({
   const [openDialog, setOpenDialog] = useState(false);
   const { user } = useAuth();
 
-  const canDelete = recipe.createdBy === user?._id;
+  const isMine = recipe.createdBy === user?._id;
 
   const minutes = useMemo(() => totalMinutes(recipe), [recipe]);
 
@@ -158,7 +159,19 @@ export function RecipeDetailsCard({
                 <ContentCopyRoundedIcon />
               </IconButton>
             </Tooltip>
-            {canDelete && (
+            {isMine && (
+              <Tooltip title="עריכת מתכון">
+                <IconButton
+                  onClick={() => navigate(`/recipes/${recipe.Id}/edit`)}
+                  sx={{
+                    bgcolor: "rgba(255,255,255,0.70)",
+                  }}
+                >
+                  <EditIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+            {isMine && (
               <Tooltip title={"מחיקת מתכון"}>
                 <IconButton
                   onClick={async () => setOpenDialog(!openDialog)}

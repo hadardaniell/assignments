@@ -9,7 +9,9 @@ export const recipesApi = {
   getRecipeById: (id: string) => getApi().get<RecipeDTO>(`/recipes/getRecipeById/${id}`),
   deleteRecipeById: (id: string) => getApi().delete<void>(`/recipes/deleteRecipe/${id}`),
   getRecipes: (params: Partial<RecipeSearchParams>) =>
-    getApi().get<RecipeDTO[]>(`/recipes/getRecipes`, 
+    getApi().get<RecipeDTO[]>(`/recipes/getRecipes`,
       params,
     ),
+  updateRecipe: (id: string, body: Partial<RecipeDTO>) =>
+    getApi().put<RecipeDTO>(`/recipes/updateRecipe/${id}`, body),
 };
