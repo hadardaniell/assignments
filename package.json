@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm --prefix server run dev\" \"npm --prefix client run dev\"",
-    "build": "npm --prefix server run build && npm --prefix client run build",
+    "dev": "node index.js",
+    "build": "tsc",
     "test": "npm --prefix server test",
     "test:watch": "npm --prefix server run test:watch"
   },
