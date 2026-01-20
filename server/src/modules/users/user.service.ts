@@ -1,6 +1,7 @@
 import { UserDTO, UpdateUserDTO, SafeUser } from './users.types';
 import { AppError } from '../../common';
 import { UserRepo } from './users.repo';
+import mongoose from 'mongoose';
 
 export class UserService {
   private readonly userRepo: UserRepo = new UserRepo();
@@ -42,7 +43,10 @@ export class UserService {
       ...updates,
       updatedAt: new Date(),
     });
-
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(400, 'Invalid user ID', 'INVALID_ID');
+    }
+    
     if (!updated) {
       throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
     }
