@@ -5,23 +5,19 @@ import { UserService } from "../users/user.service";
 import { UserModel } from "../users/user.model";
 import { AuthResponse, LoginDTO, RegisterDTO } from "./auth.types";
 import { BlacklistedTokenRepo } from "./blacklistedToken.repo";
+import * as crypto from 'crypto';
+import { RefreshTokenRepo } from "./refreshToken.repo";
 
 export class AuthService {
   private readonly users: UserService = new UserService();
   private readonly blacklistRepo: BlacklistedTokenRepo = new BlacklistedTokenRepo();
+  private readonly refreshTokenRepo = new RefreshTokenRepo();
 
   // יצירת Access Token לזמן קצר (15 דקות)
   private generateAccessToken(userId: string): string {
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new AppError(500, "Missing JWT secret");
     return jwt.sign({ sub: userId }, secret, { expiresIn: "15m" });
-  }
-
-  // יצירת Refresh Token לזמן ארוך (7 ימים)
-  private generateRefreshToken(userId: string): string {
-    const secret = process.env.JWT_REFRESH_SECRET;
-    if (!secret) throw new AppError(500, "Missing JWT Refresh secret");
-    return jwt.sign({ sub: userId }, secret, { expiresIn: "7d" });
   }
 
   public async register(body: RegisterDTO): Promise<AuthResponse> {
@@ -45,7 +41,7 @@ export class AuthService {
 
     const userId = String(user._id);
     const accessToken = this.generateAccessToken(userId);
-    const refreshToken = this.generateRefreshToken(userId);
+    const refreshToken = await this.refreshTokenRepo.createRefreshToken(userId);
 
     // שמירת ה-Refresh Token ב-DB
     await UserModel.findByIdAndUpdate(userId, { $push: { refreshTokens: refreshToken } });
@@ -67,9 +63,8 @@ export class AuthService {
 
     const userId = String(userWithPassword._id);
     const accessToken = this.generateAccessToken(userId);
-    const refreshToken = this.generateRefreshToken(userId);
+    const refreshToken = await this.refreshTokenRepo.createRefreshToken(userId);
 
-    // שמירת ה-Refresh Token ב-DB
     await UserModel.findByIdAndUpdate(userId, { $push: { refreshTokens: refreshToken } });
 
     const safeUser = await this.users.getUserByIdService(userId);
@@ -77,44 +72,25 @@ export class AuthService {
   }
 
   public async refresh(oldRefreshToken: string): Promise<AuthResponse> {
-    if (!oldRefreshToken) throw new AppError(401, "Refresh token is required");
+    if (!oldRefreshToken) throw new AppError(401, "Refresh token required");
 
-    try {
-      // 1. אימות ה-Refresh Token
-      const payload = jwt.verify(oldRefreshToken, process.env.JWT_REFRESH_SECRET!) as { sub: string };
-      const userId = payload.sub;
+    const tokenData = await this.refreshTokenRepo.findValid(oldRefreshToken);
+    if (!tokenData) throw new AppError(401, "Invalid refresh token");
 
-      // 2. בדיקה אם הטוקן קיים במערך של המשתמש ב-DB
-      const user = await UserModel.findOne({ _id: userId, refreshTokens: oldRefreshToken });
-      if (!user) throw new AppError(401, "Invalid refresh token");
+    // rotation
+    await this.refreshTokenRepo.revoke(oldRefreshToken);
 
-      // 3. יצירת זוג טוקנים חדש (Rotation)
-      const newAccessToken = this.generateAccessToken(userId);
-      const newRefreshToken = this.generateRefreshToken(userId);
+    const userId = tokenData.userId.toString();
+    const newAccessToken = this.generateAccessToken(userId);
+    const newRefreshToken = await this.refreshTokenRepo.createRefreshToken(userId);
 
-      // 4. החלפת הישן בחדש ב-DB
-      await UserModel.findByIdAndUpdate(userId, {
-        $pull: { refreshTokens: oldRefreshToken },
-        $push: { refreshTokens: newRefreshToken }
-      });
-
-      const safeUser = await this.users.getUserByIdService(userId);
-      return { token: newAccessToken, refreshToken: newRefreshToken, user: safeUser };
-    } catch (err) {
-      throw new AppError(401, "Token expired or invalid");
-    }
+    const safeUser = await this.users.getUserByIdService(userId);
+    return { token: newAccessToken, refreshToken: newRefreshToken, user: safeUser };
   }
 
   public async logout(refreshToken: string) {
     if (!refreshToken) return;
-
-    // מחיקת ה-Refresh Token מה-DB כדי שהמשתמש לא יוכל לחדש יותר את החיבור
-    await UserModel.findOneAndUpdate(
-      { refreshTokens: refreshToken },
-      { $pull: { refreshTokens: refreshToken } }
-    );
-
-    // אופציונלי: הכנסת ה-Access Token לרשימה שחורה (דורש העברת ה-Access Token לפונקציה)
+    await this.refreshTokenRepo.revoke(refreshToken);
   }
 
   public async isTokenBlacklisted(token: string): Promise<boolean> {

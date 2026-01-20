@@ -40,4 +40,4 @@ export async function expressAuthentication(
   } catch (err) {
     return Promise.reject({ status: 401, message: "Invalid token", code: "INVALID_TOKEN" });
   }
-}-
+}

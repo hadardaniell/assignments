@@ -1,25 +1,14 @@
 {
-  "name": "assignments",
-  "version": "1.0.0",
-  "description": "Root folder for Recipe App - Full Stack Management",
-  "type": "module",
+  "name": "assignments-root",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client/recipeApp\"",
-    "install-all": "npm install && npm install --prefix server && npm install --prefix client/recipeApp",
-    "test": "npm test --prefix server",
-    "tsoa:gen": "npm run tsoa:routes --prefix server && npm run tsoa:spec --prefix server",
-    "build": "npm run build --prefix server && npm run build --prefix client/recipeApp",
-    "start:prod": "cross-env NODE_ENV=production npm start --prefix server"
+    "dev": "node index.js",
+    "build": "tsc",
+    "test": "npm --prefix server test",
+    "test:watch": "npm --prefix server run test:watch"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.24.1",
-    "concurrently": "^9.2.1",
-    "cross-env": "^7.0.3",
-    "dotenv": "^17.2.3"
-  },
-  "devDependencies": {
-    "@types/node": "^25.0.8",
-    "@types/supertest": "^6.0.3"
+    "concurrently": "^9.2.1"
   }
 }

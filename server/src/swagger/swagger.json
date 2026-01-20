@@ -309,36 +309,6 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"PaginatedRecipes": {
-				"properties": {
-					"recipes": {
-						"items": {
-							"$ref": "#/components/schemas/RecipeDTO"
-						},
-						"type": "array"
-					},
-					"total": {
-						"type": "number",
-						"format": "double"
-					},
-					"page": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalPages": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"recipes",
-					"total",
-					"page",
-					"totalPages"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"Partial_RecipeDTO_": {
 				"properties": {
 					"Id": {
@@ -834,143 +804,6 @@
 				]
 			}
 		},
-		"/recipes/{id}/image": {
-			"post": {
-				"operationId": "UploadImage",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"url": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"url"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Recipes"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary"
-									}
-								},
-								"required": [
-									"file"
-								]
-							}
-						}
-					}
-				}
-			}
-		},
-		"/recipes/getRecipes": {
-			"get": {
-				"operationId": "GetRecipes",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/PaginatedRecipes"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Recipes"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "recipeBookId",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "status",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "difficulty",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "search",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "page",
-						"required": false,
-						"schema": {
-							"default": 1,
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"default": 10,
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
 		"/recipes/createRecipe": {
 			"post": {
 				"operationId": "CreateRecipe",
@@ -989,11 +822,7 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1038,6 +867,116 @@
 				]
 			}
 		},
+		"/recipes/getRecipes": {
+			"get": {
+				"operationId": "GetRecipes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "recipeBookId",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "status",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "difficulty",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "search",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "skip",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "limit",
+						"required": false,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/recipes/getRecipesByUser/{userId}": {
+			"get": {
+				"operationId": "GetRecipesByUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/recipes/updateRecipe/{id}": {
 			"put": {
 				"operationId": "UpdateRecipe",
@@ -1056,11 +995,7 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -1094,34 +1029,6 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/recipes/{id}/view": {
-			"patch": {
-				"operationId": "IncrementViews",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Recipes"
-				],
 				"security": [],
 				"parameters": [
 					{
@@ -1135,47 +1042,24 @@
 				]
 			}
 		},
-		"/recipes/{id}/cooked": {
-			"patch": {
-				"operationId": "IncrementCooked",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Recipes"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
-		"/recipes/ai-search": {
-			"get": {
-				"operationId": "AiSearch",
+		"/recipes/{id}/image": {
+			"post": {
+				"operationId": "UploadImage",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/RecipeDTO"
+									"properties": {
+										"url": {
+											"type": "string"
+										}
 									},
-									"type": "array"
+									"required": [
+										"url"
+									],
+									"type": "object"
 								}
 							}
 						}
@@ -1187,22 +1071,33 @@
 				"security": [],
 				"parameters": [
 					{
-						"in": "query",
-						"name": "query",
+						"in": "path",
+						"name": "id",
 						"required": true,
 						"schema": {
 							"type": "string"
 						}
-					},
-					{
-						"in": "query",
-						"name": "recipeBookId",
-						"required": false,
-						"schema": {
-							"type": "string"
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/likes/{recipeId}": {
@@ -1455,8 +1350,8 @@
 			"post": {
 				"operationId": "Register",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1488,7 +1383,7 @@
 				"operationId": "Login",
 				"responses": {
 					"200": {
-						"description": "OK",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1515,12 +1410,72 @@
 				}
 			}
 		},
+		"/auth/me": {
+			"get": {
+				"operationId": "Me",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SafeUser"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/auth/logout": {
+			"post": {
+				"operationId": "Logout",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										}
+									},
+									"required": [
+										"message"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [
+					{
+						"bearerAuth": []
+					}
+				],
+				"parameters": []
+			}
+		},
 		"/auth/refresh": {
 			"post": {
 				"operationId": "Refresh",
 				"responses": {
 					"200": {
-						"description": "OK",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
@@ -1534,43 +1489,6 @@
 					"Auth"
 				],
 				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"properties": {
-									"refreshToken": {
-										"type": "string"
-									}
-								},
-								"required": [
-									"refreshToken"
-								],
-								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/auth/logout": {
-			"post": {
-				"operationId": "Logout",
-				"responses": {
-					"204": {
-						"description": "No Content"
-					}
-				},
-				"tags": [
-					"Auth"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,

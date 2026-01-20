@@ -149,17 +149,6 @@ const models: TsoaRoute.Models = {
         "additionalProperties": false,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "PaginatedRecipes": {
-        "dataType": "refObject",
-        "properties": {
-            "recipes": {"dataType":"array","array":{"dataType":"refObject","ref":"RecipeDTO"},"required":true},
-            "total": {"dataType":"double","required":true},
-            "page": {"dataType":"double","required":true},
-            "totalPages": {"dataType":"double","required":true},
-        },
-        "additionalProperties": false,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_RecipeDTO_": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"Id":{"dataType":"string"},"recipeBookId":{"dataType":"string"},"originalRecipeId":{"dataType":"string"},"title":{"dataType":"string"},"description":{"dataType":"string"},"creatorName":{"dataType":"string"},"categories":{"dataType":"array","array":{"dataType":"string"}},"prepTimeMinutes":{"dataType":"double"},"cookTimeMinutes":{"dataType":"double"},"totalTimeMinutes":{"dataType":"double"},"difficulty":{"ref":"Difficulty"},"ingredients":{"dataType":"array","array":{"dataType":"refObject","ref":"IngredientInput"}},"steps":{"dataType":"array","array":{"dataType":"refObject","ref":"StepInput"}},"notes":{"dataType":"string"},"coverImageUrl":{"dataType":"string"},"sourceType":{"ref":"SourceType"},"sourceId":{"dataType":"string"},"status":{"ref":"RecipeStatus"},"createdBy":{"dataType":"string"},"likes":{"dataType":"array","array":{"dataType":"string"}},"comments":{"dataType":"array","array":{"dataType":"refObject","ref":"RecipeComment"}},"createdAt":{"dataType":"string"},"updatedAt":{"dataType":"string"}},"validators":{}},
@@ -446,85 +435,10 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsRecipeController_uploadImage: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
-        };
-        app.post('/api/recipes/:id/image',
-            authenticateMiddleware([{"jwt":[]}]),
-            upload.fields([
-                {
-                    name: "file",
-                    maxCount: 1
-                }
-            ]),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.uploadImage)),
-
-            async function RecipeController_uploadImage(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_uploadImage, request, response });
-
-                const controller = new RecipeController();
-
-              await templateService.apiHandler({
-                methodName: 'uploadImage',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsRecipeController_getRecipes: Record<string, TsoaRoute.ParameterSchema> = {
-                recipeBookId: {"in":"query","name":"recipeBookId","dataType":"string"},
-                status: {"in":"query","name":"status","dataType":"any"},
-                difficulty: {"in":"query","name":"difficulty","dataType":"any"},
-                search: {"in":"query","name":"search","dataType":"string"},
-                page: {"default":1,"in":"query","name":"page","dataType":"double"},
-                limit: {"default":10,"in":"query","name":"limit","dataType":"double"},
-        };
-        app.get('/api/recipes/getRecipes',
-            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.getRecipes)),
-
-            async function RecipeController_getRecipes(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_getRecipes, request, response });
-
-                const controller = new RecipeController();
-
-              await templateService.apiHandler({
-                methodName: 'getRecipes',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_createRecipe: Record<string, TsoaRoute.ParameterSchema> = {
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 body: {"in":"body","name":"body","required":true,"ref":"RecipeDTO"},
         };
         app.post('/api/recipes/createRecipe',
-            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
             ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.createRecipe)),
 
@@ -581,13 +495,76 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecipeController_getRecipes: Record<string, TsoaRoute.ParameterSchema> = {
+                recipeBookId: {"in":"query","name":"recipeBookId","dataType":"string"},
+                status: {"in":"query","name":"status","dataType":"any"},
+                difficulty: {"in":"query","name":"difficulty","dataType":"any"},
+                search: {"in":"query","name":"search","dataType":"string"},
+                skip: {"in":"query","name":"skip","dataType":"double"},
+                limit: {"in":"query","name":"limit","dataType":"double"},
+        };
+        app.get('/api/recipes/getRecipes',
+            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
+            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.getRecipes)),
+
+            async function RecipeController_getRecipes(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_getRecipes, request, response });
+
+                const controller = new RecipeController();
+
+              await templateService.apiHandler({
+                methodName: 'getRecipes',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsRecipeController_getRecipesByUser: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+        };
+        app.get('/api/recipes/getRecipesByUser/:userId',
+            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
+            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.getRecipesByUser)),
+
+            async function RecipeController_getRecipesByUser(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_getRecipesByUser, request, response });
+
+                const controller = new RecipeController();
+
+              await templateService.apiHandler({
+                methodName: 'getRecipesByUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_updateRecipe: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
                 body: {"in":"body","name":"body","required":true,"ref":"Partial_RecipeDTO_"},
         };
         app.put('/api/recipes/updateRecipe/:id',
-            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
             ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.updateRecipe)),
 
@@ -616,10 +593,8 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_deleteRecipe: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
         };
         app.delete('/api/recipes/deleteRecipe/:id',
-            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
             ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.deleteRecipe)),
 
@@ -646,89 +621,32 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsRecipeController_incrementViews: Record<string, TsoaRoute.ParameterSchema> = {
+        const argsRecipeController_uploadImage: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
+                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
         };
-        app.patch('/api/recipes/:id/view',
+        app.post('/api/recipes/:id/image',
+            upload.fields([
+                {
+                    name: "file",
+                    maxCount: 1
+                }
+            ]),
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.incrementViews)),
+            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.uploadImage)),
 
-            async function RecipeController_incrementViews(request: ExRequest, response: ExResponse, next: any) {
+            async function RecipeController_uploadImage(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_incrementViews, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_uploadImage, request, response });
 
                 const controller = new RecipeController();
 
               await templateService.apiHandler({
-                methodName: 'incrementViews',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsRecipeController_incrementCooked: Record<string, TsoaRoute.ParameterSchema> = {
-                id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
-        };
-        app.patch('/api/recipes/:id/cooked',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.incrementCooked)),
-
-            async function RecipeController_incrementCooked(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_incrementCooked, request, response });
-
-                const controller = new RecipeController();
-
-              await templateService.apiHandler({
-                methodName: 'incrementCooked',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: undefined,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsRecipeController_aiSearch: Record<string, TsoaRoute.ParameterSchema> = {
-                query: {"in":"query","name":"query","required":true,"dataType":"string"},
-                request: {"in":"request","name":"request","required":true,"dataType":"object"},
-                recipeBookId: {"in":"query","name":"recipeBookId","dataType":"string"},
-        };
-        app.get('/api/recipes/ai-search',
-            ...(fetchMiddlewares<RequestHandler>(RecipeController)),
-            ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.aiSearch)),
-
-            async function RecipeController_aiSearch(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsRecipeController_aiSearch, request, response });
-
-                const controller = new RecipeController();
-
-              await templateService.apiHandler({
-                methodName: 'aiSearch',
+                methodName: 'uploadImage',
                 controller,
                 response,
                 next,
@@ -956,7 +874,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_register: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"RegisterDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"RegisterDTO"},
         };
         app.post('/api/auth/register',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
@@ -978,7 +896,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 response,
                 next,
                 validatedArgs,
-                successStatus: 201,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
@@ -986,7 +904,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsAuthController_login: Record<string, TsoaRoute.ParameterSchema> = {
-                requestBody: {"in":"body","name":"requestBody","required":true,"ref":"LoginDTO"},
+                body: {"in":"body","name":"body","required":true,"ref":"LoginDTO"},
         };
         app.post('/api/auth/login',
             ...(fetchMiddlewares<RequestHandler>(AuthController)),
@@ -1008,7 +926,69 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 response,
                 next,
                 validatedArgs,
-                successStatus: 200,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_me: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.get('/api/auth/me',
+            authenticateMiddleware([{"bearerAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.me)),
+
+            async function AuthController_me(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_me, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'me',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsAuthController_logout: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
+        };
+        app.post('/api/auth/logout',
+            authenticateMiddleware([{"bearerAuth":[]}]),
+            ...(fetchMiddlewares<RequestHandler>(AuthController)),
+            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.logout)),
+
+            async function AuthController_logout(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_logout, request, response });
+
+                const controller = new AuthController();
+
+              await templateService.apiHandler({
+                methodName: 'logout',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);
@@ -1038,38 +1018,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 response,
                 next,
                 validatedArgs,
-                successStatus: 200,
-              });
-            } catch (err) {
-                return next(err);
-            }
-        });
-        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsAuthController_logout: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"refreshToken":{"dataType":"string","required":true}}},
-        };
-        app.post('/api/auth/logout',
-            authenticateMiddleware([{"jwt":[]}]),
-            ...(fetchMiddlewares<RequestHandler>(AuthController)),
-            ...(fetchMiddlewares<RequestHandler>(AuthController.prototype.logout)),
-
-            async function AuthController_logout(request: ExRequest, response: ExResponse, next: any) {
-
-            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-            let validatedArgs: any[] = [];
-            try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsAuthController_logout, request, response });
-
-                const controller = new AuthController();
-
-              await templateService.apiHandler({
-                methodName: 'logout',
-                controller,
-                response,
-                next,
-                validatedArgs,
-                successStatus: 204,
+                successStatus: undefined,
               });
             } catch (err) {
                 return next(err);

@@ -71,3 +71,14 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.muirtl-1lqgbnn-MuiPaper-root-MuiCard-root .muirtl-1yeqsoz-MuiButtonBase-root-MuiCardActionArea-root,
+.muirtl-1r6segg-MuiTypography-root{
+  direction: rtl !important;
+}
+
+.muirtl-16kozxv-MuiInputBase-root-MuiOutlinedInput-root {
+  /* height: 48px; */
+  /* font-size: 15px; */
+}
+

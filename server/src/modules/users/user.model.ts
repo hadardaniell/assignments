@@ -11,7 +11,6 @@ export interface User extends Document {
   avatarUrl?: string | null;
   role: 'admin' | 'user';
   settings?: UserSettings;
-  refreshTokens?: string[]; // הפיכת השדה לאופציונלי כדי לאפשר delete ב-transform
   createdAt: Date;
   updatedAt?: Date;
 }

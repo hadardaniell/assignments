@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeAll, afterAll } from '@jest/globals';
 import request from 'supertest';
-import app from '../app.js';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { UserModel } from '../modules/users/user.model.js'; // Use your actual model file
+import app from '../app.js';
+import { UserModel } from '../modules/users/user.model.js';
 
 let mongo: MongoMemoryServer;
 

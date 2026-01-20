@@ -1,6 +1,7 @@
-import { Box, Chip, MenuItem, TextField, Typography } from "@mui/material";
-import type { DraftState } from "../recipe.types";
+import { Box, Chip, Container, MenuItem, TextField, Typography } from "@mui/material";
+import type { DraftState } from "../../../types/recipe.types";
 import { colors } from "../../../assets/_colors";
+import { ChipList } from "../../../shared/chip-list";
 
 export function DetailsStep({
   draft,
@@ -25,13 +26,40 @@ export function DetailsStep({
 
   return (
     <Box sx={{ display: "grid", gap: 2 }}>
-      <TextField
-        label="שם המתכון (חובה)"
-        value={draft.title}
-        onChange={(e) => setDraft((p) => ({ ...p, title: e.target.value }))}
-        required
-        fullWidth
-      />
+      <Container sx={{ display: "flex", gap: "1em", width: "100%", padding: "0 !important" }}>
+        <TextField
+          label="שם המתכון"
+          value={draft.title}
+          onChange={(e) => setDraft((p) => ({ ...p, title: e.target.value }))}
+          required
+          fullWidth
+        />
+        <TextField
+          label="זמן הכנה (דקות)"
+          type="number"
+          value={Number(draft.prepTimeMinutes)}
+          onChange={(e) => setDraft((p) => ({ ...p, prepTimeMinutes: e.target.value.toString() }))}
+          fullWidth
+          required
+          sx={{ maxWidth: "130px" }}
+        />
+
+        <TextField
+          select
+          dir="rtl"
+          label="רמת קושי"
+          value={draft.difficulty ?? ""}
+          onChange={(e) =>
+            setDraft((p) => ({ ...p, difficulty: e.target.value as any }))
+          }
+          fullWidth
+          required
+        >
+          <MenuItem value="easy" dir="rtl">קל</MenuItem>
+          <MenuItem value="medium" dir="rtl">בינוני</MenuItem>
+          <MenuItem value="hard" dir="rtl">קשה</MenuItem>
+        </TextField>
+      </Container>
 
       <TextField
         label="תיאור"
@@ -49,60 +77,34 @@ export function DetailsStep({
           gap: 2,
         }}
       >
-        <TextField
-          label="זמן הכנה (דקות)"
-          value={draft.prepTimeMinutes}
-          onChange={(e) => setDraft((p) => ({ ...p, prepTimeMinutes: e.target.value }))}
-          fullWidth
-        />
 
-        <TextField
-          select
-          label="רמת קושי"
-          value={draft.difficulty}
-          onChange={(e) => setDraft((p) => ({ ...p, difficulty: e.target.value as any }))}
-          fullWidth
-        >
-         <div dir="rtl">
-          <MenuItem value="">ללא</MenuItem>
-          <MenuItem value="easy">קל</MenuItem>
-          <MenuItem value="medium">בינוני</MenuItem>
-          <MenuItem value="hard">קשה</MenuItem>
-         </div>
-        </TextField>
 
       </Box>
-        <label style={{direction: "rtl"}}>צרפו תמונה</label>
-        <TextField
-          type="file"
-          value={draft.coverImageUrl}
-          onChange={(e) => setDraft((p) => ({ ...p, coverImageUrl: e.target.value }))}
-          fullWidth
-        />
+      <Typography component="label" sx={{ direction: "rtl" }}>
+        צרפו תמונה
+      </Typography>
+      <TextField
+        type="file"
+        value={draft.coverImageUrl}
+        onChange={(e) => setDraft((p) => ({ ...p, coverImageUrl: e.target.value }))}
+        fullWidth
+      />
 
       <Box>
         <Typography sx={{ fontWeight: 800, mb: 1 }}>קטגוריות</Typography>
 
-        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {presetCategories.map((c) => {
-            const selected = draft.categories.includes(c);
-            return (
-              <Chip
-                key={c}
-                label={c}
-                clickable
-                onClick={() => toggleCategory(c)}
-                variant={selected ? "filled" : "outlined"}
-                sx={{
-                  borderColor: colors.BROWNKITCHEN.olive,
-                  ...(selected
-                    ? { backgroundColor: colors.BROWNKITCHEN.olive, color: "white" }
-                    : { color: colors.BROWNKITCHEN.olive }),
-                }}
-              />
-            );
-          })}
-        </Box>
+        <ChipList
+          categories={[...presetCategories]}
+          selectedCategories={draft.categories}
+          onSelectCategory={(category, selected) => {
+            setDraft((p) => ({
+              ...p,
+              categories: selected
+                ? [...p.categories, category]
+                : p.categories.filter((c) => c !== category),
+            }));
+          }}
+        />
 
         {!!draft.categories.length && (
           <Typography

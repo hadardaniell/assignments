@@ -18,7 +18,8 @@ export interface Stats {
   ratingsCount?: number | null;
   cookedCount?: number | null;
   viewsCount?: number | null;
-  likesCount?: number; // הוספנו מונה לייקים
+  likesCount?: number;
+  commentsCount?: number; 
 }
 
 export interface Recipe extends Document {
