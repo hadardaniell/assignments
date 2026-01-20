@@ -1,19 +1,14 @@
 {
-  "name": "assignments-root",
+  "name": "assignments",
   "version": "1.0.0",
   "description": "Root folder for Recipe App - Full Stack Management",
   "type": "module",
   "private": true,
   "scripts": {
-    "// --- פיתוח (הפעלה בו-זמנית) ---": "",
     "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client/recipeApp\"",
-    "// --- התקנה גורפת לכל הפרויקט ---": "",
     "install-all": "npm install && npm install --prefix server && npm install --prefix client/recipeApp",
-    "// --- בדיקות (מריץ את ה-Jest שבתוך הסרבר) ---": "",
     "test": "npm test --prefix server",
-    "// --- TSOA (עדכון ראוטים וסוואגר מרחוק) ---": "",
     "tsoa:gen": "npm run tsoa:routes --prefix server && npm run tsoa:spec --prefix server",
-    "// --- ייצור (Production) כפי שנדרש במטלה ---": "",
     "build": "npm run build --prefix server && npm run build --prefix client/recipeApp",
     "start:prod": "cross-env NODE_ENV=production npm start --prefix server"
   },

@@ -15,6 +15,13 @@ export interface StepInput {
   durationMinutes?: number;
 }
 
+export interface RecipeComment {
+  userId: string;
+  userName: string;
+  text: string;
+  createdAt: Date;
+}
+
 export interface RecipeDTO {
   Id?: string;
   recipeBookId?: string;
@@ -36,8 +43,16 @@ export interface RecipeDTO {
   status?: RecipeStatus;
   createdBy?: string;
   likes?: string[];
+  comments?: RecipeComment[];
   createdAt?: string;
   updatedAt?: string | null;
+}
+
+export interface PaginatedRecipes {
+  recipes: RecipeDTO[];
+  total: number;
+  page: number;
+  totalPages: number;
 }
 
 export type UpdateRecipeDTO = Partial<RecipeDTO>;

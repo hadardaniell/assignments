@@ -22,7 +22,6 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// חשיפת הקבצים לצפייה
 app.use('/uploads', express.static(uploadDir));
 
 app.get('/', (req, res) => {
@@ -31,6 +30,7 @@ app.get('/', (req, res) => {
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
+// TSOA Routes
 RegisterRoutes(app); 
 
 app.use(errorMiddleware);

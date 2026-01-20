@@ -1,7 +1,7 @@
 import { Types } from 'mongoose';
 import { RecipeModel, Recipe } from './recpies.model';
 import { LikeModel } from '../likes/like.model'; 
-import { RecipeDTO, UpdateRecipeDTO, RecipeFilterDTO } from './recipe.types';
+import { RecipeDTO, UpdateRecipeDTO, RecipeFilterDTO, PaginatedRecipes } from './recipe.types';
 import { toRecipeDTO } from './recipe.mapper';
 import { RecipeRepo } from './resipes.repo';
 import { AIService } from './ai.service';
@@ -10,6 +10,37 @@ import { AppError } from '../../common';
 export class RecipeService {
     private readonly recipeRepo: RecipeRepo = new RecipeRepo();
     private readonly aiService: AIService = new AIService();
+
+    async listRecipes(
+        filter: RecipeFilterDTO, 
+        page: number = 1, 
+        limit: number = 10
+    ): Promise<PaginatedRecipes> {
+        const skip = (page - 1) * limit;
+
+        const query: any = {};
+        if (filter.recipeBookId) query.recipeBookId = new Types.ObjectId(filter.recipeBookId);
+        if (filter.status) query.status = filter.status;
+        if (filter.difficulty) query.difficulty = filter.difficulty;
+        if (filter.search) {
+            query.title = { $regex: filter.search, $options: 'i' };
+        }
+
+        const [recipes, total] = await Promise.all([
+            RecipeModel.find(query)
+                .skip(skip)
+                .limit(limit)
+                .sort({ createdAt: -1 }),
+            RecipeModel.countDocuments(query)
+        ]);
+
+        return {
+            recipes: recipes.map(toRecipeDTO),
+            total,
+            page,
+            totalPages: Math.ceil(total / limit)
+        };
+    }
 
     async toggleLike(recipeId: string, userId: string): Promise<boolean> {
         const recipe = await RecipeModel.findById(recipeId);
@@ -98,11 +129,6 @@ export class RecipeService {
     async getRecipeById(id: string): Promise<RecipeDTO | null> {
         const recipe = await this.recipeRepo.findById(id);
         return recipe ? toRecipeDTO(recipe) : null;
-    }
-
-    async listRecipes(filter: RecipeFilterDTO): Promise<RecipeDTO[]> {
-        const recipes = await this.recipeRepo.findMany(filter);
-        return recipes.map(toRecipeDTO);
     }
 
     async updateRecipe(id: string, userId: string, input: UpdateRecipeDTO): Promise<RecipeDTO | null> {

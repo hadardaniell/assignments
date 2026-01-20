@@ -5,11 +5,11 @@ import {
   Body, 
   SuccessResponse, 
   Tags,
-  Request
+  Request,
+  Security
 } from 'tsoa';
 import { AuthService } from '../modules/auth/auth.service';
 import { RegisterDTO, LoginDTO, AuthResponse } from '../modules/auth/auth.types';
-import { Request as ExRequest } from 'express';
 
 @Route("auth")
 @Tags("Auth")
@@ -33,9 +33,6 @@ export class AuthController extends Controller {
     return this.authService.login(requestBody);
   }
 
-  /**
-   * נתיב לחידוש ה-Access Token באמצעות ה-Refresh Token
-   */
   @Post("refresh")
   @SuccessResponse("200", "OK")
   public async refresh(
@@ -44,10 +41,8 @@ export class AuthController extends Controller {
     return this.authService.refresh(body.refreshToken);
   }
 
-  /**
-   * התנתקות: מחיקת ה-Refresh Token מה-DB כדי למנוע חידושים עתידיים
-   */
   @Post("logout")
+  @Security("jwt")
   @SuccessResponse("204", "No Content")
   public async logout(
     @Body() body: { refreshToken: string }

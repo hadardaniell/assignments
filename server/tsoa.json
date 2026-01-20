@@ -9,7 +9,7 @@
     "outputDirectory": "src/swagger",
     "basePath": "/api",
     "securityDefinitions": {
-      "bearerAuth": {
+      "jwt": {
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT"
