@@ -36,6 +36,7 @@ export interface RecipeDTO {
   createdBy?: string;
   createdAt?: string;
   updatedAt?: string | null;
+  commentsCount?: number;
 }
 
 export type DraftState = {
@@ -45,10 +46,18 @@ export type DraftState = {
   categories: string[];
   prepTimeMinutes: string;
   cookTimeMinutes: string;
-  difficulty: Difficulty | "";
+  difficulty: Difficulty;
   coverImageUrl: string;
 
   ingredients: IngredientInput[];
   steps: StepInput[];
   notes: string;
+};
+
+export type RecipeSearchParams = {
+  status?: string;
+  difficulty?: string;
+  search?: string;
+  skip?: number;
+  limit?: number;
 };

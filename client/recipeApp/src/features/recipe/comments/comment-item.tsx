@@ -68,11 +68,11 @@ export function CommentItem({
         </Avatar>
 
         <Box sx={{ flex: 1 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack direction="row" justifyContent="space-between" alignItems="center" gap="2em">
             <Typography sx={{ fontWeight: 800 }}>
               {isMine ? "את" : "משתמש"}{" "}
               <Typography component="span" variant="caption" color="text.secondary">
-                • {fmtDate(comment.createdAt)}
+                  {fmtDate(comment.createdAt)}
               </Typography>
             </Typography>
 

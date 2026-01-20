@@ -1,6 +1,6 @@
 import { Button, TextField, Typography, Box } from '@mui/material';
 // import { useNavigate } from 'react-router-dom';
-import type { AuthResponse, RegisterDTO } from '../auth.types';
+import type { AuthResponse, RegisterDTO } from '../../../types/auth.types';
 import { authApi } from '../../../data-access/auth.api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

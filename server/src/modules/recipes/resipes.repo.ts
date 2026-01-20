@@ -27,21 +27,22 @@ export class RecipeRepo {
     if (filter.recipeBookId) query.recipeBookId = filter.recipeBookId;
     if (filter.createdBy) query.createdBy = filter.createdBy;
     if (filter.status) query.status = filter.status;
-    
+
     // Check for categories array
     if (filter.categories && filter.categories.length > 0) {
       query.categories = { $in: filter.categories };
     }
-    
+
     if (filter.difficulty) query.difficulty = filter.difficulty;
-    
+
     // Partial text search on title
     if (filter.search) {
       query.title = { $regex: filter.search, $options: 'i' };
     }
-
+    console.log("FILTER:", filter);
+    
     const skip = filter.skip ?? 0;
-    const limit = filter.limit ?? 20;
+    const limit = filter.limit ?? 10;
     const sortField = filter.sortBy ?? 'createdAt';
     const sortOrder = filter.sortOrder === 'asc' ? 1 : -1;
 
@@ -57,8 +58,8 @@ export class RecipeRepo {
    */
   async updateById(id: string, data: UpdateQuery<Recipe>): Promise<Recipe | null> {
     return await RecipeModel.findByIdAndUpdate(
-      id, 
-      data, 
+      id,
+      data,
       { new: true, runValidators: true }
     ).exec();
   }

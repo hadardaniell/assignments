@@ -12,15 +12,19 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
-import { RecipeCard, type RecipeCardModel } from "../feed/recipe-card";
+import { RecipeCard, type RecipeCardModel } from "../../shared/recipe-card";
 import { RecipesGrid } from "./recipes-grid";
 import { ProfileCard } from "./profile-card";
-import type { User } from "../auth/auth.types";
+import type { User } from "../../types/auth.types";
 import { useAuth } from "../../context/auth.context";
 import { recipesApi } from "../../data-access/recipe.api";
+import { useNavigate } from "react-router-dom";
 
 export function ProfilePage() {
     const { user } = useAuth();
+    const { setUser } = useAuth();
+    const navigate = useNavigate();
+
     // const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
     const [loading, setLoading] = useState(false);
     const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
@@ -47,12 +51,16 @@ export function ProfilePage() {
     const recipeCount = recipes.length;
 
     const onRecipeClick = (id: string) => {
-        console.log("open recipe", id);
+        navigate('/recipe/' + id)
     };
 
     return (
         <Box dir="rtl" sx={{ p: 3 }}>
-            <ProfileCard user={user!} recipeCount={recipeCount} />
+            <ProfileCard
+                user={user}
+                recipeCount={recipeCount}
+                onUserUpdated={(updated) => setUser(updated)}
+            />
             <RecipesGrid recipes={recipes} onRecipeClick={(id) => onRecipeClick(id)} />
         </Box>
     );

@@ -11,6 +11,7 @@ import { initHttpClient } from './services/http-client.service.ts';
 import { router } from './router/index.tsx';
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './context/auth.context.tsx';
+import './App.css'
 
 async function bootstrap() {
   await initHttpClient();
