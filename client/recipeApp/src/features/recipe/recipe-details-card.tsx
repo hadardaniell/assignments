@@ -20,6 +20,7 @@ import { colors } from "../../assets/_colors";
 import { recipesApi } from "../../data-access/recipe.api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
+import { OkCancelDialog } from "../dialog-models/ok-cancel-dialog";
 
 function difficultyLabel(d?: Difficulty) {
   if (!d) return "—";
@@ -93,6 +94,7 @@ export function RecipeDetailsCard({
 }) {
   const navigate = useNavigate();
   const [copied, setCopied] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   const { user } = useAuth();
 
   const canDelete = recipe.createdBy === user?._id;
@@ -159,15 +161,27 @@ export function RecipeDetailsCard({
             {canDelete && (
               <Tooltip title={"מחיקת מתכון"}>
                 <IconButton
-                  onClick={async () => deleteRecipeById(recipe.Id!)}
-                sx={{
-                  bgcolor: "rgba(255,255,255,0.70)",
-                }}
-              >
-                <DeleteOutlineRounded />
-              </IconButton>
-            </Tooltip>
+                  onClick={async () => setOpenDialog(!openDialog)}
+                  sx={{
+                    bgcolor: "rgba(255,255,255,0.70)",
+                  }}
+                >
+                  <DeleteOutlineRounded />
+                </IconButton>
+              </Tooltip>
             )}
+
+            <OkCancelDialog
+              open={openDialog}
+              header="למחוק מתכון?"
+              content="הפעולה לא ניתנת לשחזור."
+              onClose={(result) => {
+                setOpenDialog(false);
+                if (result) {
+                  deleteRecipeById(recipe.Id!)
+                }
+              }}
+            />
           </Stack>
         </Stack>
 

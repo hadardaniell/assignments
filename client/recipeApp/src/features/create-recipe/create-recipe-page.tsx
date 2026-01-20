@@ -11,33 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { recipesApi } from "../../data-access/recipe.api";
 import { useAuth } from "../../context/auth.context";
 import { colors } from '../../assets/_colors';
-
-const stepLabels = ["פרטים יבשים", "מצרכים", "שלבי הכנה", "הערות מיוחדות"];
-const presetCategories = [
-    "איטלקי",
-    "קינוחים",
-    "בשרי",
-    "טבעוני",
-    "צמחוני",
-    "חלבי",
-    "ארוחת בוקר",
-    "מרקים",
-    "סלטים",
-    "אפייה",
-] as const;
-
-const UNITS = [
-    "כוס",
-    "כף",
-    "כפית",
-    "גרם",
-    "ק״ג",
-    "מ״ל",
-    "ליטר",
-    "יחידה",
-    "שן",
-    "חבילה",
-];
+import { presetCategories, stepLabels, UNITS } from "../../assets/consts";
 
 export function CreateRecipePage() {
     const { user } = useAuth();
@@ -69,11 +43,29 @@ export function CreateRecipePage() {
     }, [draft.prepTimeMinutes, draft.cookTimeMinutes]);
 
     const canGoNext = useMemo(() => {
-        if (activeStep === 0) return !!draft.title.trim();
-        if (activeStep === 1) return draft.ingredients.every((i) => i.name.trim().length > 0);
-        if (activeStep === 2) return draft.steps.every((s) => s.instruction.trim().length > 0);
+        if (activeStep === 0) {
+            return (
+                draft.title.trim().length > 0 &&
+                draft.prepTimeMinutes !== null &&
+                draft.prepTimeMinutes !== "" &&
+                !Number.isNaN(Number(draft.prepTimeMinutes)) &&
+                Number(draft.prepTimeMinutes) > 0 &&
+                !!draft.difficulty &&
+                draft.categories.length > 0
+            );
+        }
+
+        if (activeStep === 1) {
+            return draft.ingredients.every((i) => i.name.trim().length > 0);
+        }
+
+        if (activeStep === 2) {
+            return draft.steps.every((s) => s.instruction.trim().length > 0);
+        }
+
         return true;
     }, [activeStep, draft]);
+
 
     const buildDTO = (status: RecipeStatus): RecipeDTO => {
         const prep = draft.prepTimeMinutes ? Number(draft.prepTimeMinutes) : null;
@@ -107,18 +99,6 @@ export function CreateRecipePage() {
         };
     };
 
-    const onSaveDraft = async () => {
-        const dto = buildDTO("draft");
-        console.log("SAVE DRAFT DTO:", dto);
-        try {
-            const res = await recipesApi.createRecipe(dto);
-            console.log("Draft saved:", res);
-            navigate("/profile");
-        } catch (err) {
-            console.error("Failed to save draft", err);
-        }
-    };
-
     const onPublish = async () => {
         const dto = buildDTO("published");
         setSubmitting(true);
@@ -148,9 +128,10 @@ export function CreateRecipePage() {
         <Box dir="rtl" sx={{
             maxWidth: 980, mx: "auto",
         }}>
-            <Typography variant="h5" sx={{ fontWeight: 900, mb: 2, display: 'flex', justifyContent: 'center',
+            <Typography variant="h5" sx={{
+                fontWeight: 900, mb: 2, display: 'flex', justifyContent: 'center',
                 color: colors.BROWNKITCHEN.brownie
-             }}>
+            }}>
                 יצירת מתכון חדש
             </Typography>
 
@@ -192,9 +173,6 @@ export function CreateRecipePage() {
                         </Button>
 
                         <Box sx={{ display: "flex", gap: 1 }}>
-                            <Button variant="outlined" onClick={onSaveDraft}>
-                                שמירה כטיוטה
-                            </Button>
 
                             {activeStep < stepLabels.length - 1 ? (
                                 <Button

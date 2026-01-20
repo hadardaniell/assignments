@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
-import type { User } from "../features/auth/auth.types";
+import type { User } from "../types/auth.types";
 import { authApi } from "../data-access/auth.api";
 
 type AuthState = {

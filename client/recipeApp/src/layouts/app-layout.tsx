@@ -8,6 +8,7 @@ import {
     Toolbar,
     AppBar,
     Typography,
+    Tooltip,
 } from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import DynamicFeedIcon from "@mui/icons-material/DynamicFeed";
@@ -16,6 +17,8 @@ import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { colors } from "../assets/_colors";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
+
 
 const drawerWidth = 60;
 
@@ -30,9 +33,9 @@ export function AppLayout() {
 
     const menuItems = [
         // { label: "בית", icon: <HomeIcon />, to: "/" },
-        { label: "פיד", icon: <HomeIcon />, to: "/feed" },
-        { label: "פרופיל", icon: <PersonIcon />, to: "/profile" },
-        { label: "יצירת מתכון", icon: <AddIcon />, to: "/recipes/new" },
+        { label: "חיפוש", icon: <SearchRoundedIcon />, to: "/search", tooltip: "חיפוש מתכונים" },
+        { label: "פרופיל", icon: <PersonIcon />, to: "/profile", tooltip: "הפרופיל שלי" },
+        { label: "יצירת מתכון", icon: <AddIcon />, to: "/recipes/new", tooltip: "מתכון חדש" },
     ];
 
     return (
@@ -63,6 +66,7 @@ export function AppLayout() {
                 }}>
                     <div style={{ height: "100%" }}>
                         {menuItems.map((item) => (
+                             <Tooltip title={item.tooltip} placement="left" key={item.to}>
                             <ListItemButton
                                 key={item.to}
                                 selected={location.pathname === item.to}
@@ -71,6 +75,7 @@ export function AppLayout() {
                                 <ListItemIcon sx={{ minWidth: 35 }}>{item.icon}</ListItemIcon>
                                 {/* <ListItemText primary={item.label} /> */}
                             </ListItemButton>
+                        </Tooltip>
                         ))}
                     </div>
 

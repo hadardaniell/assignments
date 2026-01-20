@@ -66,7 +66,7 @@ export function RecipeComments({
         setPosting(true);
         try {
             const res = await commentsApi.createComment({ recipeId, content, createdBy: currentUserId });
-            setItems((prev) => [res.data, ...prev]);
+            setItems((prev) => [res, ...prev]);
             setNewText("");
         } catch (e: any) {
             setError(e?.response?.data?.message || e?.message || "שגיאה ביצירת תגובה");
@@ -78,7 +78,7 @@ export function RecipeComments({
     function startEdit(c: CommentDTO) {
         const id = getId(c);
         setEditId(id);
-        setEditText(c.text ?? "");
+        setEditText(c.content ?? "");
     }
 
     function cancelEdit() {
@@ -87,13 +87,13 @@ export function RecipeComments({
     }
 
     async function saveEdit(commentId: string) {
-        const text = editText.trim();
-        if (!text) return;
+        const content = editText.trim();
+        if (!content) return;
 
         setSavingEdit(true);
         try {
-            const res = await commentsApi.updateComment(commentId, { text });
-            setItems((prev) => prev.map((c) => (getId(c) === commentId ? res.data : c)));
+            const res = await commentsApi.updateComment(commentId, { content });
+            setItems((prev) => prev.map((c) => (getId(c) === commentId ? res : c)));
             cancelEdit();
         } catch (e: any) {
             setError(e?.response?.data?.message || e?.message || "שגיאה בעדכון תגובה");
