@@ -17,11 +17,8 @@ export class AuthController extends Controller {
             this.setStatus(201);
             return result;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
             throw err;
         }
     }
@@ -33,11 +30,8 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
             throw err;
         }
     }
@@ -51,11 +45,8 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return user;
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
             throw err;
         }
     }
@@ -75,11 +66,8 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return { message: "Logged out successfully" };
         } catch (err: any) {
-            if (err instanceof AppError) {
-                this.setStatus(err.statusCode);
-                throw { message: err.message, code: err.code };
-            }
-            this.setStatus(500);
+            const status = err.statusCode || err.status || 500;
+            this.setStatus(status);
             throw err;
         }
     }

@@ -56,7 +56,7 @@ export class AuthService {
     if (!userWithPassword) {
       throw new AppError(401, "Invalid credentials");
     }
-
+    
     // 2. Check the password
     const isPasswordOk = await bcrypt.compare(body.password, userWithPassword.passwordHash);
     
