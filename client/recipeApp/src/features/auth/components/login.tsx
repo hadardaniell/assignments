@@ -71,7 +71,8 @@ export const LoginComponent = () => {
             <Button
                 variant="contained"
                 fullWidth
-                sx={{ color: grey[900], height: 48 }}
+                color="primary"
+                sx={{height: 48 }}
                 onClick={handleLogin}
             >
                 התחברות
