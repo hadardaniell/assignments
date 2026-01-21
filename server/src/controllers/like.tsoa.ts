@@ -1,62 +1,118 @@
-// import { 
-//   Controller, 
-//   Route, 
-//   Post, 
-//   Delete, 
-//   Path, 
-//   Security, 
-//   Request, 
-//   Tags,
-//   SuccessResponse
-// } from 'tsoa';
-// import { LikeModel } from '../modules/likes/like.model';
-// import { AppError } from '../common';
+import {
+  Route,
+  Tags,
+  Controller,
+  Post,
+  Get,
+  Delete,
+  Path,
+  Query,
+  Body
+} from "tsoa";
+import { LikesService } from "../modules/likes/likes.service";
+import { AppError } from "../common";
 
-// @Route("likes")
-// @Tags("Likes")
-// @Security("jwt")
-// export class LikesController extends Controller {
+@Route("likes")
+@Tags("Likes")
+export class LikesController extends Controller {
+  private readonly service: LikesService = new LikesService();
 
-//   @Post("{recipeId}")
-//   @SuccessResponse("201", "Created")
-//   public async addLike(
-//     @Path() recipeId: string,
-//     @Request() request: any
-//   ): Promise<{ message: string }> {
-//     const userId = request.user.id;
+  @Post("like")
+  public async likeRecipe(
+    @Body() body: { userId: string; recipeId: string }
+  ): Promise<void> {
+    try {
+      const { userId, recipeId } = body;
 
-//     try {
-//       await LikeModel.create({
-//         userId,
-//         recipeId
-//       });
-//       return { message: "Like added successfully" };
-//     } catch (error: any) {
-//       // אם האינדקס הייחודי שהגדרת במודל מזהה כפילות
-//       if (error.code === 11000) {
-//         throw new AppError(400, "You already liked this recipe");
-//       }
-//       throw error;
-//     }
-//   }
+      if (!userId || !recipeId) {
+        throw new AppError(400, "userId and recipeId are required");
+      }
 
-//   @Delete("{recipeId}")
-//   @SuccessResponse("200", "Deleted")
-//   public async removeLike(
-//     @Path() recipeId: string,
-//     @Request() request: any
-//   ): Promise<{ message: string }> {
-//     const userId = request.user.id;
+      await this.service.likeRecipe(userId, recipeId);
+      this.setStatus(201);
+      return;
+    } catch (err: any) {
+      const status = err.statusCode || err.status || 500;
+      this.setStatus(status);
+      throw err;
+    }
+  }
 
-//     const result = await LikeModel.findOneAndDelete({
-//       userId,
-//       recipeId
-//     });
+  @Delete("unlike")
+  public async unlikeRecipe(
+    @Query() userId: string,
+    @Query() recipeId: string
+  ): Promise<void> {
+    try {
+      if (!userId || !recipeId) {
+        throw new AppError(400, "userId and recipeId are required");
+      }
 
-//     if (!result) {
-//       throw new AppError(404, "Like not found");
-//     }
+      const removed = await this.service.unlikeRecipe(userId, recipeId);
+      if (!removed) {
+        throw new AppError(404, "Like not found");
+      }
 
-//     return { message: "Like removed successfully" };
-//   }
-// }
+      this.setStatus(204);
+      return;
+    } catch (err: any) {
+      this.setStatus(err.statusCode || 500);
+      throw err;
+    }
+  }
+
+  @Get("isLiked")
+  public async isRecipeLiked(
+    @Query() userId: string,
+    @Query() recipeId: string
+  ): Promise<{ liked: boolean }> {
+    try {
+      if (!userId || !recipeId) {
+        throw new AppError(400, "userId and recipeId are required");
+      }
+
+      const liked = await this.service.isRecipeLikedByUser(userId, recipeId);
+      return { liked };
+    } catch (err: any) {
+      this.setStatus(err.statusCode || 500);
+      throw err;
+    }
+  }
+
+  @Get("count/{recipeId}")
+  public async getRecipeLikesCount(
+    @Path() recipeId: string
+  ): Promise<{ count: number }> {
+    try {
+      const count = await this.service.getLikesCount(recipeId);
+      return { count };
+    } catch (err: any) {
+      this.setStatus(err.statusCode || 500);
+      throw err;
+    }
+  }
+
+  @Get("byUser/{userId}")
+  public async getUserLikes(
+    @Path() userId: string
+  ): Promise<any[]> {
+    try {
+      return await this.service.getUserLikes(userId);
+    } catch (err: any) {
+      this.setStatus(err.statusCode || 500);
+      throw err;
+    }
+  }
+
+  @Get("byLikesRecipe/{recipeId}")
+  public async getRecipeLikes(
+    @Path() recipeId: string
+  ): Promise<any[]> {
+    try {
+      return await this.service.getRecipeLikes(recipeId);
+    } catch (err: any) {
+      this.setStatus(err.statusCode || 500);
+      throw err;
+    }
+  }
+}
