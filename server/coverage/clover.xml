@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1768977995725" clover="3.2.0">
-  <project timestamp="1768977995725" name="All files">
-    <metrics statements="723" coveredstatements="541" conditionals="267" coveredconditionals="153" methods="124" coveredmethods="98" elements="1114" coveredelements="792" complexity="0" loc="723" ncloc="723" packages="10" files="26" classes="26"/>
+<coverage generated="1768979919790" clover="3.2.0">
+  <project timestamp="1768979919791" name="All files">
+    <metrics statements="723" coveredstatements="587" conditionals="267" coveredconditionals="160" methods="124" coveredmethods="109" elements="1114" coveredelements="856" complexity="0" loc="723" ncloc="723" packages="10" files="26" classes="26"/>
     <package name="src">
       <metrics statements="22" coveredstatements="20" conditionals="2" coveredconditionals="1" methods="1" coveredmethods="0"/>
       <file name="app.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\app.ts">
@@ -43,10 +43,10 @@
       <file name="app-error.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\common\errors\app-error.ts">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
         <line num="1" count="4" type="stmt"/>
-        <line num="6" count="11" type="stmt"/>
-        <line num="7" count="11" type="stmt"/>
-        <line num="8" count="11" type="stmt"/>
-        <line num="9" count="11" type="stmt"/>
+        <line num="6" count="13" type="stmt"/>
+        <line num="7" count="13" type="stmt"/>
+        <line num="8" count="13" type="stmt"/>
+        <line num="9" count="13" type="stmt"/>
       </file>
     </package>
     <package name="src.common.middlewares">
@@ -56,14 +56,14 @@
         <line num="2" count="4" type="stmt"/>
         <line num="3" count="4" type="stmt"/>
         <line num="5" count="4" type="stmt"/>
-        <line num="12" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="12" count="20" type="cond" truecount="1" falsecount="1"/>
         <line num="13" count="0" type="stmt"/>
-        <line num="17" count="16" type="cond" truecount="1" falsecount="1"/>
+        <line num="17" count="20" type="cond" truecount="1" falsecount="1"/>
         <line num="18" count="0" type="stmt"/>
-        <line num="25" count="16" type="cond" truecount="2" falsecount="0"/>
+        <line num="25" count="20" type="cond" truecount="2" falsecount="0"/>
         <line num="26" count="8" type="stmt"/>
-        <line num="33" count="8" type="stmt"/>
-        <line num="34" count="8" type="cond" truecount="3" falsecount="0"/>
+        <line num="33" count="12" type="stmt"/>
+        <line num="34" count="12" type="cond" truecount="3" falsecount="0"/>
       </file>
       <file name="expressAuthentication.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\common\middlewares\expressAuthentication.ts">
         <metrics statements="20" coveredstatements="6" conditionals="12" coveredconditionals="1" methods="1" coveredmethods="1"/>
@@ -90,7 +90,7 @@
       </file>
     </package>
     <package name="src.controllers">
-      <metrics statements="210" coveredstatements="147" conditionals="76" coveredconditionals="35" methods="28" coveredmethods="23"/>
+      <metrics statements="210" coveredstatements="167" conditionals="76" coveredconditionals="38" methods="28" coveredmethods="27"/>
       <file name="auth.tsoa.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\controllers\auth.tsoa.ts">
         <metrics statements="52" coveredstatements="49" conditionals="19" coveredconditionals="10" methods="6" coveredmethods="6"/>
         <line num="1" count="4" type="stmt"/>
@@ -241,17 +241,17 @@
         <line num="112" count="1" type="stmt"/>
       </file>
       <file name="user.tsoa.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\controllers\user.tsoa.ts">
-        <metrics statements="70" coveredstatements="19" conditionals="18" coveredconditionals="1" methods="8" coveredmethods="3"/>
+        <metrics statements="70" coveredstatements="39" conditionals="18" coveredconditionals="4" methods="8" coveredmethods="7"/>
         <line num="1" count="4" type="stmt"/>
         <line num="3" count="4" type="stmt"/>
         <line num="4" count="4" type="stmt"/>
         <line num="8" count="4" type="stmt"/>
-        <line num="9" count="2" type="stmt"/>
+        <line num="9" count="12" type="stmt"/>
         <line num="12" count="4" type="stmt"/>
-        <line num="15" count="0" type="stmt"/>
-        <line num="16" count="0" type="stmt"/>
-        <line num="17" count="0" type="stmt"/>
-        <line num="18" count="0" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="17" count="1" type="stmt"/>
+        <line num="18" count="1" type="stmt"/>
         <line num="20" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="21" count="0" type="stmt"/>
         <line num="22" count="0" type="stmt"/>
@@ -266,24 +266,24 @@
         <line num="44" count="0" type="stmt"/>
         <line num="45" count="0" type="stmt"/>
         <line num="50" count="4" type="stmt"/>
-        <line num="53" count="1" type="stmt"/>
-        <line num="54" count="1" type="stmt"/>
-        <line num="56" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="57" count="0" type="stmt"/>
-        <line num="58" count="0" type="stmt"/>
+        <line num="53" count="4" type="stmt"/>
+        <line num="54" count="4" type="stmt"/>
+        <line num="56" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="57" count="2" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
         <line num="63" count="1" type="stmt"/>
         <line num="64" count="1" type="stmt"/>
         <line num="69" count="4" type="stmt"/>
-        <line num="73" count="0" type="stmt"/>
-        <line num="74" count="0" type="stmt"/>
-        <line num="76" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="73" count="2" type="stmt"/>
+        <line num="74" count="2" type="stmt"/>
+        <line num="76" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="77" count="0" type="stmt"/>
         <line num="78" count="0" type="stmt"/>
-        <line num="83" count="0" type="stmt"/>
-        <line num="84" count="0" type="stmt"/>
+        <line num="83" count="1" type="stmt"/>
+        <line num="84" count="1" type="stmt"/>
         <line num="89" count="4" type="stmt"/>
-        <line num="93" count="0" type="stmt"/>
-        <line num="94" count="0" type="stmt"/>
+        <line num="93" count="2" type="stmt"/>
+        <line num="94" count="2" type="stmt"/>
         <line num="96" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="97" count="0" type="stmt"/>
         <line num="98" count="0" type="stmt"/>
@@ -303,15 +303,15 @@
         <line num="132" count="0" type="stmt"/>
         <line num="133" count="0" type="stmt"/>
         <line num="138" count="4" type="stmt"/>
-        <line num="141" count="0" type="stmt"/>
-        <line num="142" count="0" type="stmt"/>
-        <line num="143" count="0" type="stmt"/>
-        <line num="144" count="0" type="stmt"/>
-        <line num="146" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="141" count="2" type="stmt"/>
+        <line num="142" count="2" type="stmt"/>
+        <line num="143" count="1" type="stmt"/>
+        <line num="144" count="1" type="stmt"/>
+        <line num="146" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="147" count="0" type="stmt"/>
         <line num="148" count="0" type="stmt"/>
-        <line num="153" count="0" type="stmt"/>
-        <line num="154" count="0" type="stmt"/>
+        <line num="153" count="1" type="stmt"/>
+        <line num="154" count="1" type="stmt"/>
       </file>
     </package>
     <package name="src.modules.auth">
@@ -539,69 +539,69 @@
       </file>
     </package>
     <package name="src.modules.users">
-      <metrics statements="48" coveredstatements="31" conditionals="14" coveredconditionals="3" methods="20" coveredmethods="14"/>
+      <metrics statements="48" coveredstatements="40" conditionals="14" coveredconditionals="7" methods="20" coveredmethods="18"/>
       <file name="user.model.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\modules\users\user.model.ts">
         <metrics statements="7" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="1"/>
         <line num="1" count="4" type="stmt"/>
         <line num="18" count="4" type="stmt"/>
-        <line num="55" count="1" type="stmt"/>
+        <line num="55" count="3" type="stmt"/>
         <line num="66" count="4" type="stmt"/>
         <line num="68" count="0" type="stmt"/>
         <line num="69" count="0" type="stmt"/>
         <line num="73" count="4" type="stmt"/>
       </file>
       <file name="user.service.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\modules\users\user.service.ts">
-        <metrics statements="31" coveredstatements="18" conditionals="14" coveredconditionals="3" methods="10" coveredmethods="7"/>
+        <metrics statements="31" coveredstatements="25" conditionals="14" coveredconditionals="7" methods="10" coveredmethods="9"/>
         <line num="2" count="4" type="stmt"/>
         <line num="3" count="4" type="stmt"/>
         <line num="4" count="4" type="stmt"/>
         <line num="6" count="4" type="stmt"/>
-        <line num="7" count="12" type="stmt"/>
-        <line num="10" count="3" type="cond" truecount="1" falsecount="1"/>
-        <line num="11" count="3" type="stmt"/>
-        <line num="12" count="3" type="stmt"/>
-        <line num="16" count="1" type="stmt"/>
-        <line num="17" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="7" count="22" type="stmt"/>
+        <line num="10" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="11" count="8" type="stmt"/>
+        <line num="12" count="8" type="stmt"/>
+        <line num="16" count="2" type="stmt"/>
+        <line num="17" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="18" count="0" type="stmt"/>
-        <line num="21" count="1" type="stmt"/>
-        <line num="22" count="1" type="stmt"/>
+        <line num="21" count="2" type="stmt"/>
+        <line num="22" count="2" type="stmt"/>
         <line num="26" count="1" type="stmt"/>
         <line num="27" count="1" type="stmt"/>
-        <line num="31" count="2" type="stmt"/>
-        <line num="32" count="1" type="cond" truecount="1" falsecount="1"/>
-        <line num="33" count="0" type="stmt"/>
-        <line num="35" count="1" type="stmt"/>
-        <line num="42" count="0" type="stmt"/>
-        <line num="46" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="31" count="5" type="stmt"/>
+        <line num="32" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="33" count="2" type="stmt"/>
+        <line num="35" count="2" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="46" count="3" type="cond" truecount="1" falsecount="1"/>
         <line num="47" count="0" type="stmt"/>
-        <line num="50" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="50" count="3" type="cond" truecount="1" falsecount="1"/>
         <line num="51" count="0" type="stmt"/>
-        <line num="54" count="0" type="stmt"/>
-        <line num="58" count="0" type="stmt"/>
-        <line num="59" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="54" count="3" type="stmt"/>
+        <line num="58" count="2" type="stmt"/>
+        <line num="59" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="60" count="0" type="stmt"/>
         <line num="65" count="0" type="stmt"/>
         <line num="66" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="70" count="3" type="stmt"/>
       </file>
       <file name="users.repo.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\modules\users\users.repo.ts">
-        <metrics statements="10" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="6"/>
+        <metrics statements="10" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="8" coveredmethods="8"/>
         <line num="1" count="4" type="stmt"/>
         <line num="4" count="4" type="stmt"/>
-        <line num="8" count="1" type="stmt"/>
-        <line num="12" count="1" type="stmt"/>
-        <line num="16" count="1" type="stmt"/>
-        <line num="20" count="2" type="stmt"/>
-        <line num="24" count="1" type="stmt"/>
-        <line num="28" count="3" type="stmt"/>
-        <line num="35" count="0" type="stmt"/>
-        <line num="43" count="0" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="17" count="2" type="stmt"/>
+        <line num="21" count="5" type="stmt"/>
+        <line num="25" count="1" type="stmt"/>
+        <line num="29" count="3" type="stmt"/>
+        <line num="36" count="4" type="stmt"/>
+        <line num="44" count="2" type="stmt"/>
       </file>
     </package>
     <package name="src.routes-tsoa">
-      <metrics statements="229" coveredstatements="169" conditionals="11" coveredconditionals="6" methods="29" coveredmethods="22"/>
+      <metrics statements="229" coveredstatements="186" conditionals="11" coveredconditionals="6" methods="29" coveredmethods="25"/>
       <file name="routes.ts" path="C:\Users\hadar\OneDrive\הדר - לימודים\פיתוח אפליקציות מתקדם\assignments\server\src\routes-tsoa\routes.ts">
-        <metrics statements="229" coveredstatements="169" conditionals="11" coveredconditionals="6" methods="29" coveredmethods="22"/>
+        <metrics statements="229" coveredstatements="186" conditionals="11" coveredconditionals="6" methods="29" coveredmethods="25"/>
         <line num="5" count="4" type="stmt"/>
         <line num="7" count="4" type="stmt"/>
         <line num="9" count="4" type="stmt"/>
@@ -616,11 +616,11 @@
         <line num="215" count="4" type="cond" truecount="2" falsecount="0"/>
         <line num="218" count="4" type="stmt"/>
         <line num="221" count="4" type="stmt"/>
-        <line num="229" count="1" type="stmt"/>
-        <line num="230" count="1" type="stmt"/>
-        <line num="231" count="1" type="stmt"/>
-        <line num="233" count="0" type="stmt"/>
-        <line num="235" count="0" type="stmt"/>
+        <line num="229" count="2" type="stmt"/>
+        <line num="230" count="2" type="stmt"/>
+        <line num="231" count="2" type="stmt"/>
+        <line num="233" count="1" type="stmt"/>
+        <line num="235" count="1" type="stmt"/>
         <line num="244" count="1" type="stmt"/>
         <line num="248" count="4" type="stmt"/>
         <line num="250" count="4" type="stmt"/>
@@ -632,27 +632,27 @@
         <line num="273" count="0" type="stmt"/>
         <line num="277" count="4" type="stmt"/>
         <line num="280" count="4" type="stmt"/>
-        <line num="288" count="1" type="stmt"/>
-        <line num="289" count="1" type="stmt"/>
-        <line num="290" count="1" type="stmt"/>
-        <line num="292" count="1" type="stmt"/>
-        <line num="294" count="1" type="stmt"/>
+        <line num="288" count="4" type="stmt"/>
+        <line num="289" count="4" type="stmt"/>
+        <line num="290" count="4" type="stmt"/>
+        <line num="292" count="4" type="stmt"/>
+        <line num="294" count="4" type="stmt"/>
         <line num="303" count="0" type="stmt"/>
         <line num="307" count="4" type="stmt"/>
         <line num="311" count="4" type="stmt"/>
-        <line num="319" count="0" type="stmt"/>
-        <line num="320" count="0" type="stmt"/>
-        <line num="321" count="0" type="stmt"/>
-        <line num="323" count="0" type="stmt"/>
-        <line num="325" count="0" type="stmt"/>
+        <line num="319" count="2" type="stmt"/>
+        <line num="320" count="2" type="stmt"/>
+        <line num="321" count="2" type="stmt"/>
+        <line num="323" count="2" type="stmt"/>
+        <line num="325" count="2" type="stmt"/>
         <line num="334" count="0" type="stmt"/>
         <line num="338" count="4" type="stmt"/>
         <line num="342" count="4" type="stmt"/>
-        <line num="350" count="0" type="stmt"/>
-        <line num="351" count="0" type="stmt"/>
-        <line num="352" count="0" type="stmt"/>
-        <line num="354" count="0" type="stmt"/>
-        <line num="356" count="0" type="stmt"/>
+        <line num="350" count="2" type="stmt"/>
+        <line num="351" count="2" type="stmt"/>
+        <line num="352" count="2" type="stmt"/>
+        <line num="354" count="2" type="stmt"/>
+        <line num="356" count="2" type="stmt"/>
         <line num="365" count="0" type="stmt"/>
         <line num="369" count="4" type="stmt"/>
         <line num="373" count="4" type="stmt"/>
@@ -664,11 +664,11 @@
         <line num="402" count="0" type="stmt"/>
         <line num="406" count="4" type="stmt"/>
         <line num="409" count="4" type="stmt"/>
-        <line num="417" count="0" type="stmt"/>
-        <line num="418" count="0" type="stmt"/>
-        <line num="419" count="0" type="stmt"/>
-        <line num="421" count="0" type="stmt"/>
-        <line num="423" count="0" type="stmt"/>
+        <line num="417" count="2" type="stmt"/>
+        <line num="418" count="2" type="stmt"/>
+        <line num="419" count="2" type="stmt"/>
+        <line num="421" count="2" type="stmt"/>
+        <line num="423" count="2" type="stmt"/>
         <line num="432" count="0" type="stmt"/>
         <line num="436" count="4" type="stmt"/>
         <line num="439" count="4" type="stmt"/>
