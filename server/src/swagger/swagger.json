@@ -1100,22 +1100,91 @@
 				}
 			}
 		},
-		"/likes/{recipeId}": {
+		"/likes/like": {
 			"post": {
-				"operationId": "AddLike",
+				"operationId": "LikeRecipe",
 				"responses": {
-					"201": {
-						"description": "Created",
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Likes"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"recipeId": {
+										"type": "string"
+									},
+									"userId": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"recipeId",
+									"userId"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/likes/unlike": {
+			"delete": {
+				"operationId": "UnlikeRecipe",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Likes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "recipeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/likes/isLiked": {
+			"get": {
+				"operationId": "IsRecipeLiked",
+				"responses": {
+					"200": {
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
 									"properties": {
-										"message": {
-											"type": "string"
+										"liked": {
+											"type": "boolean"
 										}
 									},
 									"required": [
-										"message"
+										"liked"
 									],
 									"type": "object"
 								}
@@ -1126,11 +1195,55 @@
 				"tags": [
 					"Likes"
 				],
-				"security": [
+				"security": [],
+				"parameters": [
 					{
-						"jwt": []
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "recipeId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
 					}
+				]
+			}
+		},
+		"/likes/count/{recipeId}": {
+			"get": {
+				"operationId": "GetRecipeLikesCount",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"count": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"count"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Likes"
 				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",
@@ -1141,24 +1254,19 @@
 						}
 					}
 				]
-			},
-			"delete": {
-				"operationId": "RemoveLike",
+			}
+		},
+		"/likes/byUser/{userId}": {
+			"get": {
+				"operationId": "GetUserLikes",
 				"responses": {
 					"200": {
-						"description": "Deleted",
+						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										}
-									},
-									"required": [
-										"message"
-									],
-									"type": "object"
+									"items": {},
+									"type": "array"
 								}
 							}
 						}
@@ -1167,11 +1275,39 @@
 				"tags": [
 					"Likes"
 				],
-				"security": [
+				"security": [],
+				"parameters": [
 					{
-						"jwt": []
+						"in": "path",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
 					}
+				]
+			}
+		},
+		"/likes/byLikesRecipe/{recipeId}": {
+			"get": {
+				"operationId": "GetRecipeLikes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Likes"
 				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "path",

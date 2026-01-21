@@ -8,6 +8,8 @@ import { UsersController } from './../controllers/user.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { RecipeController } from './../controllers/recipe.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { LikesController } from './../controllers/like.tsoa.js';
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { CommentsController } from './../controllers/comments.tsoa.js';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { AuthController } from './../controllers/auth.tsoa.js';
@@ -645,6 +647,188 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'uploadImage',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_likeRecipe: Record<string, TsoaRoute.ParameterSchema> = {
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"recipeId":{"dataType":"string","required":true},"userId":{"dataType":"string","required":true}}},
+        };
+        app.post('/api/likes/like',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.likeRecipe)),
+
+            async function LikesController_likeRecipe(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_likeRecipe, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'likeRecipe',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_unlikeRecipe: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
+                recipeId: {"in":"query","name":"recipeId","required":true,"dataType":"string"},
+        };
+        app.delete('/api/likes/unlike',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.unlikeRecipe)),
+
+            async function LikesController_unlikeRecipe(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_unlikeRecipe, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'unlikeRecipe',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_isRecipeLiked: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"query","name":"userId","required":true,"dataType":"string"},
+                recipeId: {"in":"query","name":"recipeId","required":true,"dataType":"string"},
+        };
+        app.get('/api/likes/isLiked',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.isRecipeLiked)),
+
+            async function LikesController_isRecipeLiked(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_isRecipeLiked, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'isRecipeLiked',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_getRecipeLikesCount: Record<string, TsoaRoute.ParameterSchema> = {
+                recipeId: {"in":"path","name":"recipeId","required":true,"dataType":"string"},
+        };
+        app.get('/api/likes/count/:recipeId',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.getRecipeLikesCount)),
+
+            async function LikesController_getRecipeLikesCount(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_getRecipeLikesCount, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'getRecipeLikesCount',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_getUserLikes: Record<string, TsoaRoute.ParameterSchema> = {
+                userId: {"in":"path","name":"userId","required":true,"dataType":"string"},
+        };
+        app.get('/api/likes/byUser/:userId',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.getUserLikes)),
+
+            async function LikesController_getUserLikes(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_getUserLikes, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'getUserLikes',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsLikesController_getRecipeLikes: Record<string, TsoaRoute.ParameterSchema> = {
+                recipeId: {"in":"path","name":"recipeId","required":true,"dataType":"string"},
+        };
+        app.get('/api/likes/byLikesRecipe/:recipeId',
+            ...(fetchMiddlewares<RequestHandler>(LikesController)),
+            ...(fetchMiddlewares<RequestHandler>(LikesController.prototype.getRecipeLikes)),
+
+            async function LikesController_getRecipeLikes(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsLikesController_getRecipeLikes, request, response });
+
+                const controller = new LikesController();
+
+              await templateService.apiHandler({
+                methodName: 'getRecipeLikes',
                 controller,
                 response,
                 next,
