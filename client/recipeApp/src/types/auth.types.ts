@@ -13,6 +13,7 @@ export type LoginDTO = {
 
 export type AuthResponse = {
   token: string;
+  refreshToken: string;
   user: User;
 };
 

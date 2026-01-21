@@ -5,6 +5,9 @@ export type RequestData = Record<string, any> | undefined;
 
 let api: ReturnType<typeof createApi> | null = null;
 
+let isRefreshing = false;
+let pendingRequests: ((token: string) => void)[] = [];
+
 await loadConfig();
 
 function createApi(client: AxiosInstance) {
@@ -42,6 +45,56 @@ export async function initHttpClient() {
     }
     return config;
   });
+
+  client.interceptors.response.use(
+    (res) => res,
+    async (error) => {
+      const originalRequest = error.config;
+
+      if (error.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+
+        if (isRefreshing) {
+          return new Promise((resolve) => {
+            pendingRequests.push((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              resolve(client(originalRequest));
+            });
+          });
+        }
+
+        isRefreshing = true;
+
+        try {
+          const refreshToken = localStorage.getItem("refreshToken");
+          if (!refreshToken) throw new Error("No refresh token");
+
+          const res = await client.post("/auth/refresh", { refreshToken });
+
+          const { accessToken, refreshToken: newRefreshToken } = res.data;
+
+          localStorage.setItem("token", accessToken);
+          localStorage.setItem("refreshToken", newRefreshToken);
+
+          pendingRequests.forEach((cb) => cb(accessToken));
+          pendingRequests = [];
+
+          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          return client(originalRequest);
+        } catch (e) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("refreshToken");
+          window.location.href = "/login";
+          return Promise.reject(e);
+        } finally {
+          isRefreshing = false;
+        }
+      }
+
+      return Promise.reject(error);
+    }
+  );
+
 
   api = createApi(client);
   return api;

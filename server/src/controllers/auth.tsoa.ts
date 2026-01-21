@@ -36,11 +36,11 @@ export class AuthController extends Controller {
         }
     }
 
-    @Security("bearerAuth")
+    @Security("jwt")
     @Get("me")
     public async me(@Request() req: any): Promise<SafeUser> {
         try {
-            const userId = req.user?.userId;
+            const userId = req.user?.sub;
             const user = await this.service.me(userId);
             this.setStatus(200);
             return user;
@@ -51,7 +51,7 @@ export class AuthController extends Controller {
         }
     }
 
-    @Security("bearerAuth")
+    @Security("jwt")
     @Post("logout")
     public async logout(@Request() req: any): Promise<{ message: string }> {
         try {

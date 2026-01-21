@@ -33,7 +33,6 @@ export class RecipeRepo {
     if (filter.search) {
       query.title = { $regex: filter.search, $options: 'i' };
     }
-    console.log("FILTER:", filter);
     
     const skip = filter.skip ?? 0;
     const limit = filter.limit ?? 10;

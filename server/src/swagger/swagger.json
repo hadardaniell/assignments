@@ -1566,7 +1566,7 @@
 				],
 				"security": [
 					{
-						"bearerAuth": []
+						"jwt": []
 					}
 				],
 				"parameters": []
@@ -1600,7 +1600,7 @@
 				],
 				"security": [
 					{
-						"bearerAuth": []
+						"jwt": []
 					}
 				],
 				"parameters": []
