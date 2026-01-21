@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/modules/recipes/recipe.mapper.ts</title>
+    <title>Code coverage report for src/modules/likes/like.model.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/modules/recipes</a> recipe.mapper.ts</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">src/modules/likes</a> like.model.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">67.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>27/40</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/1</span>
+                <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>3/3</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
@@ -92,16 +92,22 @@
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
 <a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -121,36 +127,48 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { RecipeDTO } from './recipe.types';
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Schema, model, Types, Document } from "mongoose";
 &nbsp;
-export function toRecipeDTO(recipe: any): RecipeDTO {
-  const creatorName = 
-    recipe.creatorName || 
-    (recipe.createdBy?.firstName ? <span class="branch-0 cbranch-no" title="branch not covered" >`${recipe.createdBy.firstName} ${recipe.createdBy.lastName || ''}`.trim() </span>: null) ||
-    recipe.createdBy?.name || 
-    null;
+export interface Like extends Document {
+  userId: Types.ObjectId;
+  recipeId: Types.ObjectId;
+  likedAt: Date;
+}
 &nbsp;
-  return {
-    Id: recipe._id?.toString?.() ?? <span class="branch-1 cbranch-no" title="branch not covered" >recipe.Id </span>?? <span class="branch-2 cbranch-no" title="branch not covered" >String(recipe._id),</span>
-    recipeBookId: recipe.recipeBookId?.toString?.() ?? <span class="branch-1 cbranch-no" title="branch not covered" >recipe.recipeBookId,</span>
-    createdBy: recipe.createdBy?._id?.toString?.() ?? recipe.createdBy?.toString?.() ?? recipe.createdBy,
-    creatorName: creatorName,
-    title: recipe.title,
-    description: recipe.description ?? null,
-    categories: recipe.categories ?? <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-    prepTimeMinutes: recipe.prepTimeMinutes ?? null,
-    cookTimeMinutes: recipe.cookTimeMinutes ?? null,
-    totalTimeMinutes: recipe.totalTimeMinutes ?? null,
-    difficulty: recipe.difficulty,
-    ingredients: recipe.ingredients ?? <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-    steps: recipe.steps ?? <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
-    notes: recipe.notes ?? null,
-    coverImageUrl: recipe.coverImageUrl ?? null,
-    sourceType: recipe.sourceType,
-    createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : <span class="branch-1 cbranch-no" title="branch not covered" >String(recipe.createdAt),</span>
-    updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : (<span class="branch-1 cbranch-no" title="branch not covered" >recipe.updatedAt ?? null)</span>,
-  };
-}</pre></td></tr></table></pre>
+const LikeSchema = new Schema&lt;Like&gt;(
+  {
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    recipeId: {
+      type: Schema.Types.ObjectId,
+      ref: "Recipe",
+      required: true,
+    },
+    likedAt: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+  },
+  {
+    timestamps: false, 
+    versionKey: false,
+  }
+);
+&nbsp;
+LikeSchema.index({ userId: 1, recipeId: 1 }, { unique: true });
+&nbsp;
+export const LikeModel = model&lt;Like&gt;("Like", LikeSchema);
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->

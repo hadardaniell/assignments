@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">68.85% </span>
+                <span class="strong">75.4% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>42/61</span>
+                <span class='fraction'>46/61</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.17% </span>
+                <span class="strong">62.06% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>16/29</span>
+                <span class='fraction'>18/29</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.5% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/8</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">73.58% </span>
+                <span class="strong">81.13% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>39/53</span>
+                <span class='fraction'>43/53</span>
             </div>
         
             
@@ -178,9 +178,9 @@
 <span class="cline-any cline-yes">4x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
-<span class="cline-any cline-yes">10x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -258,8 +258,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -268,8 +268,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -361,9 +361,9 @@ export class AuthService {
 <span class="cstat-no" title="statement not covered" >    return { token: newAccessToken, refreshToken: newRefreshToken, user: safeUser };</span>
   }
 &nbsp;
-  public <span class="fstat-no" title="function not covered" >async </span>logout(refreshToken: string) {
-<span class="cstat-no" title="statement not covered" >    if (!refreshToken) <span class="cstat-no" title="statement not covered" >return;</span></span>
-<span class="cstat-no" title="statement not covered" >    await this.refreshTokenRepo.revoke(refreshToken);</span>
+  public async logout(refreshToken: string) {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!refreshToken) <span class="cstat-no" title="statement not covered" >return;</span>
+    await this.refreshTokenRepo.revoke(refreshToken);
   }
 &nbsp;
   public <span class="fstat-no" title="function not covered" >async </span>me(userId: string) {
@@ -371,9 +371,9 @@ export class AuthService {
 <span class="cstat-no" title="statement not covered" >    return this.users.getUserByIdService(userId);</span>
   }
 &nbsp;
-  public <span class="fstat-no" title="function not covered" >async </span>isTokenBlacklisted(token: string): Promise&lt;boolean&gt; {
-<span class="cstat-no" title="statement not covered" >    if (!token) <span class="cstat-no" title="statement not covered" >return false;</span></span>
-<span class="cstat-no" title="statement not covered" >    return this.blacklistRepo.isBlacklistedDAL(token);</span>
+  public async isTokenBlacklisted(token: string): Promise&lt;boolean&gt; {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (!token) <span class="cstat-no" title="statement not covered" >return false;</span>
+    return this.blacklistRepo.isBlacklistedDAL(token);
   }
 }</pre></td></tr></table></pre>
 
@@ -382,7 +382,7 @@ export class AuthService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-21T07:18:39.625Z
+                at 2026-01-21T22:50:31.295Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

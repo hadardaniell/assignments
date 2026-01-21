@@ -28,6 +28,7 @@ export const LoginComponent = () => {
         try {
             const res: AuthResponse = await authApi.login(form);
             localStorage.setItem("token", res.token);
+            localStorage.setItem("refreshToken", res?.refreshToken);
             console.log('user:', res);
             setUser(res.user); 
             navigate('/profile');

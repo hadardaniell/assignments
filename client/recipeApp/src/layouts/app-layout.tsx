@@ -23,6 +23,7 @@ export function AppLayout() {
 
     const onLogout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         navigate("/auth/login");
     };
 

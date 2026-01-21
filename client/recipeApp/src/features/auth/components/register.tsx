@@ -28,6 +28,7 @@ export const RegisterComponent = () => {
         try {
             const res: AuthResponse = await authApi.register(form);
             localStorage.setItem("token", res.token);
+            localStorage.setItem("refreshToken", res.refreshToken);
             console.log("user:", res);
             navigate("/");
         } catch (error: any) {
