@@ -2,11 +2,12 @@ import { UserModel, User } from './user.model';
 import { UserDTO, UpdateUserDTO } from './users.types';
 
 export class UserRepo {
-  constructor() {}
+  constructor() { }
 
   async createUserDAL(data: UserDTO): Promise<User> {
     const user = await UserModel.create({
       ...data,
+      role: "user",
       createdAt: new Date(),
     });
     return user;

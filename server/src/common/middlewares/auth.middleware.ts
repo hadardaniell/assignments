@@ -22,7 +22,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
     }
 
     const payload = jwt.verify(token, secret) as any;
-    (req as any).userId = payload?.sub;
+    (req as any).user = { userId: payload?.sub };
     next();
   } catch {
     return res.status(401).json({ message: "Invalid token", code: "INVALID_TOKEN" });

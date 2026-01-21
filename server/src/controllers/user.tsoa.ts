@@ -117,9 +117,9 @@ export class UsersController extends Controller {
 
       const fileName = file.filename || file.originalname;
       const imageUrl = `/uploads/${fileName}`;
-      
+
       await this.service.updateUserService(id, { avatarUrl: imageUrl });
-      
+
       return { url: imageUrl };
     } catch (err: any) {
       if (err instanceof AppError) {

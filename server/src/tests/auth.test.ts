@@ -3,10 +3,13 @@ import request from 'supertest';
 import app from '../app';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import { AppError } from '../common';
+import { AuthController } from '../controllers/auth.tsoa';
 
 let mongo: MongoMemoryServer;
 
 describe('Auth Integration Tests', () => {
+    let controller: AuthController;
     const testUser = {
         name: "Test User",
         email: `test-${Date.now()}@example.com`,
@@ -17,6 +20,9 @@ describe('Auth Integration Tests', () => {
 
     beforeAll(async () => {
         // Fix for 'Missing JWT secret' error
+        controller = new AuthController();
+        // נרגל setStatus כדי לוודא שהוא נקרא כמו שצריך
+        (controller as any).setStatus = jest.fn();
         process.env.JWT_SECRET = 'test-secret-key-123';
 
         mongo = await MongoMemoryServer.create();
@@ -118,7 +124,7 @@ describe('Auth Integration Tests', () => {
 
             expect(res.status).toBe(401);
         });
-        
+
         it('should fail refresh without refreshToken', async () => {
             const res = await request(app)
                 .post('/api/auth/refresh')
@@ -136,5 +142,105 @@ describe('Auth Integration Tests', () => {
 
             expect(res.status).toBeGreaterThanOrEqual(401);
         });
+    });
+
+    it("register: sets 201 on success", async () => {
+        (controller as any).service = {
+            register: jest.fn().mockResolvedValue({
+                token: "t",
+                refreshToken: "r",
+                user: { email: "a@a.com" },
+            }),
+        };
+
+        const res = await controller.register({
+            name: "A",
+            email: "a@a.com",
+            password: "Password123!",
+            language: "en",
+            avatarUrl: "x",
+        } as any);
+
+        expect((controller as any).setStatus).toHaveBeenCalledWith(201);
+        expect(res.token).toBe("t");
+    });
+
+    it("register: when service throws AppError with statusCode -> setStatus(statusCode)", async () => {
+        (controller as any).service = {
+            register: jest.fn().mockRejectedValue(new AppError(409, "Email exists", "DUP")),
+        };
+
+        await expect(controller.register({} as any)).rejects.toBeInstanceOf(AppError);
+        expect((controller as any).setStatus).toHaveBeenCalledWith(409);
+    });
+
+    it("login: when service throws plain error with .status -> setStatus(status)", async () => {
+        const err = { status: 401, message: "nope" };
+        (controller as any).service = {
+            login: jest.fn().mockRejectedValue(err),
+        };
+
+        await expect(controller.login({} as any)).rejects.toEqual(err);
+        expect((controller as any).setStatus).toHaveBeenCalledWith(401);
+    });
+
+    it("me: uses req.user.userId and sets 200 on success", async () => {
+        (controller as any).service = {
+            me: jest.fn().mockResolvedValue({ _id: "1", email: "x@y.com" }),
+        };
+
+        const req = { user: { userId: "1" } };
+        const res = await controller.me(req as any);
+
+        expect((controller as any).setStatus).toHaveBeenCalledWith(200);
+        expect((controller as any).service.me).toHaveBeenCalledWith("1");
+        expect(res.email).toBe("x@y.com");
+    });
+
+    it("logout: missing/invalid Authorization header -> 401", async () => {
+        (controller as any).service = { logout: jest.fn() };
+
+        const req = { headers: {} };
+        await expect(controller.logout(req as any)).rejects.toBeInstanceOf(AppError);
+        expect((controller as any).setStatus).toHaveBeenCalledWith(401);
+        expect((controller as any).service.logout).not.toHaveBeenCalled();
+    });
+
+    it("logout: valid Bearer token -> calls service.logout(token) and sets 200", async () => {
+        (controller as any).service = { logout: jest.fn().mockResolvedValue(undefined) };
+
+        const req = { headers: { authorization: "Bearer abc123" } };
+        const res = await controller.logout(req as any);
+
+        expect((controller as any).service.logout).toHaveBeenCalledWith("abc123");
+        expect((controller as any).setStatus).toHaveBeenCalledWith(200);
+        expect(res).toEqual({ message: "Logged out successfully" });
+    });
+
+    it("refresh: missing refreshToken -> 400", async () => {
+        (controller as any).service = { refresh: jest.fn() };
+
+        await expect(controller.refresh({} as any)).rejects.toBeInstanceOf(AppError);
+        expect((controller as any).setStatus).toHaveBeenCalledWith(400);
+        expect((controller as any).service.refresh).not.toHaveBeenCalled();
+    });
+
+    it("refresh: valid refreshToken -> sets 200 and returns AuthResponse", async () => {
+        (controller as any).service = {
+            refresh: jest.fn().mockResolvedValue({ token: "newT", refreshToken: "newR", user: { email: "e" } }),
+        };
+
+        const res = await controller.refresh({ refreshToken: "r1" });
+
+        expect((controller as any).service.refresh).toHaveBeenCalledWith("r1");
+        expect((controller as any).setStatus).toHaveBeenCalledWith(200);
+        expect(res.token).toBe("newT");
+    });
+
+    it("any method: when error has no status/statusCode -> setStatus(500)", async () => {
+        (controller as any).service = { login: jest.fn().mockRejectedValue(new Error("boom")) };
+
+        await expect(controller.login({} as any)).rejects.toBeInstanceOf(Error);
+        expect((controller as any).setStatus).toHaveBeenCalledWith(500);
     });
 });
