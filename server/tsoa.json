@@ -20,6 +20,7 @@
     "routesDir": "src/routes-tsoa",
     "basePath": "/api",
     "esm": true,
-    "authenticationModule": "./src/common/middlewares/expressAuthentication.ts"
+    "authenticationModule": "./src/common/middlewares/expressAuthentication.ts",
+    "multer": {"dest": "./uploads"}
   }
 }

@@ -359,12 +359,12 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsUsersController_uploadAvatar: Record<string, TsoaRoute.ParameterSchema> = {
                 id: {"in":"path","name":"id","required":true,"dataType":"string"},
-                file: {"in":"formData","name":"file","required":true,"dataType":"file"},
+                file: {"in":"formData","name":"profile_image","required":true,"dataType":"file"},
         };
         app.post('/api/users/:id/uploadAvatar',
             upload.fields([
                 {
-                    name: "file",
+                    name: "profile_image",
                     maxCount: 1
                 }
             ]),

@@ -3,6 +3,8 @@ import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 import { AIService } from '../modules/recipes/ai.service';
+import fs from 'fs';
+import path from 'path';
 
 @Route('recipes')
 @Tags('Recipes')
@@ -50,8 +52,7 @@ export class RecipeController extends Controller {
             }
             return recipe;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -119,12 +120,26 @@ export class RecipeController extends Controller {
         @Path() id: string,
         @UploadedFile('recipe_image') file: Express.Multer.File
     ): Promise<{ url: string }> {
-        if (!file) throw new AppError(400, 'File is required');
+        try {
+            if (!file) throw new AppError(400, 'File is required');
 
-        const fileName = file.filename || file.originalname;
-        const imageUrl = `/uploads/recipe_images/${fileName}`;
+            const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
+            if (!fs.existsSync(targetDir)) {
+                fs.mkdirSync(targetDir, { recursive: true });
+            }
 
-        await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
-        return { url: imageUrl };
+            const fileName = `${Date.now()}-${file.originalname}`;
+            const targetPath = path.join(targetDir, fileName);
+
+            fs.renameSync(file.path, targetPath);
+
+            const imageUrl = `/uploads/recipe_images/${fileName}`;
+            await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
+
+            return { url: imageUrl };
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
     }
 }

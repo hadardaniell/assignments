@@ -733,13 +733,13 @@
 							"schema": {
 								"type": "object",
 								"properties": {
-									"file": {
+									"profile_image": {
 										"type": "string",
 										"format": "binary"
 									}
 								},
 								"required": [
-									"file"
+									"profile_image"
 								]
 							}
 						}

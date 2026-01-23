@@ -2,6 +2,8 @@ import { Body, Controller, Get, Post, Put, Delete, Route, Tags, Path, Patch, Upl
 import { UserDTO, UpdateUserDTO, SafeUser } from '../modules/users/users.types';
 import { AppError } from '../common/errors/app-error';
 import { UserService } from '../modules/users/user.service';
+import fs from 'fs';
+import path from 'path';
 
 @Route('users')
 @Tags('Users')
@@ -19,10 +21,7 @@ export class UsersController extends Controller {
     } catch (err: any) {
       if (err instanceof AppError) {
         this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
+        throw { message: err.message, code: err.code };
       }
       this.setStatus(500);
       throw err;
@@ -34,13 +33,6 @@ export class UsersController extends Controller {
     try {
       return await this.service.getAllUsersService();
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
-      }
       this.setStatus(500);
       throw err;
     }
@@ -53,13 +45,6 @@ export class UsersController extends Controller {
     try {
       return await this.service.getUserByIdService(id);
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
-      }
       this.setStatus(500);
       throw err;
     }
@@ -73,13 +58,6 @@ export class UsersController extends Controller {
     try {
       return await this.service.updateUserService(id, body);
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
-      }
       this.setStatus(500);
       throw err;
     }
@@ -93,13 +71,6 @@ export class UsersController extends Controller {
     try {
       return await this.service.updateUserService(id, body);
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
-      }
       this.setStatus(500);
       throw err;
     }
@@ -108,26 +79,31 @@ export class UsersController extends Controller {
   @Post('{id}/uploadAvatar')
   public async uploadAvatar(
     @Path() id: string,
-    @UploadedFile() file: Express.Multer.File
+    @UploadedFile('profile_image') file: Express.Multer.File
   ): Promise<{ url: string }> {
     try {
       if (!file) {
         throw new AppError(400, 'File is required');
       }
 
-      const fileName = file.filename || file.originalname;
-      const imageUrl = `/uploads/${fileName}`;
+      const targetDir = path.join(process.cwd(), 'uploads', 'profile_images');
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
 
+      const uniqueFileName = `${Date.now()}-${file.originalname}`;
+      const targetPath = path.join(targetDir, uniqueFileName);
+
+      fs.renameSync(file.path, targetPath);
+
+      const imageUrl = `/uploads/profile_images/${uniqueFileName}`;
       await this.service.updateUserService(id, { avatarUrl: imageUrl });
 
       return { url: imageUrl };
     } catch (err: any) {
       if (err instanceof AppError) {
         this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
+        throw { message: err.message, code: err.code };
       }
       this.setStatus(500);
       throw err;
@@ -143,13 +119,6 @@ export class UsersController extends Controller {
       this.setStatus(204);
       return;
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw {
-          message: err.message,
-          code: err.code,
-        };
-      }
       this.setStatus(500);
       throw err;
     }
