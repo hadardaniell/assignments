@@ -15,11 +15,15 @@ export class CommentsDAL {
     return CommentModel.find({ recipeId: new Types.ObjectId(recipeId) }).exec();
   }
 
-    async updateById(id: string, data: UpdateQuery<Comment>): Promise<Comment | null> {
-      return CommentModel.findByIdAndUpdate(id, data, { new: true }).exec();
-    }
+  async updateById(id: string, data: UpdateQuery<Comment>): Promise<Comment | null> {
+    return CommentModel.findByIdAndUpdate(id, data, { new: true }).exec();
+  }
 
   async deleteById(id: string): Promise<Comment | null> {
     return CommentModel.findByIdAndDelete(id).exec();
+  }
+
+  async countByRecipeId(recipeId: Types.ObjectId): Promise<number> {
+    return CommentModel.countDocuments({ recipeId }).exec();
   }
 }

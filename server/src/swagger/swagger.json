@@ -177,31 +177,6 @@
 					"published"
 				]
 			},
-			"RecipeComment": {
-				"properties": {
-					"userId": {
-						"type": "string"
-					},
-					"userName": {
-						"type": "string"
-					},
-					"text": {
-						"type": "string"
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"userId",
-					"userName",
-					"text",
-					"createdAt"
-				],
-				"type": "object",
-				"additionalProperties": false
-			},
 			"RecipeDTO": {
 				"properties": {
 					"Id": {
@@ -281,17 +256,13 @@
 					"createdBy": {
 						"type": "string"
 					},
-					"likes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
+					"likesCount": {
+						"type": "number",
+						"format": "double"
 					},
-					"comments": {
-						"items": {
-							"$ref": "#/components/schemas/RecipeComment"
-						},
-						"type": "array"
+					"commentsCount": {
+						"type": "number",
+						"format": "double"
 					},
 					"createdAt": {
 						"type": "string"
@@ -380,17 +351,13 @@
 					"createdBy": {
 						"type": "string"
 					},
-					"likes": {
-						"items": {
-							"type": "string"
-						},
-						"type": "array"
+					"likesCount": {
+						"type": "number",
+						"format": "double"
 					},
-					"comments": {
-						"items": {
-							"$ref": "#/components/schemas/RecipeComment"
-						},
-						"type": "array"
+					"commentsCount": {
+						"type": "number",
+						"format": "double"
 					},
 					"createdAt": {
 						"type": "string"
@@ -804,6 +771,38 @@
 				]
 			}
 		},
+		"/recipes/generateAIRecipes": {
+			"post": {
+				"operationId": "GenerateAIRecipes",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Recipes"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "query",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
 		"/recipes/createRecipe": {
 			"post": {
 				"operationId": "CreateRecipe",
@@ -1086,13 +1085,13 @@
 							"schema": {
 								"type": "object",
 								"properties": {
-									"file": {
+									"recipe_image": {
 										"type": "string",
 										"format": "binary"
 									}
 								},
 								"required": [
-									"file"
+									"recipe_image"
 								]
 							}
 						}

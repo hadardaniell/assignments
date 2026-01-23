@@ -63,7 +63,8 @@ const StatsSchema = new Schema<Stats>({
   ratingsCount: { type: Number, default: 0 },
   cookedCount: { type: Number, default: 0 },
   viewsCount: { type: Number, default: 0 },
-  likesCount: { type: Number, default: 0 } // הגדרת ברירת מחדל למונה
+  likesCount: { type: Number, default: 0 },
+  commentsCount: { type: Number, default: 0 }
 }, { _id: false });
 
 const RecipeSchema = new Schema<Recipe>({

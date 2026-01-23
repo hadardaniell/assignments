@@ -16,22 +16,24 @@ export class RecipeRepo {
   }
 
   async findMany(filter: RecipeFilterDTO): Promise<Recipe[]> {
-    const query: QueryFilter<Recipe> = {};
+    const query: any = {};
 
     if (filter.recipeBookId) query.recipeBookId = filter.recipeBookId;
     if (filter.createdBy) query.createdBy = filter.createdBy;
     if (filter.status) query.status = filter.status;
 
-    // Check for categories array
     if (filter.categories && filter.categories.length > 0) {
       query.categories = { $in: filter.categories };
     }
 
     if (filter.difficulty) query.difficulty = filter.difficulty;
 
-    // Partial text search on title
     if (filter.search) {
-      query.title = { $regex: filter.search, $options: 'i' };
+      query.$or = [
+        { title: { $regex: filter.search, $options: 'i' } },
+        { description: { $regex: filter.search, $options: 'i' } },
+        { 'ingredients.name': { $regex: filter.search, $options: 'i' } }
+      ];
     }
     
     const skip = filter.skip ?? 0;

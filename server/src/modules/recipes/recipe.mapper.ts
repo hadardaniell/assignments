@@ -24,6 +24,8 @@ export function toRecipeDTO(recipe: any): RecipeDTO {
     notes: recipe.notes ?? null,
     coverImageUrl: recipe.coverImageUrl ?? null,
     sourceType: recipe.sourceType,
+    likesCount: recipe.likesCount ?? 0,
+    commentsCount: recipe.commentsCount ?? 0,
     createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : String(recipe.createdAt),
     updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : (recipe.updatedAt ?? null),
   };
