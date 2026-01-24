@@ -3,8 +3,6 @@ import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 import { AIService } from '../modules/recipes/ai.service';
-import fs from 'fs';
-import path from 'path';
 
 @Route('recipes')
 @Tags('Recipes')
@@ -122,20 +120,7 @@ export class RecipeController extends Controller {
     ): Promise<{ url: string }> {
         try {
             if (!file) throw new AppError(400, 'File is required');
-
-            const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
-            if (!fs.existsSync(targetDir)) {
-                fs.mkdirSync(targetDir, { recursive: true });
-            }
-
-            const fileName = `${Date.now()}-${file.originalname}`;
-            const targetPath = path.join(targetDir, fileName);
-
-            fs.renameSync(file.path, targetPath);
-
-            const imageUrl = `/uploads/recipe_images/${fileName}`;
-            await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
-
+            const imageUrl = await this.service.uploadRecipeImage(id, file);
             return { url: imageUrl };
         } catch (err: any) {
             this.setStatus(err.statusCode || 500);

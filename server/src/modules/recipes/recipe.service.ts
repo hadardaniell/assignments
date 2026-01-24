@@ -9,6 +9,9 @@ import { toRecipeDTO } from './recipe.mapper';
 import { RecipeRepo } from './resipes.repo';
 import { LikesRepo } from '../likes/likes.repo';
 import { CommentsDAL } from '../comments/comments.dal';
+import fs from 'fs';
+import path from 'path';
+import { AppError } from '../../common';
 
 export class RecipeService {
     private readonly recipeRepo: RecipeRepo = new RecipeRepo();
@@ -111,5 +114,32 @@ export class RecipeService {
         dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
         dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
         return dto;
+    }
+
+    async uploadRecipeImage(recipeId: string, file: Express.Multer.File): Promise<string> {
+        const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
+        
+        if (!fs.existsSync(targetDir)) {
+            fs.mkdirSync(targetDir, { recursive: true });
+        }
+
+        const fileName = `${Date.now()}-${file.originalname}`;
+        const targetPath = path.join(targetDir, fileName);
+
+        if (fs.existsSync(file.path)) {
+            fs.copyFileSync(file.path, targetPath);
+            fs.unlinkSync(file.path);
+        } else {
+            throw new AppError(500, 'Temporary file error');
+        }
+
+        const imageUrl = `/uploads/recipe_images/${fileName}`;
+        const updatedRecipe = await this.updateRecipe(recipeId, '', { coverImageUrl: imageUrl });
+        
+        if (!updatedRecipe) {
+            throw new AppError(404, 'Recipe not found');
+        }
+
+        return imageUrl;
     }
 }
