@@ -37,6 +37,7 @@ export interface RecipeDTO {
   createdAt?: string;
   updatedAt?: string | null;
   commentsCount?: number;
+  isUserLiked?: boolean;
 }
 
 export type DraftState = {

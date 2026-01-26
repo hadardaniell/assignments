@@ -28,5 +28,6 @@ export function toRecipeDTO(recipe: any): RecipeDTO {
     commentsCount: recipe.commentsCount ?? 0,
     createdAt: recipe.createdAt instanceof Date ? recipe.createdAt.toISOString() : String(recipe.createdAt),
     updatedAt: recipe.updatedAt instanceof Date ? recipe.updatedAt.toISOString() : (recipe.updatedAt ?? null),
+    isUserLiked: recipe.isUserLiked
   };
 }

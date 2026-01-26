@@ -270,12 +270,16 @@
 					"updatedAt": {
 						"type": "string",
 						"nullable": true
+					},
+					"isUserLiked": {
+						"type": "boolean"
 					}
 				},
 				"required": [
 					"title",
 					"ingredients",
-					"steps"
+					"steps",
+					"isUserLiked"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -364,6 +368,9 @@
 					},
 					"updatedAt": {
 						"type": "string"
+					},
+					"isUserLiked": {
+						"type": "boolean"
 					}
 				},
 				"type": "object",
@@ -853,7 +860,11 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

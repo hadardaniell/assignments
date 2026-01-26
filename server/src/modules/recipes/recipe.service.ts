@@ -42,43 +42,85 @@ export class RecipeService {
             sourceId: input.sourceId ? new Types.ObjectId(input.sourceId) : null,
             status: input.status ?? 'draft'
         } as Partial<Recipe>);
-        
+
         const dto = toRecipeDTO(recipe);
         dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
         dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
         return dto;
     }
 
-    async getRecipeById(id: string): Promise<RecipeDTO | null> {
+    async getRecipeById(id: string, userId?: string | null): Promise<RecipeDTO | null> {
         const recipe = await this.recipeRepo.findById(id);
         if (!recipe) return null;
 
         const dto = toRecipeDTO(recipe);
         const recipeId = new Types.ObjectId(id);
+
         dto.likesCount = await this.likesRepo.countByRecipe(recipeId);
         dto.commentsCount = await this.commentsDal.countByRecipeId(recipeId);
+
+        if (userId) {
+            const viewerObjectId = userId ? new Types.ObjectId(userId) : null;
+            console.log(viewerObjectId)
+            console.log(userId)
+            dto.isUserLiked = viewerObjectId
+                ? await this.likesRepo.exists(viewerObjectId, recipe._id)
+                : false;
+
+                console.log(dto.isUserLiked)
+
+
+        } else {
+            dto.isUserLiked = false;
+        }
+
         return dto;
     }
 
+
     async getRecipesByUserId(userId: string) {
         const recipes = await this.recipeRepo.findMany({ createdBy: userId });
-        return Promise.all(recipes.map(async (recipe) => {
-            const dto = toRecipeDTO(recipe);
-            dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
-            dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
-            return dto;
-        }));
+
+        const viewerObjectId = userId ? new Types.ObjectId(userId) : null;
+
+        return Promise.all(
+            recipes.map(async (recipe) => {
+                const dto = toRecipeDTO(recipe);
+
+                dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
+                dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
+
+                dto.isUserLiked = viewerObjectId
+                    ? await this.likesRepo.exists(viewerObjectId, recipe._id)
+                    : false;
+
+                return dto;
+            })
+        );
     }
 
-    async listRecipes(filter: RecipeFilterDTO): Promise<RecipeDTO[]> {
+
+    async listRecipes(filter: RecipeFilterDTO, viewerUserId?: string): Promise<RecipeDTO[]> {
         const recipes = await this.recipeRepo.findMany(filter);
-        return Promise.all(recipes.map(async (recipe) => {
-            const dto = toRecipeDTO(recipe);
-            dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
-            dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
-            return dto;
-        }));
+
+        const viewerObjectId = viewerUserId ? new Types.ObjectId(viewerUserId) : null;
+        console.log(viewerObjectId);
+        return Promise.all(
+            recipes.map(async (recipe) => {
+                const dto = toRecipeDTO(recipe);
+
+                dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
+                dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
+
+                dto.isUserLiked = viewerObjectId
+                    ? await this.likesRepo.exists(viewerObjectId, recipe._id)
+                    : false;
+
+                return dto;
+            })
+        );
     }
+
 
     async updateRecipe(
         id: string,
@@ -118,7 +160,7 @@ export class RecipeService {
 
     async uploadRecipeImage(recipeId: string, file: Express.Multer.File): Promise<string> {
         const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
-        
+
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir, { recursive: true });
         }
@@ -135,7 +177,7 @@ export class RecipeService {
 
         const imageUrl = `/uploads/recipe_images/${fileName}`;
         const updatedRecipe = await this.updateRecipe(recipeId, '', { coverImageUrl: imageUrl });
-        
+
         if (!updatedRecipe) {
             throw new AppError(404, 'Recipe not found');
         }

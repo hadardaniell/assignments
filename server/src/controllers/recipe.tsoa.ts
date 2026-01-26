@@ -1,8 +1,9 @@
-import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile } from 'tsoa';
+import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile, Security, Request } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
 import { AIService } from '../modules/recipes/ai.service';
+import type { Request as ExpressRequest } from 'express';
 
 @Route('recipes')
 @Tags('Recipes')
@@ -41,10 +42,16 @@ export class RecipeController extends Controller {
         }
     }
 
+    @Security('jwt')
     @Get('getRecipeById/{id}')
-    public async getRecipeById(@Path() id: string): Promise<RecipeDTO> {
+    public async getRecipeById(@Path() id: string, @Request() req: ExpressRequest): Promise<RecipeDTO> {
         try {
-            const recipe = await this.service.getRecipeById(id);
+
+            const userId = (req as {user?: { id: string }}).user?.id ?? null;
+            console.log(userId);
+
+            const recipe = await this.service.
+                getRecipeById(id, userId);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
             }
