@@ -2,11 +2,27 @@ import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, Upl
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
+import { AIService } from '../modules/recipes/ai.service';
 
 @Route('recipes')
 @Tags('Recipes')
 export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
+    private readonly aiService: AIService = new AIService();
+
+    @Post('generateAIRecipes')
+    public async generateAIRecipes(@Query() query: string): Promise<any[]> {
+        try {
+            const recipes = await this.aiService.generateFullRecipe(query);
+            if (!recipes) {
+                throw new AppError(500, 'Failed to generate recipes from AI');
+            }
+            return recipes;
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
 
     @Post('createRecipe')
     public async createRecipe(@Body() body: RecipeDTO): Promise<RecipeDTO> {
@@ -34,8 +50,7 @@ export class RecipeController extends Controller {
             }
             return recipe;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -101,14 +116,15 @@ export class RecipeController extends Controller {
     @Post('{id}/image')
     public async uploadImage(
         @Path() id: string,
-        @UploadedFile() file: Express.Multer.File
+        @UploadedFile('recipe_image') file: Express.Multer.File
     ): Promise<{ url: string }> {
-        if (!file) throw new AppError(400, 'File is required');
-
-        const fileName = file.filename || file.originalname;
-        const imageUrl = `/uploads/${fileName}`;
-
-        await this.service.updateRecipe(id, '', { coverImageUrl: imageUrl });
-        return { url: imageUrl };
+        try {
+            if (!file) throw new AppError(400, 'File is required');
+            const imageUrl = await this.service.uploadRecipeImage(id, file);
+            return { url: imageUrl };
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
     }
 }

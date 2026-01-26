@@ -3,16 +3,11 @@ import swaggerUi from 'swagger-ui-express';
 import { RegisterRoutes } from "./routes-tsoa/routes"; 
 import swaggerDoc from './swagger/swagger.json';
 import { errorMiddleware } from './common';
+import { upload } from './common/multer';
 import cors from 'cors';
 import path from 'path';
-import fs from 'fs';
 
 const app = express();
-const uploadDir = path.resolve(process.cwd(), 'uploads');
-
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
 
 app.use(cors({
   origin: '*', 
@@ -22,7 +17,7 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/uploads', express.static(uploadDir));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 app.get('/', (req, res) => {
   res.send('Server is running! Go to /docs for Swagger');
@@ -30,7 +25,9 @@ app.get('/', (req, res) => {
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
-// TSOA Routes
+app.use('/api/recipes/:id/image', upload.single('recipe_image'));
+app.use('/api/users/:id/uploadAvatar', upload.single('profile_image'));
+
 RegisterRoutes(app); 
 
 app.use(errorMiddleware);

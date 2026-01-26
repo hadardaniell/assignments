@@ -42,8 +42,8 @@ export interface RecipeDTO {
   sourceId?: string | null;
   status?: RecipeStatus;
   createdBy?: string;
-  likes?: string[];
-  comments?: RecipeComment[];
+  likesCount?: number;
+  commentsCount?: number;
   createdAt?: string;
   updatedAt?: string | null;
 }
