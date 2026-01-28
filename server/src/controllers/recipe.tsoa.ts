@@ -37,7 +37,7 @@ export class RecipeController extends Controller {
             this.setStatus(201);
             return recipe;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            this.setStatus(err.status || 500);
             throw err;
         }
     }
@@ -47,7 +47,7 @@ export class RecipeController extends Controller {
     public async getRecipeById(@Path() id: string, @Request() req: ExpressRequest): Promise<RecipeDTO> {
         try {
 
-            const userId = (req as {user?: { id: string }}).user?.id ?? null;
+            const userId = (req as { user?: { id: string } }).user?.id ?? null;
             console.log(userId);
 
             const recipe = await this.service.
@@ -62,8 +62,10 @@ export class RecipeController extends Controller {
         }
     }
 
+    @Security("jwt")
     @Get('getRecipes')
     public async getRecipes(
+        @Request() req: any,
         @Query() recipeBookId?: string,
         @Query() status?: any,
         @Query() difficulty?: any,
@@ -72,8 +74,9 @@ export class RecipeController extends Controller {
         @Query() limit?: number
     ): Promise<RecipeDTO[]> {
         try {
+            const userId = req.userId;
             const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
-            return await this.service.listRecipes(filter);
+            return await this.service.listRecipes(filter, userId);
         } catch (err: any) {
             this.setStatus(500);
             throw err;

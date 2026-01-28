@@ -134,7 +134,7 @@ const models: TsoaRoute.Models = {
             "commentsCount": {"dataType":"double"},
             "createdAt": {"dataType":"string"},
             "updatedAt": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
-            "isUserLiked": {"dataType":"boolean","required":true},
+            "isUserLiked": {"dataType":"boolean"},
         },
         "additionalProperties": false,
     },
@@ -518,6 +518,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_getRecipes: Record<string, TsoaRoute.ParameterSchema> = {
+                req: {"in":"request","name":"req","required":true,"dataType":"object"},
                 recipeBookId: {"in":"query","name":"recipeBookId","dataType":"string"},
                 status: {"in":"query","name":"status","dataType":"any"},
                 difficulty: {"in":"query","name":"difficulty","dataType":"any"},
@@ -526,6 +527,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 limit: {"in":"query","name":"limit","dataType":"double"},
         };
         app.get('/api/recipes/getRecipes',
+            authenticateMiddleware([{"jwt":[]}]),
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
             ...(fetchMiddlewares<RequestHandler>(RecipeController.prototype.getRecipes)),
 

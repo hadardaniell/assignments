@@ -3,22 +3,33 @@ import request from 'supertest';
 import app from '../app.js';
 import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import jwt from "jsonwebtoken";
 
 let mongo: MongoMemoryServer;
+let accessToken: string;
+
+const authHeader = () => ({ Authorization: `Bearer ${accessToken}` });
 
 describe('API Integration Tests', () => {
   // Real IDs from your request.rest
   const USER_ID = "693041739a28b3e672ca7192";
   const RECIPE_BOOK_ID = "693042979a28b3e672ca719e";
   const FALLBACK_RECIPE_ID = "6930442a9a28b3e672ca71b6";
-  
+
   let createdRecipeId: string;
   let createdCommentId: string;
 
   beforeAll(async () => {
     process.env.JWT_SECRET = 'test_secret_key_123';
+    process.env.GEMINI_API_KEY = 'test_secret_key_123';
     mongo = await MongoMemoryServer.create();
     await mongoose.connect(mongo.getUri());
+
+    accessToken = jwt.sign(
+      { sub: USER_ID },                 
+      process.env.JWT_SECRET!,
+      { expiresIn: "1h" }
+    );
   });
 
   afterAll(async () => {
@@ -54,9 +65,10 @@ describe('API Integration Tests', () => {
     });
 
     it('should get all recipes', async () => {
-        const res = await request(app).get('/api/recipes/getRecipes');
-        expect(res.status).toBe(200);
-        expect(Array.isArray(res.body)).toBe(true);
+      const res = await request(app).get('/api/recipes/getRecipes')
+      .set(authHeader());
+      expect(res.status).toBe(200);
+      expect(Array.isArray(res.body)).toBe(true);
     });
   });
 
@@ -70,7 +82,7 @@ describe('API Integration Tests', () => {
           content: "סתם הערה חדשה",
           createdBy: USER_ID
         });
-      
+
       expect(res.status).toBe(201);
       createdCommentId = res.body.Id || res.body._id || res.body.id;
     });
@@ -80,7 +92,7 @@ describe('API Integration Tests', () => {
       const targetRecipe = createdRecipeId || FALLBACK_RECIPE_ID;
       // PATH: /api/comments/recipe/getCommentsByRecipe/{id}
       const res = await request(app).get(`/api/comments/recipe/getCommentsByRecipe/${targetRecipe}`);
-      
+
       expect(res.status).toBe(200);
       expect(Array.isArray(res.body)).toBe(true);
     });
@@ -89,7 +101,7 @@ describe('API Integration Tests', () => {
     it('should get a single comment by ID', async () => {
       // PATH: /api/comments/getCommentById/{id}
       const res = await request(app).get(`/api/comments/getCommentById/${createdCommentId}`);
-      
+
       expect(res.status).toBe(200);
       expect(res.body.content).toBe("סתם הערה חדשה");
     });
@@ -102,7 +114,7 @@ describe('API Integration Tests', () => {
         .send({
           content: "bla bla bla"
         });
-      
+
       expect(res.status).toBe(200);
       expect(res.body.content).toBe("bla bla bla");
     });
@@ -111,7 +123,7 @@ describe('API Integration Tests', () => {
     it('should delete a comment', async () => {
       // PATH: /api/comments/delete/{id}
       const res = await request(app).delete(`/api/comments/delete/${createdCommentId}`);
-      
+
       expect([200, 204]).toContain(res.status);
 
       // Final Check: verify it's gone
