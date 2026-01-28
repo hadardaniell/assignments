@@ -46,6 +46,7 @@ export interface RecipeDTO {
   commentsCount?: number;
   createdAt?: string;
   updatedAt?: string | null;
+  isUserLiked?: boolean;
 }
 
 export interface PaginatedRecipes {

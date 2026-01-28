@@ -22,6 +22,7 @@ import { recipesApi } from "../../data-access/recipe.api";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth.context";
 import { OkCancelDialog } from "../dialog-models/ok-cancel-dialog";
+import { LikeComponent } from "../../shared/like";
 
 function difficultyLabel(d?: Difficulty) {
   if (!d) return "—";
@@ -184,6 +185,7 @@ export function RecipeDetailsCard({
               </Tooltip>
             )}
 
+            <LikeComponent userId={user?._id!} recipeId={recipe.Id!} isUserLike={recipe.isUserLiked!}/>
             <OkCancelDialog
               open={openDialog}
               header="למחוק מתכון?"

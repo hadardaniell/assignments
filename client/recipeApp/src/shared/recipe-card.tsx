@@ -13,6 +13,8 @@ import noRecipeImg from "../assets/images/no_recipe3.jpg";
 import { useNavigate } from "react-router-dom";
 import { colors } from "../assets/_colors";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import { LikeComponent } from "./like";
+import { useAuth } from "../context/auth.context";
 
 export type RecipeCardModel = {
   Id?: string;
@@ -23,6 +25,7 @@ export type RecipeCardModel = {
   tags?: string[];
   commentsCount?: number;
   likesCount?: number;
+  isUserLiked: boolean;
 };
 
 type Props = {
@@ -33,6 +36,8 @@ type Props = {
 
 export function RecipeCard({ recipe, onClick, sx }: Props) {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
 
   const created = recipe.createdAt
     ? new Date(recipe.createdAt).toLocaleDateString("he-IL")
@@ -88,7 +93,28 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
               transform: "scale(1.0)",
             }}
           />
-
+          <Box
+            sx={{
+              position: "absolute",
+              top: 8,
+              left: "118px" + "!important",
+              height: 24,
+              zIndex: 3,
+              bgcolor: "rgba(255,255,255,0.85)",
+              borderRadius: "50%",
+              p: 0.5,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+            }}
+          >
+            <LikeComponent
+              userId={user?._id}
+              recipeId={recipe.Id!}
+              isUserLike={recipe.isUserLiked}
+            />
+          </Box>
           {/* Overlay */}
           <Box
             className="rc-overlay"
