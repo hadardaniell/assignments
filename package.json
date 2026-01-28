@@ -9,6 +9,7 @@
     "test:watch": "npm --prefix server run test:watch"
   },
   "dependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "passport-google-oauth20": "^2.0.0"
   }
 }
