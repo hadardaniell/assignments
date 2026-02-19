@@ -1,3 +1,5 @@
+import { RecipeDTO } from '../modules/recipes/recipe.dto';
+
 export class AIService {
     private readonly apiKey: string;
 
@@ -9,7 +11,7 @@ export class AIService {
         }
     }
 
-    public async generateFullRecipe(query: string) {
+    public async generateFullRecipe(query: string): Promise<RecipeDTO[] | null> {
         if (!this.apiKey) {
             console.error("AI Service: Cannot proceed without API Key");
             return null;
@@ -76,7 +78,7 @@ export class AIService {
 
             text = text.substring(start, end + 1);
 
-            return JSON.parse(text);
+            return JSON.parse(text) as RecipeDTO[];
 
         } catch (error) {
             console.error("AIService JSON Parse Error:", error);
