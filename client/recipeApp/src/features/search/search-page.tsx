@@ -175,7 +175,7 @@ export default function SearchPage() {
   }, [input, query, resetAndSearch]);
 
   return (
-    <Box sx={{ minHeight: "100vh", py: { xs: 3, md: 5 }, padding: "0 !important" }}>
+    <Box sx={{ minHeight: "100vh", py: { xs: 3, md: 5 }, padding: "1em 0" }}>
       <Container
         maxWidth="lg"
         sx={{ direction: "rtl", display: "flex", flexDirection: "column", gap: 2 }}

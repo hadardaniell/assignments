@@ -12,8 +12,9 @@ export class RecipeController extends Controller {
     private readonly aiService: AIService = new AIService();
 
     @Post('generateAIRecipes')
-    public async generateAIRecipes(@Query() query: string): Promise<any[]> {
+    public async generateAIRecipes(@Body() body: { query: string }): Promise<any[]> {
         try {
+            const { query } = body;
             const recipes = await this.aiService.generateFullRecipe(query);
             if (!recipes) {
                 throw new AppError(500, 'Failed to generate recipes from AI');

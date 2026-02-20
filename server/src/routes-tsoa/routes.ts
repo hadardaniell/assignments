@@ -426,7 +426,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsRecipeController_generateAIRecipes: Record<string, TsoaRoute.ParameterSchema> = {
-                query: {"in":"query","name":"query","required":true,"dataType":"string"},
+                body: {"in":"body","name":"body","required":true,"dataType":"nestedObjectLiteral","nestedProperties":{"query":{"dataType":"string","required":true}}},
         };
         app.post('/api/recipes/generateAIRecipes',
             ...(fetchMiddlewares<RequestHandler>(RecipeController)),
