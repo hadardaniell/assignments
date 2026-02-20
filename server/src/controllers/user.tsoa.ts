@@ -2,8 +2,6 @@ import { Body, Controller, Get, Post, Put, Delete, Route, Tags, Path, Patch, Upl
 import { UserDTO, UpdateUserDTO, SafeUser } from '../modules/users/users.types';
 import { AppError } from '../common/errors/app-error';
 import { UserService } from '../modules/users/user.service';
-import fs from 'fs';
-import path from 'path';
 
 @Route('users')
 @Tags('Users')
@@ -19,11 +17,7 @@ export class UsersController extends Controller {
       this.setStatus(201);
       return user;
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw { message: err.message, code: err.code };
-      }
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }
@@ -45,7 +39,7 @@ export class UsersController extends Controller {
     try {
       return await this.service.getUserByIdService(id);
     } catch (err: any) {
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }
@@ -58,7 +52,7 @@ export class UsersController extends Controller {
     try {
       return await this.service.updateUserService(id, body);
     } catch (err: any) {
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }
@@ -71,7 +65,7 @@ export class UsersController extends Controller {
     try {
       return await this.service.updateUserService(id, body);
     } catch (err: any) {
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }
@@ -82,30 +76,10 @@ export class UsersController extends Controller {
     @UploadedFile('profile_image') file: Express.Multer.File
   ): Promise<{ url: string }> {
     try {
-      if (!file) {
-        throw new AppError(400, 'File is required');
-      }
-
-      const targetDir = path.join(process.cwd(), 'uploads', 'profile_images');
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-      }
-
-      const uniqueFileName = `${Date.now()}-${file.originalname}`;
-      const targetPath = path.join(targetDir, uniqueFileName);
-
-      fs.renameSync(file.path, targetPath);
-
-      const imageUrl = `/uploads/profile_images/${uniqueFileName}`;
-      await this.service.updateUserService(id, { avatarUrl: imageUrl });
-
+      const imageUrl = await this.service.uploadUserAvatar(id, file);
       return { url: imageUrl };
     } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw { message: err.message, code: err.code };
-      }
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }
@@ -119,7 +93,7 @@ export class UsersController extends Controller {
       this.setStatus(204);
       return;
     } catch (err: any) {
-      this.setStatus(500);
+      this.setStatus(err.statusCode || 500);
       throw err;
     }
   }

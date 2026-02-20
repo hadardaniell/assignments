@@ -2,6 +2,8 @@ import { UserDTO, UpdateUserDTO, SafeUser } from './users.types';
 import { AppError } from '../../common';
 import { UserRepo } from './users.repo';
 import mongoose from 'mongoose';
+import path from 'path';
+import fs from 'fs';
 
 export class UserService {
   private readonly userRepo: UserRepo = new UserRepo();
@@ -39,13 +41,14 @@ export class UserService {
     id: string,
     updates: Partial<UpdateUserDTO> | { avatarUrl?: string }
   ): Promise<SafeUser> {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      throw new AppError(400, 'Invalid user ID', 'INVALID_ID');
+    }
+
     const updated = await this.userRepo.updateUserDAL(id, {
       ...updates,
       updatedAt: new Date(),
     });
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new AppError(400, 'Invalid user ID', 'INVALID_ID');
-    }
     
     if (!updated) {
       throw new AppError(404, 'User not found', 'USER_NOT_FOUND');
@@ -68,5 +71,26 @@ export class UserService {
 
   async getUserByEmailWithPasswordService(email: string): Promise<any | null> {
     return this.userRepo.findUserByEmailWithPasswordDAL(email);
+  }
+
+  async uploadUserAvatar(id: string, file: Express.Multer.File): Promise<string> {
+    if (!file || !file.path) {
+      throw new AppError(400, 'File upload failed');
+    }
+
+    const fileName = path.basename(file.path);
+    const imageUrl = `/uploads/profile_images/${fileName}`;
+
+    const updatedUser = await this.userRepo.updateUserDAL(id, {
+      avatarUrl: imageUrl,
+      updatedAt: new Date()
+    });
+
+    if (!updatedUser) {
+      if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
+      throw new AppError(404, 'User not found');
+    }
+
+    return imageUrl;
   }
 }
