@@ -241,8 +241,10 @@ export default function SearchPage() {
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: 1,
+            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 160px))",
+            gap: 2,
+            justifyContent: "left",
+            direction: "ltr",
           }}
         >
           {filteredAndSortedItems.map((r) => (
