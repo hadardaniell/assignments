@@ -278,8 +278,7 @@
 				"required": [
 					"title",
 					"ingredients",
-					"steps",
-					"isUserLiked"
+					"steps"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -798,16 +797,25 @@
 					"Recipes"
 				],
 				"security": [],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "query",
-						"required": true,
-						"schema": {
-							"type": "string"
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"query": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"query"
+								],
+								"type": "object"
+							}
 						}
 					}
-				]
+				}
 			}
 		},
 		"/recipes/createRecipe": {
@@ -898,7 +906,11 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "query",

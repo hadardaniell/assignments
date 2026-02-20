@@ -79,7 +79,7 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
         ...sx,
       }}
     >
-      <CardActionArea onClick={() => toRecipePage(recipe.Id)} sx={{ position: "relative" }}>
+      <CardActionArea onClick={() => toRecipePage(recipe.Id!)} sx={{ position: "relative" }}>
         {/* Image */}
         <Box sx={{ position: "relative" }}>
           <CardMedia

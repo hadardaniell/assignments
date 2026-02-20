@@ -14,4 +14,6 @@ export const recipesApi = {
     ),
   updateRecipe: (id: string, body: Partial<RecipeDTO>) =>
     getApi().put<RecipeDTO>(`/recipes/updateRecipe/${id}`, body),
+  searchAIRecipes: (query: string) =>
+    getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", {body: { query }}),
 };

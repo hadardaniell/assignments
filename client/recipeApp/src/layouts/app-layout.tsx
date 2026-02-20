@@ -79,7 +79,7 @@ export function AppLayout() {
             </Drawer>
 
             {/* Content */}
-            <Box component="main" sx={{ flexGrow: 1, p: 3, minHeight: "100vh" }}>
+            <Box component="main" sx={{ minHeight: "100vh", width: "100%" }}>
                 {/* backgroundColor: "#f8f8f8", */}
                 <Outlet />
             </Box>
