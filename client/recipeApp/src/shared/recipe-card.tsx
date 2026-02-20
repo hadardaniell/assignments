@@ -19,7 +19,7 @@ import { useAuth } from "../context/auth.context";
 export type RecipeCardModel = {
   Id?: string;
   title: string;
-  imageUrl?: string | null;
+  coverImageUrl?: string | null;
   description?: string | null;
   createdAt?: string | Date | null;
   tags?: string[];
@@ -43,7 +43,7 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
     ? new Date(recipe.createdAt).toLocaleDateString("he-IL")
     : null;
 
-  const imgSrc = recipe.imageUrl || noRecipeImg;
+  const imgSrc = recipe.coverImageUrl ? `http://localhost:3000/uploads/recipe_images/${recipe.coverImageUrl}` : noRecipeImg;
 
   function toRecipePage(id: string) {
     if (onClick) return onClick(id);
@@ -87,6 +87,9 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
             component="img"
             height="160"
             image={imgSrc}
+            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
+              e.currentTarget.src = noRecipeImg;
+            }}
             alt={recipe.title}
             sx={{
               transition: "filter 220ms ease, transform 220ms ease",
