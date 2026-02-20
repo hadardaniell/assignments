@@ -14,8 +14,8 @@ import { presetCategories, stepLabels, UNITS } from "../../assets/consts";
 
 type Props = {
     mode: "create" | "edit";
-    recipeId?: string;             
-    initialDraft: DraftState;      
+    recipeId?: string;
+    initialDraft: DraftState;
     onDone?: (recipe?: any) => void;
 };
 
@@ -25,6 +25,7 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
     const [activeStep, setActiveStep] = useState(0);
     const [submitting, setSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState<string | null>(null);
+    const [coverFile, setCoverFile] = useState<File | null>(null);
     const [draft, setDraft] = useState<DraftState>(initialDraft);
 
     const totalTimeMinutes = useMemo(() => {
@@ -152,6 +153,9 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
             if (mode === "create") {
                 const dto = buildDTO("published");
                 const created = await recipesApi.createRecipe(dto);
+                if (coverFile && created) {
+                    await recipesApi.uploadRecipeImage(created.Id!, coverFile!);
+                }
                 onDone?.(created);
                 return;
             }
@@ -159,6 +163,9 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
             if (!recipeId) throw new Error("Missing recipeId for edit mode");
             let dto = buildUpdateDTO();
             const updated = await recipesApi.updateRecipe(recipeId, dto);
+            if(updated && coverFile) {
+                await recipesApi.uploadRecipeImage(updated.Id!, coverFile!);
+            }
             onDone?.(updated);
         } catch (err: any) {
             const msg = err?.response?.data?.message || err?.message || "שגיאה בשמירה, נסה שוב";
@@ -169,7 +176,7 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
     };
 
     return (
-        <Box dir="rtl" sx={{ padding: "1em"}}>
+        <Box dir="rtl" sx={{ padding: "1em" }}>
             <Typography
                 variant="h5"
                 sx={{
@@ -204,8 +211,8 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
                         <DetailsStep
                             draft={draft}
                             setDraft={setDraft}
-                            totalTimeMinutes={totalTimeMinutes}
                             presetCategories={presetCategories}
+                            onCoverFileChange={setCoverFile}
                         />
                     )}
                     {activeStep === 1 && <IngredientsStep draft={draft} setDraft={setDraft} units={UNITS} />}

@@ -104,7 +104,6 @@ export class RecipeService {
         const recipes = await this.recipeRepo.findMany(filter);
 
         const viewerObjectId = viewerUserId ? new Types.ObjectId(viewerUserId) : null;
-        console.log(viewerObjectId);
         return Promise.all(
             recipes.map(async (recipe) => {
                 const dto = toRecipeDTO(recipe);

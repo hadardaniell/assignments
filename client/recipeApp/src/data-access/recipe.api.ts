@@ -15,5 +15,13 @@ export const recipesApi = {
   updateRecipe: (id: string, body: Partial<RecipeDTO>) =>
     getApi().put<RecipeDTO>(`/recipes/updateRecipe/${id}`, body),
   searchAIRecipes: (query: string) =>
-    getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", {body: { query }}),
+    getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", { body: { query } }),
+  uploadRecipeImage: (id: string, file: File) => {
+    const fd = new FormData();
+    fd.append("recipe_image", file, id);
+
+    return getApi().post<{ url: string }>(`/recipes/${id}/image`, fd, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  },
 };

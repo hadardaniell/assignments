@@ -71,7 +71,7 @@ export class RecipeController extends Controller {
         @Query() limit?: number
     ): Promise<RecipeDTO[]> {
         try {
-            const userId = req.user?.id || req.user?._id || null;
+            const userId = req.user?.id;
             const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
             return await this.service.listRecipes(filter, userId);
         } catch (err: any) {

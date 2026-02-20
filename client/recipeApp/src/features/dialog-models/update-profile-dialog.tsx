@@ -140,7 +140,9 @@ export function UpdateProfileDialog({
                         />
 
                         <TextField
-                            label="תמונת פרופיל (URL)"
+                            type="file"
+                            fullWidth
+                            inputProps={{ accept: "image/*" }}
                             value={form.avatarUrl ?? ""}
                             onChange={(e) => setForm((p) => ({ ...p, avatarUrl: e.target.value }))}
                             fullWidth

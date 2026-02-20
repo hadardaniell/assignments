@@ -2,18 +2,20 @@ import { Box, Chip, Container, MenuItem, TextField, Typography } from "@mui/mate
 import type { DraftState } from "../../../types/recipe.types";
 import { colors } from "../../../assets/_colors";
 import { ChipList } from "../../../shared/chip-list";
+import { useState } from "react";
 
 export function DetailsStep({
   draft,
   setDraft,
   presetCategories,
-  totalTimeMinutes,
+  onCoverFileChange
 }: {
   draft: DraftState;
   setDraft: React.Dispatch<React.SetStateAction<DraftState>>;
   presetCategories: readonly string[];
-  totalTimeMinutes: number | null;
+   onCoverFileChange: (file: File | null) => void;
 }) {
+
   const toggleCategory = (c: string) => {
     setDraft((p) => {
       const exists = p.categories.includes(c);
@@ -85,9 +87,14 @@ export function DetailsStep({
       </Typography>
       <TextField
         type="file"
-        value={draft.coverImageUrl}
-        onChange={(e) => setDraft((p) => ({ ...p, coverImageUrl: e.target.value }))}
         fullWidth
+        inputProps={{ accept: "image/*" }}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          const file = e.target.files?.[0];
+          if (!file) return;
+          onCoverFileChange(file);
+        }
+        }
       />
 
       <Box>
