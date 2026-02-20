@@ -11,6 +11,7 @@ import path from 'path';
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import session from 'express-session';
+import { upload } from './common/multer';
 
 const app = express();
 
@@ -63,6 +64,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+
+app.use(upload.any());
 
 RegisterRoutes(app); 
 

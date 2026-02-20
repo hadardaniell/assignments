@@ -14,7 +14,7 @@ const recipeDir = path.join(uploadDir, 'recipe_images');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        if (file.fieldname === 'profile_image') {
+        if (file.fieldname === 'profile_image' || file.fieldname === 'avatarUrl') {
             cb(null, profileDir);
         } else if (file.fieldname === 'recipe_image') {
             cb(null, recipeDir);
@@ -28,4 +28,7 @@ const storage = multer.diskStorage({
     }
 });
 
-export const upload = multer({ storage });
+export const upload = multer({ 
+    storage,
+    limits: { fileSize: 5 * 1024 * 1024 }
+});

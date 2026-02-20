@@ -24,9 +24,7 @@ export class RecipeService {
         const recipe = await this.recipeRepo.create({
             recipeBookId: input.recipeBookId ? new Types.ObjectId(input.recipeBookId) : null,
             createdBy,
-            originalRecipeId: input.originalRecipeId
-                ? new Types.ObjectId(input.originalRecipeId)
-                : null,
+            originalRecipeId: input.originalRecipeId ? new Types.ObjectId(input.originalRecipeId) : null,
             title: input.title,
             description: input.description ?? null,
             categories: input.categories ?? [],
@@ -60,16 +58,8 @@ export class RecipeService {
         dto.commentsCount = await this.commentsDal.countByRecipeId(recipeId);
 
         if (userId) {
-            const viewerObjectId = userId ? new Types.ObjectId(userId) : null;
-            console.log(viewerObjectId)
-            console.log(userId)
-            dto.isUserLiked = viewerObjectId
-                ? await this.likesRepo.exists(viewerObjectId, recipe._id)
-                : false;
-
-                console.log(dto.isUserLiked)
-
-
+            const viewerObjectId = new Types.ObjectId(userId);
+            dto.isUserLiked = await this.likesRepo.exists(viewerObjectId, recipe._id);
         } else {
             dto.isUserLiked = false;
         }
@@ -77,66 +67,42 @@ export class RecipeService {
         return dto;
     }
 
-
     async getRecipesByUserId(userId: string) {
         const recipes = await this.recipeRepo.findMany({ createdBy: userId });
-
-        const viewerObjectId = userId ? new Types.ObjectId(userId) : null;
+        const viewerObjectId = new Types.ObjectId(userId);
 
         return Promise.all(
             recipes.map(async (recipe) => {
                 const dto = toRecipeDTO(recipe);
-
                 dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
                 dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
-
-                dto.isUserLiked = viewerObjectId
-                    ? await this.likesRepo.exists(viewerObjectId, recipe._id)
-                    : false;
-
+                dto.isUserLiked = await this.likesRepo.exists(viewerObjectId, recipe._id);
                 return dto;
             })
         );
     }
-
 
     async listRecipes(filter: RecipeFilterDTO, viewerUserId?: string): Promise<RecipeDTO[]> {
         const recipes = await this.recipeRepo.findMany(filter);
-
         const viewerObjectId = viewerUserId ? new Types.ObjectId(viewerUserId) : null;
+
         return Promise.all(
             recipes.map(async (recipe) => {
                 const dto = toRecipeDTO(recipe);
-
                 dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
                 dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
-
-                dto.isUserLiked = viewerObjectId
-                    ? await this.likesRepo.exists(viewerObjectId, recipe._id)
-                    : false;
-
+                dto.isUserLiked = viewerObjectId ? await this.likesRepo.exists(viewerObjectId, recipe._id) : false;
                 return dto;
             })
         );
     }
 
-
-    async updateRecipe(
-        id: string,
-        userId: string,
-        input: UpdateRecipeDTO
-    ): Promise<RecipeDTO | null> {
+    async updateRecipe(id: string, userId: string, input: UpdateRecipeDTO): Promise<RecipeDTO | null> {
         const update: any = { ...input };
 
-        if (input.recipeBookId) {
-            update.recipeBookId = new Types.ObjectId(input.recipeBookId);
-        }
-        if (input.originalRecipeId) {
-            update.originalRecipeId = new Types.ObjectId(input.originalRecipeId);
-        }
-        if (input.sourceId) {
-            update.sourceId = new Types.ObjectId(input.sourceId);
-        }
+        if (input.recipeBookId) update.recipeBookId = new Types.ObjectId(input.recipeBookId);
+        if (input.originalRecipeId) update.originalRecipeId = new Types.ObjectId(input.originalRecipeId);
+        if (input.sourceId) update.sourceId = new Types.ObjectId(input.sourceId);
 
         const recipe = await this.recipeRepo.updateById(id, update);
         if (!recipe) return null;
@@ -158,26 +124,19 @@ export class RecipeService {
     }
 
     async uploadRecipeImage(recipeId: string, file: Express.Multer.File): Promise<string> {
-        const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
-
-        if (!fs.existsSync(targetDir)) {
-            fs.mkdirSync(targetDir, { recursive: true });
+        if (!file || !file.path) {
+            throw new AppError(400, 'File upload failed');
         }
 
-        const fileName = `${Date.now()}-${file.originalname}`;
-        const targetPath = path.join(targetDir, fileName);
-
-        if (fs.existsSync(file.path)) {
-            fs.copyFileSync(file.path, targetPath);
-            fs.unlinkSync(file.path);
-        } else {
-            throw new AppError(500, 'Temporary file error');
-        }
-
+        const fileName = path.basename(file.path);
         const imageUrl = `/uploads/recipe_images/${fileName}`;
-        const updatedRecipe = await this.updateRecipe(recipeId, '', { coverImageUrl: imageUrl });
+
+        const updatedRecipe = await this.recipeRepo.updateById(recipeId, { 
+            coverImageUrl: imageUrl 
+        });
 
         if (!updatedRecipe) {
+            if (fs.existsSync(file.path)) fs.unlinkSync(file.path);
             throw new AppError(404, 'Recipe not found');
         }
 
