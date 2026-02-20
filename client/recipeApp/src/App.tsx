@@ -7,7 +7,6 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/auth/login" replace />} />
         <Route path="/auth/*" element={<AuthPage />} />
-        {/* כאן אפשר להוסיף Routes נוספים בעתיד */}
       </Routes>
     </Router>
   )

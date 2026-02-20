@@ -169,7 +169,7 @@ export function RecipeFormStepper({ mode, recipeId, initialDraft, onDone }: Prop
     };
 
     return (
-        <Box dir="rtl" sx={{ maxWidth: 980, mx: "auto" }}>
+        <Box dir="rtl" sx={{ padding: "1em"}}>
             <Typography
                 variant="h5"
                 sx={{
