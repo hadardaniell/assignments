@@ -1,4 +1,5 @@
-import { RecipeDTO } from '../modules/recipes/recipe.dto';
+import { RecipeDTO } from '../recipes/recipe.types';
+
 
 export class AIService {
     private readonly apiKey: string;

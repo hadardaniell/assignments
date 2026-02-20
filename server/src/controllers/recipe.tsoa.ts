@@ -47,12 +47,8 @@ export class RecipeController extends Controller {
     @Get('getRecipeById/{id}')
     public async getRecipeById(@Path() id: string, @Request() req: ExpressRequest): Promise<RecipeDTO> {
         try {
-
-            const userId = (req as { user?: { id: string } }).user?.id ?? null;
-            console.log(userId);
-
-            const recipe = await this.service.
-                getRecipeById(id, userId);
+            const userId = (req as any).user?.id || (req as any).user?._id || null;
+            const recipe = await this.service.getRecipeById(id, userId);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
             }
@@ -75,7 +71,7 @@ export class RecipeController extends Controller {
         @Query() limit?: number
     ): Promise<RecipeDTO[]> {
         try {
-            const userId = req.userId;
+            const userId = req.user?.id || req.user?._id || null;
             const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
             return await this.service.listRecipes(filter, userId);
         } catch (err: any) {
