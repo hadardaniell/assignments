@@ -753,30 +753,6 @@
 				}
 			}
 		},
-		"/users/deleteUser/{id}": {
-			"delete": {
-				"operationId": "DeleteUser",
-				"responses": {
-					"204": {
-						"description": "No content"
-					}
-				},
-				"tags": [
-					"Users"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"type": "string"
-						}
-					}
-				]
-			}
-		},
 		"/recipes/generateAIRecipes": {
 			"post": {
 				"operationId": "GenerateAIRecipes",

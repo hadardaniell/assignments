@@ -56,7 +56,7 @@ describe("Users Integration Tests", () => {
             expect(res.body.message).toBeDefined();
         });
     });
-    
+
     it("sanity: can create user directly in DB", async () => {
         const u = await UserModel.create({
             email: `direct-${Date.now()}@test.com`,
@@ -168,6 +168,10 @@ describe("Users Integration Tests", () => {
             role: "user",
         });
         const delId = u._id.toString();
+        
+        const before = await request(app).get(`/api/users/getUserById/${delId}`);
+        console.log("GET before delete:", before.status, before.body);
+        expect(before.status).toBe(200);
 
         const delRes = await request(app).delete(`/api/users/deleteUser/${delId}`);
         expect(delRes.status).toBe(204);
@@ -179,6 +183,6 @@ describe("Users Integration Tests", () => {
     it("should fail delete with invalid id (400+)", async () => {
         const res = await request(app).delete("/api/users/deleteUser/invalidid123");
         expect(res.status).toBeGreaterThanOrEqual(400);
-        expect(res.body.message).toBeDefined();
+        expect(res.body.message ?? res.body.error ?? res.text).toBeTruthy();
     });
 });

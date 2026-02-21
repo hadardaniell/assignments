@@ -18,10 +18,8 @@ export const recipesApi = {
     getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", { body: { query } }),
   uploadRecipeImage: (id: string, file: File) => {
     const fd = new FormData();
-    fd.append("recipe_image", file, id);
+    fd.append("recipe_image", file); 
 
-    return getApi().post<{ url: string }>(`/recipes/${id}/image`, fd, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
+    return getApi().post<{ url: string }>(`/recipes/${id}/image`, fd);
   },
 };

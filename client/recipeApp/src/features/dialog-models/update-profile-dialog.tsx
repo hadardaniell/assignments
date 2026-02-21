@@ -10,12 +10,10 @@ import {
     Avatar,
     Typography,
     CircularProgress,
-    InputAdornment,
-    IconButton,
 } from "@mui/material";
-import ClearRoundedIcon from "@mui/icons-material/ClearRounded";
 import type { SafeUser } from "../../types/user.types";
 import { usersApi } from "../../data-access/user.api";
+import { useAuth } from "../../context/auth.context";
 
 type UpdateProfileDialogProps = {
     open: boolean;
@@ -43,6 +41,11 @@ export function UpdateProfileDialog({
     const [saving, setSaving] = React.useState(false);
     const [error, setError] = React.useState<string>("");
 
+    const [avatarFile, setAvatarFile] = React.useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null);
+
+    const { user: authUser, setUser } = useAuth();
+
     // כשפותחים/משתנה user — נטען נתונים לטופס
     React.useEffect(() => {
         if (!open || !user) return;
@@ -51,6 +54,8 @@ export function UpdateProfileDialog({
             name: user.name ?? "",
             avatarUrl: user.avatarUrl ?? "",
         });
+        setAvatarFile(null);
+        setAvatarPreview(user.avatarUrl ? `http://localhost:3000${user.avatarUrl}` : null);
     }, [open, user]);
 
     const canSave = React.useMemo(() => {
@@ -63,10 +68,13 @@ export function UpdateProfileDialog({
         const prevName = (user.name ?? "").trim();
         const prevAvatar = (user.avatarUrl ?? "").trim();
 
-        const hasChanges = nextName !== prevName || nextAvatar !== prevAvatar;
+        const hasChanges =
+            nextName !== prevName ||
+            nextAvatar !== prevAvatar ||
+            !!avatarFile;
 
         return nextName.length > 0 && hasChanges;
-    }, [form.name, form.avatarUrl, saving, user]);
+    }, [form.name, form.avatarUrl, avatarFile, saving, user]);
 
     const handleUpdate = async () => {
         if (!user) return;
@@ -82,19 +90,25 @@ export function UpdateProfileDialog({
         const nextAvatar = (form.avatarUrl ?? "").trim();
         const prevAvatar = (user.avatarUrl ?? "").trim();
         if (nextAvatar !== prevAvatar) {
-            // אם ריק => שולחים null כדי למחוק
             payload.avatarUrl = nextAvatar ? nextAvatar : null;
         }
 
-        // אם אין שינויים, לא שולחים בקשה
-        if (Object.keys(payload).length === 0) return;
+        if (Object.keys(payload).length === 0 && !avatarFile) return;
 
         setSaving(true);
         setError("");
 
         try {
+            if (avatarFile) {
+                const res = await usersApi.uploadUserAvatar(user._id, avatarFile); // { url }
+                setUser(authUser ? { ...authUser, avatarUrl: res.url } : null);
+                payload.avatarUrl = res.url;
+            }
+
             const updated = await usersApi.updateUser(user._id, payload);
-            onUpdated(updated);
+            if (updated) {
+                onUpdated(updated);
+            }
         } catch (e: any) {
             setError(e?.message ?? "עדכון נכשל, נסו שוב");
         } finally {
@@ -121,7 +135,7 @@ export function UpdateProfileDialog({
                     <Stack spacing={2} sx={{ mt: 1 }}>
                         <Stack direction="row" spacing={2} alignItems="center">
                             <Avatar
-                                src={form.avatarUrl || undefined}
+                                src={(avatarPreview ?? form.avatarUrl) || undefined}
                                 alt={form.name}
                                 sx={{ width: 56, height: 56 }}
                             />
@@ -143,22 +157,17 @@ export function UpdateProfileDialog({
                             type="file"
                             fullWidth
                             inputProps={{ accept: "image/*" }}
-                            value={form.avatarUrl ?? ""}
-                            onChange={(e) => setForm((p) => ({ ...p, avatarUrl: e.target.value }))}
-                            fullWidth
                             disabled={saving}
-                            InputProps={{
-                                endAdornment: form.avatarUrl ? (
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                            size="small"
-                                            onClick={() => setForm((p) => ({ ...p, avatarUrl: "" }))}
-                                            disabled={saving}
-                                        >
-                                            <ClearRoundedIcon />
-                                        </IconButton>
-                                    </InputAdornment>
-                                ) : undefined,
+                            onChange={(e) => {
+                                const f = e.target.files?.[0] ?? null;
+                                setAvatarFile(f);
+
+                                if (f) {
+                                    const preview = URL.createObjectURL(f);
+                                    setAvatarPreview(preview);
+                                } else {
+                                    setAvatarPreview(null);
+                                }
                             }}
                         />
 

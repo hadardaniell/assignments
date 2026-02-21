@@ -67,7 +67,7 @@ export class RecipeService {
                 ? await this.likesRepo.exists(viewerObjectId, recipe._id)
                 : false;
 
-                console.log(dto.isUserLiked)
+            console.log(dto.isUserLiked)
 
 
         } else {
@@ -158,27 +158,41 @@ export class RecipeService {
     }
 
     async uploadRecipeImage(recipeId: string, file: Express.Multer.File): Promise<string> {
-        const targetDir = path.join(process.cwd(), 'uploads', 'recipe_images');
+        const targetDir = path.join(process.cwd(), "uploads", "recipe_images");
 
         if (!fs.existsSync(targetDir)) {
             fs.mkdirSync(targetDir, { recursive: true });
         }
 
-        const fileName = `${Date.now()}-${file.originalname}`;
+        const ext = path.extname(file.originalname) || "";
+        const fileName = `${recipeId}${ext}`;
         const targetPath = path.join(targetDir, fileName);
 
-        if (fs.existsSync(file.path)) {
+        // אם כבר קיימת תמונה - נדרוס
+        if (fs.existsSync(targetPath)) {
+            fs.unlinkSync(targetPath);
+        }
+
+        // 1) אם multer שמר לדיסק
+        if (file.path && fs.existsSync(file.path)) {
             fs.copyFileSync(file.path, targetPath);
             fs.unlinkSync(file.path);
+        }
+        // 2) אם multer שמר בזיכרון
+        else if ((file as any).buffer && (file as any).buffer.length > 0) {
+            fs.writeFileSync(targetPath, (file as any).buffer);
         } else {
-            throw new AppError(500, 'Temporary file error');
+            // debug עוזר להבין מה הגיע
+            console.log("Multer file keys:", Object.keys(file));
+            throw new AppError(500, "Temporary file error");
         }
 
         const imageUrl = `/uploads/recipe_images/${fileName}`;
-        const updatedRecipe = await this.updateRecipe(recipeId, '', { coverImageUrl: imageUrl });
 
+        const updatedRecipe = await this.updateRecipe(recipeId, "", { coverImageUrl: imageUrl });
         if (!updatedRecipe) {
-            throw new AppError(404, 'Recipe not found');
+            try { fs.unlinkSync(targetPath); } catch { }
+            throw new AppError(404, "Recipe not found");
         }
 
         return imageUrl;

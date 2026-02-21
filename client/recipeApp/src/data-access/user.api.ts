@@ -11,4 +11,9 @@ export const usersApi = {
     const res = await getApi().put<SafeUser>(`/users/updateUser/${id}`, body);
     return res;
   },
+  uploadUserAvatar: (userId: string, file: File) => {
+    const fd = new FormData();
+    fd.append("profile_image", file);
+    return getApi().post<{ url: string }>(`/users/${userId}/uploadAvatar`, fd);
+  },
 };
