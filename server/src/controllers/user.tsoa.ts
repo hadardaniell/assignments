@@ -84,4 +84,20 @@ export class UsersController extends Controller {
     const url = await this.service.uploadUserAvatar(id, file);
     return { url };
   }
+
+  @Delete('deleteUser/{id}')
+  public async deleteUser(@Path() id: string): Promise<void> {
+    try {
+      await this.service.deleteUserService(id);
+      this.setStatus(204);
+      return;
+    } catch (err: any) {
+      if (err instanceof AppError) {
+        this.setStatus(err.statusCode);
+        throw { message: err.message, code: err.code };
+      }
+      this.setStatus(500);
+      throw err;
+    }
+  }
 }
