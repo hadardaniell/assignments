@@ -25,9 +25,6 @@ app.get('/', (req, res) => {
 
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
-app.use('/api/recipes/:id/image', upload.single('recipe_image'));
-app.use('/api/users/:id/uploadAvatar', upload.single('profile_image'));
-
 RegisterRoutes(app); 
 
 app.use(errorMiddleware);

@@ -76,51 +76,12 @@ export class UsersController extends Controller {
     }
   }
 
-  @Post('{id}/uploadAvatar')
+  @Post("{id}/uploadAvatar")
   public async uploadAvatar(
     @Path() id: string,
-    @UploadedFile('profile_image') file: Express.Multer.File
+    @UploadedFile("profile_image") file: Express.Multer.File
   ): Promise<{ url: string }> {
-    try {
-      if (!file) {
-        throw new AppError(400, 'File is required');
-      }
-
-      const targetDir = path.join(process.cwd(), 'uploads', 'profile_images');
-      if (!fs.existsSync(targetDir)) {
-        fs.mkdirSync(targetDir, { recursive: true });
-      }
-
-      const uniqueFileName = `${Date.now()}-${file.originalname}`;
-      const targetPath = path.join(targetDir, uniqueFileName);
-
-      fs.renameSync(file.path, targetPath);
-
-      const imageUrl = `/uploads/profile_images/${uniqueFileName}`;
-      await this.service.updateUserService(id, { avatarUrl: imageUrl });
-
-      return { url: imageUrl };
-    } catch (err: any) {
-      if (err instanceof AppError) {
-        this.setStatus(err.statusCode);
-        throw { message: err.message, code: err.code };
-      }
-      this.setStatus(500);
-      throw err;
-    }
-  }
-
-  @Delete('deleteUser/{id}')
-  public async deleteUser(
-    @Path() id: string
-  ): Promise<void> {
-    try {
-      await this.service.deleteUserService(id);
-      this.setStatus(204);
-      return;
-    } catch (err: any) {
-      this.setStatus(500);
-      throw err;
-    }
+    const url = await this.service.uploadUserAvatar(id, file);
+    return { url };
   }
 }

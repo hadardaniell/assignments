@@ -15,8 +15,8 @@ function createApi(client: AxiosInstance) {
     get<T>(url: string, params?: any, config?: AxiosRequestConfig) {
       return client.get<T>(url, { ...(config ?? {}), params }).then(r => r.data);
     },
-    post<T>(url: string, data?: RequestData, config?: AxiosRequestConfig) {
-      return client.post<T>(url, data).then(r => r.data);
+    post<T>(url: string, data?: any, config?: AxiosRequestConfig) {
+      return client.post<T>(url, data, config).then(r => r.data);
     },
     put<T>(url: string, data?: RequestData, config?: AxiosRequestConfig) {
       return client.put<T>(url, data, config).then(r => r.data);
@@ -34,10 +34,20 @@ export async function initHttpClient() {
 
   const client = axios.create({
     baseURL: apiBaseUrl,
-    headers: { "Content-Type": "application/json" },
+    // headers: { "Content-Type": "application/json" },
   });
 
   client.interceptors.request.use((config) => {
+    if (config.data instanceof FormData) {
+      if (config.headers) {
+        delete (config.headers as any)["Content-Type"];
+        delete (config.headers as any)["content-type"];
+      }
+    } else {
+      config.headers = config.headers ?? {};
+      (config.headers as any)["Content-Type"] = "application/json";
+    }
+
     const token = localStorage.getItem("token");
     if (token) {
       config.headers = config.headers ?? {};

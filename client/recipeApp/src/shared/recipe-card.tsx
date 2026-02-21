@@ -43,7 +43,7 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
     ? new Date(recipe.createdAt).toLocaleDateString("he-IL")
     : null;
 
-  const imgSrc = recipe.coverImageUrl ? `http://localhost:3000/uploads/recipe_images/${recipe.coverImageUrl}` : noRecipeImg;
+  const imgSrc = recipe.coverImageUrl ? `http://localhost:3000${recipe.coverImageUrl}` : noRecipeImg;
 
   function toRecipePage(id: string) {
     if (onClick) return onClick(id);
