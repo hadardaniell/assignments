@@ -1,5 +1,6 @@
 import { Button, Card, CardContent, Typography, Grid } from "@mui/material";
 import { RecipeCard, type RecipeCardModel } from "../../shared/recipe-card";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   recipes: RecipeCardModel[];
@@ -7,6 +8,8 @@ type Props = {
 };
 
 export function RecipesGrid({ recipes, onRecipeClick }: Props) {
+  const navigate = useNavigate();
+  
   return (
     <>
       <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>
@@ -24,7 +27,7 @@ export function RecipesGrid({ recipes, onRecipeClick }: Props) {
             <Button
               sx={{ mt: 2 }}
               variant="contained"
-              onClick={() => console.log("go create recipe")}
+              onClick={() => navigate("/recipes/new")}
             >
               יצירת מתכון
             </Button>

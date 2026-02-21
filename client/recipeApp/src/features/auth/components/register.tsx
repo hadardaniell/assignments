@@ -4,10 +4,13 @@ import type { AuthResponse, RegisterDTO } from '../../../types/auth.types';
 import { authApi } from '../../../data-access/auth.api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/auth.context';
 
 
 export const RegisterComponent = () => {
     const navigate = useNavigate();
+    const { setUser } = useAuth();
+    
     const [form, setForm] = useState<RegisterDTO>({
         name: "",
         email: "",
@@ -29,8 +32,9 @@ export const RegisterComponent = () => {
             const res: AuthResponse = await authApi.register(form);
             localStorage.setItem("token", res.token);
             localStorage.setItem("refreshToken", res.refreshToken);
+            setUser(res.user);
             console.log("user:", res);
-            navigate("/");
+            navigate("/profile");
         } catch (error: any) {
             if (error.response.data.code === "EMAIL_TAKEN") {
                 setErrorMessage("האימייל כבר בשימוש");
@@ -41,7 +45,9 @@ export const RegisterComponent = () => {
 
     return (
         <Box display="flex" flexDirection="column" gap={2} dir="rtl">
-            <Typography variant="h4" textAlign="center" sx={{ fontSize: 22, fontWeight: 600 }}>הרשמה</Typography>
+            <Typography variant="h4" textAlign="center" sx={{
+                fontSize: 22, fontWeight: 600
+            }}>הרשמה</Typography>
             <TextField label="שם משתמש" variant="outlined" fullWidth
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
@@ -56,7 +62,8 @@ export const RegisterComponent = () => {
                 onChange={(e) => setConfirmPassword(e.target.value)} />
             {errorMessage && (<Typography color="error" variant="body2">{errorMessage}</Typography>)}
             <Button variant="contained" color="primary" fullWidth
-                onClick={handleRegister}>
+                onClick={handleRegister}
+                sx={{ height: 48 }}>
                 הרשמה
             </Button>
             <Button variant="text" onClick={() => navigate('/auth/login')}>
