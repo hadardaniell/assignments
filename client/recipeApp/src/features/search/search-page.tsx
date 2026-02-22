@@ -18,6 +18,8 @@ import type { RecipeDTO } from "../../types/recipe.types";
 import { RecipeCard } from "../../shared/recipe-card";
 import { presetCategories } from "../../assets/consts";
 import { ChipList } from "../../shared/chip-list";
+import { FormControl, Select, MenuItem } from "@mui/material";
+import { colors } from "../../assets/_colors";
 
 const PAGE_SIZE = 10;
 
@@ -34,6 +36,9 @@ export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [input, setInput] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
+  type SortOrder = "newest" | "oldest";
+  const [sortOrder, setSortOrder] = useState<SortOrder>("newest");
 
   // data state
   const [items, setItems] = useState<RecipeDTO[]>([]);
@@ -57,12 +62,15 @@ export default function SearchPage() {
       selectedCategories.length === 0
         ? items
         : items.filter((r) => {
-            const recipeCats = ((r as any).categories ?? []) as string[];
-            return selectedCategories.some((c) => recipeCats.includes(c));
-          });
+          const recipeCats = ((r as any).categories ?? []) as string[];
+          return selectedCategories.some((c) => recipeCats.includes(c));
+        });
 
-    return [...filtered].sort((a, b) => recipeDateMs(b) - recipeDateMs(a));
-  }, [items, selectedCategories]);
+    return [...filtered].sort((a, b) => {
+      const diff = recipeDateMs(b) - recipeDateMs(a); // newest first
+      return sortOrder === "newest" ? diff : -diff;   // flip for oldest first
+    });
+  }, [items, selectedCategories, sortOrder]);
 
   // show count based on filtered list
   const resultsCount = filteredAndSortedItems.length;
@@ -231,7 +239,35 @@ export default function SearchPage() {
           </Stack>
 
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" alignItems="center">
-            <Chip size="small" label="ממויין לפי תאריך: חדש → ישן" />
+            <FormControl
+              size="small"
+              sx={{
+                "& .MuiOutlinedInput-root": {
+                  backgroundColor: "#fff",
+                  height: 35,
+                  fontSize: 14,
+                },
+                "& fieldset": {
+                  borderColor: colors.GREY[300],
+                },
+                "&:hover fieldset": {
+                  borderColor: colors.BROWNKITCHEN.coffee,
+                },
+                "& .Mui-focused fieldset": {
+                  borderColor: colors.BROWNKITCHEN.coffee,
+                },
+              }}
+            >
+              <Select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value as "newest" | "oldest")}
+                displayEmpty
+              >
+                <MenuItem value="newest" sx={{fontSize: 14}}>חדש → ישן</MenuItem>
+                <MenuItem value="oldest" sx={{fontSize: 14}}>ישן → חדש</MenuItem>
+              </Select>
+            </FormControl>
+
             <Chip size="small" label={`תוצאות: ${resultsCount}`} />
             {loadingMore ? <Chip size="small" label="טוען עוד…" /> : null}
           </Stack>
