@@ -16,6 +16,7 @@ export class RecipeController extends Controller {
             const { query } = body;
             const userId = req.user?.id || req.user?.sub;
             
+            // שימוש ב-Service המעודכן שגם שומר וגם מביא תמונות
             const recipes = await this.service.generateAndSaveAIRecipes(query, userId);
             
             if (!recipes || recipes.length === 0) {
@@ -47,9 +48,9 @@ export class RecipeController extends Controller {
 
     @Security('jwt')
     @Get('getRecipeById/{id}')
-    public async getRecipeById(@Path() id: string, @Request() req: any): Promise<RecipeDTO> {
+    public async getRecipeById(@Path() id: string, @Request() req: ExpressRequest): Promise<RecipeDTO> {
         try {
-            const userId = req.user?.id || req.user?.sub || null;
+            const userId = (req as { user?: { id: string } }).user?.id ?? null;
             const recipe = await this.service.getRecipeById(id, userId);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
@@ -62,33 +63,25 @@ export class RecipeController extends Controller {
     }
 
     @Security("jwt")
-@Get('getRecipes')
-public async getRecipes(
-    @Request() req: any,
-    @Query() recipeBookId?: string,
-    @Query() status?: any,
-    @Query() difficulty?: any,
-    @Query() search?: string,
-    @Query() skip?: number,
-    @Query() limit?: number
-): Promise<RecipeDTO[]> {
-    try {
-        const userId = req.user?.id || req.user?.sub;
-        // איחוד כל הפרמטרים לאובייקט אחד שה-Service מצפה לו
-        const filter: RecipeFilterDTO = { 
-            recipeBookId, 
-            status, 
-            difficulty, 
-            search, 
-            skip, 
-            limit 
-        };
-        return await this.service.listRecipes(filter, userId);
-    } catch (err: any) {
-        this.setStatus(500);
-        throw err;
+    @Get('getRecipes')
+    public async getRecipes(
+        @Request() req: any,
+        @Query() recipeBookId?: string,
+        @Query() status?: any,
+        @Query() difficulty?: any,
+        @Query() search?: string,
+        @Query() skip?: number,
+        @Query() limit?: number
+    ): Promise<RecipeDTO[]> {
+        try {
+            const userId = req.user?.id || req.user?.sub;
+            const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
+            return await this.service.listRecipes(filter, userId);
+        } catch (err: any) {
+            this.setStatus(500);
+            throw err;
+        }
     }
-}
 
     @Get('getRecipesByUser/{userId}')
     public async getRecipesByUser(@Path() userId: string): Promise<RecipeDTO[]> {

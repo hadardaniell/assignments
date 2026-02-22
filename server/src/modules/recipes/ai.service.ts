@@ -27,14 +27,9 @@ export class AIService {
                                     properties: {
                                         title: { type: SchemaType.STRING },
                                         description: { type: SchemaType.STRING },
-                                        difficulty: { 
-                                            type: SchemaType.STRING, 
-                                            description: "Must be exactly: easy, medium, or hard" 
-                                        },
+                                        difficulty: { type: SchemaType.STRING },
                                         prepTimeMinutes: { type: SchemaType.NUMBER },
                                         cookTimeMinutes: { type: SchemaType.NUMBER },
-                                        totalTimeMinutes: { type: SchemaType.NUMBER },
-                                        categories: { type: SchemaType.ARRAY, items: { type: SchemaType.STRING } },
                                         ingredients: {
                                             type: SchemaType.ARRAY,
                                             items: {
@@ -68,26 +63,18 @@ export class AIService {
                 }
             });
 
-            const prompt = `
-                צור 3 מתכונים עבור השאילתה: "${query}". 
-                דגש קריטי: שדה ה-difficulty חייב להיות באנגלית בלבד: "easy", "medium", או "hard".
-                שאר הטקסט חייב להיות בעברית.
-                אם השאילתה לא קשורה לאוכל, החזר isRelevant: false.
-            `;
+            const prompt = `Generate 3 recipes for: "${query}". 
+            Constraints: 
+            1. difficulty must be "easy", "medium" or "hard". 
+            2. All text in Hebrew. 
+            3. If not food related, isRelevant: false.`;
 
             const result = await model.generateContent(prompt);
             const response = JSON.parse(result.response.text());
 
-            if (!response.isRelevant) {
-                throw new AppError(400, "נראה שהחיפוש שלך לא קשור לעולם הבישול.");
-            }
-
-            return response.recipes;
+            return response.isRelevant ? response.recipes : null;
         } catch (error: any) {
-            if (error.status === "RESOURCE_EXHAUSTED" || error.message?.includes("429")) {
-                throw new AppError(429, "חריגה ממכסת הבקשות של Google. נסה שוב בעוד דקה.");
-            }
-            console.error("Gemini AI Error:", error.message);
+            console.error("Gemini Error:", error.message);
             return null;
         }
     }
