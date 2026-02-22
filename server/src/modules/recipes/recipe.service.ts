@@ -57,19 +57,12 @@ export class RecipeService {
         const aiRecipes = await this.aiService.generateFullRecipe(query);
         if (!aiRecipes) return [];
 
-        if (viewerUserId) {
-            await RecipeModel.deleteMany({ 
-                createdBy: new Types.ObjectId(viewerUserId), 
-                sourceType: 'ai' 
-            });
-        }
-
         const recipesToSave = aiRecipes.map((r: any) => {
             const { Id, id, _id, ...rest } = r;
             return {
                 ...rest,
                 difficulty: this.normalizeDifficulty(rest.difficulty),
-                createdBy: viewerUserId ? new Types.ObjectId(viewerUserId) : new Types.ObjectId(process.env.AI_USER_ID),
+                createdBy: new Types.ObjectId(process.env.AI_USER_ID),
                 sourceType: 'ai',
                 status: 'published',
                 createdAt: new Date(),
