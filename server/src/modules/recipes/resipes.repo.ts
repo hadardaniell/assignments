@@ -49,11 +49,11 @@ export class RecipeRepo {
       .exec();
   }
 
-  async updateById(id: string, data: UpdateQuery<Recipe>): Promise<Recipe | null> {
+  async updateById(id: string, data: any): Promise<Recipe | null> {
     return await RecipeModel.findByIdAndUpdate(
       id,
-      data,
-      { new: true, runValidators: true }
+      { $set: data },
+      { new: true, runValidators: true, strict: false }
     )
     .populate('createdBy', 'firstName lastName name')
     .exec();

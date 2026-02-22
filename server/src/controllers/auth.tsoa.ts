@@ -1,14 +1,24 @@
 import { Body, Controller, Get, Post, Request, Route, Security, Tags } from "tsoa";
-
 import { AppError } from "../common";
 import { AuthService } from "../modules/auth/auth.service";
 import { AuthResponse, LoginDTO, RegisterDTO } from "../modules/auth/auth.types";
 import { SafeUser } from "../modules/users/users.types";
+import express from 'express';
 
 @Route("auth")
 @Tags("Auth")
 export class AuthController extends Controller {
     private readonly service: AuthService = new AuthService();
+
+    @Get("google")
+    public async googleLogin(): Promise<void> {
+        return;
+    }
+
+    @Get("google/callback")
+    public async googleCallback(@Request() req: express.Request): Promise<void> {
+        return;
+    }
 
     @Post("register")
     public async register(@Body() body: RegisterDTO): Promise<AuthResponse> {
@@ -17,8 +27,7 @@ export class AuthController extends Controller {
             this.setStatus(201);
             return result;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -30,8 +39,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -42,11 +50,9 @@ export class AuthController extends Controller {
         try {
             const userId = req.user?.sub;
             const user = await this.service.me(userId);
-            this.setStatus(200);
             return user;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -59,15 +65,11 @@ export class AuthController extends Controller {
             if (!header?.startsWith("Bearer ")) {
                 throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
             }
-
-            const token = header.slice("Bearer ".length).trim();
+            const token = header.slice(7).trim();
             await this.service.logout(token);
-
-            this.setStatus(200);
             return { message: "Logged out successfully" };
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -75,17 +77,10 @@ export class AuthController extends Controller {
     @Post("refresh")
     public async refresh(@Body() body: { refreshToken: string }): Promise<AuthResponse> {
         try {
-            if (!body.refreshToken) {
-                throw new AppError(400, "Refresh token is required");
-            }
-
-            const result = await this.service.refresh(body.refreshToken);
-
-            this.setStatus(200);
-            return result;
+            if (!body.refreshToken) throw new AppError(400, "Refresh token is required");
+            return await this.service.refresh(body.refreshToken);
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }

@@ -393,6 +393,9 @@
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"username": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -1502,6 +1505,36 @@
 						}
 					}
 				]
+			}
+		},
+		"/auth/google": {
+			"get": {
+				"operationId": "GoogleLogin",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/auth/google/callback": {
+			"get": {
+				"operationId": "GoogleCallback",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": []
 			}
 		},
 		"/auth/register": {

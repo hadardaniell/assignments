@@ -21,6 +21,6 @@
     "basePath": "/api",
     "esm": true,
     "authenticationModule": "./src/common/middlewares/expressAuthentication.ts",
-    "multer": {"dest": "./uploads"}
+    "multer": {"dest": "./uploads/recipe_images"}
   }
 }
