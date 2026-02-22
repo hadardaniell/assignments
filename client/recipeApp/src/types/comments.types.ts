@@ -1,11 +1,13 @@
 export type CommentDTO = {
-  id?: string;           // או commentId אצלך
-  _id?: string;          // אם מונגו
+  id?: string;           
+  _id?: string;          
   recipeId: string;
   createdBy: string;
   content: string;
   createdAt?: string;
   updatedAt?: string | null;
+  username?: string;
+  avatarUrl?: string;
 };
 
 export type CreateCommentRequest = {

@@ -142,7 +142,10 @@ export function RecipeComments({
             ) : null}
 
             {/* Add comment */}
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 2 }} dir="rtl">
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ mb: 2,
+                display: "flex",
+                alignItems: "center",
+             }} dir="rtl">
                 <TextField
                     fullWidth
                     placeholder="הוספת תגובה…"
@@ -156,7 +159,11 @@ export function RecipeComments({
                     onClick={onCreate}
                     disabled={!canPost || posting}
                     color="primary"
-                    sx={{ rotate: "180deg" }}
+                    sx={{ rotate: "180deg", 
+                        width: 40, height: 40, 
+                        display: "flex", 
+                        alignItems: "center", 
+                        justifyContent: "center" }}
                 >
                     {posting ? <CircularProgress size={18} /> : <SendRoundedIcon />}
                 </IconButton>

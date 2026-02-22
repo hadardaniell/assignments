@@ -15,6 +15,7 @@ export interface CommentDTO extends CreateCommentRequest {
   id: string;
   createdAt: Date;
   username?: string;
+  avatarUrl?: string;
 }
 
 /**
