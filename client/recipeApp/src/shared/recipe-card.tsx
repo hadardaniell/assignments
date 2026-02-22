@@ -32,9 +32,12 @@ type Props = {
   recipe: RecipeCardModel;
   onClick?: (id: string) => void;
   sx?: SxProps;
+
+  onLiked?: (recipe: RecipeCardModel) => void;
+  onUnliked?: (recipeId: string) => void;
 };
 
-export function RecipeCard({ recipe, onClick, sx }: Props) {
+export function RecipeCard({ recipe, onClick, sx, onLiked, onUnliked }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
 
@@ -116,6 +119,9 @@ export function RecipeCard({ recipe, onClick, sx }: Props) {
               userId={user?._id}
               recipeId={recipe.Id!}
               isUserLike={recipe.isUserLiked}
+
+              onLiked={() => onLiked?.(recipe)}
+              onUnliked={() => onUnliked?.(recipe.Id!)}
             />
           </Box>
           {/* Overlay */}

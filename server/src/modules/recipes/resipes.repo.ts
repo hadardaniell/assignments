@@ -1,4 +1,4 @@
-import { QueryFilter, UpdateQuery } from 'mongoose';
+import { QueryFilter, Types, UpdateQuery } from 'mongoose';
 import { RecipeModel, Recipe } from './recpies.model';
 import { RecipeFilterDTO } from './recipe.types';
 
@@ -35,7 +35,7 @@ export class RecipeRepo {
         { 'ingredients.name': { $regex: filter.search, $options: 'i' } }
       ];
     }
-    
+
     const skip = filter.skip ?? 0;
     const limit = filter.limit ?? 10;
     const sortField = filter.sortBy ?? 'createdAt';
@@ -55,11 +55,32 @@ export class RecipeRepo {
       data,
       { new: true, runValidators: true }
     )
-    .populate('createdBy', 'firstName lastName name')
-    .exec();
+      .populate('createdBy', 'firstName lastName name')
+      .exec();
   }
 
   async deleteById(id: string): Promise<Recipe | null> {
     return await RecipeModel.findByIdAndDelete(id).exec();
+  }
+
+  async findByIds(ids: string[]): Promise<any[]> {
+    const uniqueIds = Array.from(new Set(ids)).filter(Boolean);
+
+    const objIds = uniqueIds
+      .filter((id) => Types.ObjectId.isValid(id))
+      .map((id) => new Types.ObjectId(id));
+
+    if (objIds.length === 0) return [];
+
+    const docs = await RecipeModel.find({ _id: { $in: objIds } }).lean();
+
+    const order = new Map(uniqueIds.map((id, i) => [id, i]));
+    docs.sort((a: any, b: any) => {
+      const ai = order.get(String(a._id)) ?? 999999;
+      const bi = order.get(String(b._id)) ?? 999999;
+      return ai - bi;
+    });
+
+    return docs;
   }
 }
