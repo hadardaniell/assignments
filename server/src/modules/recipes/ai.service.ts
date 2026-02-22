@@ -1,49 +1,22 @@
+import { RecipeDTO } from './recipe.types';
+import { Types } from 'mongoose';
+
 export class AIService {
     private readonly apiKey: string;
 
     constructor() {
         this.apiKey = process.env.GEMINI_API_KEY || '';
-        
         if (!this.apiKey) {
-            console.error("AI Service Error: GEMINI_API_KEY is missing in .env file");
+            console.error("AI Service Error: GEMINI_API_KEY is missing");
         }
     }
 
-    public async generateFullRecipe(query: string) {
-        if (!this.apiKey) {
-            console.error("AI Service: Cannot proceed without API Key");
-            return null;
-        }
+    public async generateFullRecipe(query: string): Promise<RecipeDTO[] | null> {
+        if (!this.apiKey) return null;
 
         const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${this.apiKey}`;
 
-        const prompt = `
-            אתה שף מומחה. צור 5 מתכונים שונים, מקוריים ומפורטים בעברית עבור השאילתה: "${query}".
-            עבור כל מתכון, המצא שם של שף דמיוני והכנס אותו לשדה "creatorName".
-            
-            החזר אך ורק מערך JSON (Array) המכיל 5 אובייקטים בפורמט הבא:
-            [
-              {
-                "title": "שם המתכון",
-                "description": "תיאור קצר",
-                "creatorName": "שם השף",
-                "difficulty": "easy", 
-                "prepTimeMinutes": 15,
-                "cookTimeMinutes": 30,
-                "totalTimeMinutes": 45,
-                "categories": ["קטגוריה"],
-                "ingredients": [
-                    {"name": "שם הרכיב", "quantity": 1, "unit": "יחידה", "notes": ""}
-                ],
-                "steps": [
-                    {"index": 1, "instruction": "הוראה", "durationMinutes": 5}
-                ],
-                "notes": "טיפים",
-                "sourceType": "ai"
-              }
-            ]
-            חשוב: אל תוסיף הסברים, אל תוסיף Markdown, ואל תוסיף הערות בתוך ה-JSON. החזר רק את המערך.
-        `;
+        const prompt = `צור 3 מתכונים שונים בעברית עבור השאילתה: "${query}".`;
 
         try {
             const response = await fetch(url, {
@@ -52,7 +25,51 @@ export class AIService {
                 body: JSON.stringify({
                     contents: [{ parts: [{ text: prompt }] }],
                     generationConfig: {
-                        response_mime_type: "application/json"
+                        response_mime_type: "application/json",
+                        response_schema: {
+                            type: "array",
+                            items: {
+                                type: "object",
+                                properties: {
+                                    title: { type: "string" },
+                                    description: { type: "string" },
+                                    creatorName: { type: "string" },
+                                    difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
+                                    prepTimeMinutes: { type: "number" },
+                                    cookTimeMinutes: { type: "number" },
+                                    totalTimeMinutes: { type: "number" },
+                                    categories: { type: "array", items: { type: "string" } },
+                                    ingredients: {
+                                        type: "array",
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                name: { type: "string" },
+                                                quantity: { type: "number" },
+                                                unit: { type: "string" },
+                                                notes: { type: "string" }
+                                            },
+                                            required: ["name", "quantity", "unit"]
+                                        }
+                                    },
+                                    steps: {
+                                        type: "array",
+                                        items: {
+                                            type: "object",
+                                            properties: {
+                                                index: { type: "number" },
+                                                instruction: { type: "string" },
+                                                durationMinutes: { type: "number" }
+                                            },
+                                            required: ["index", "instruction"]
+                                        }
+                                    },
+                                    notes: { type: "string" },
+                                    sourceType: { type: "string" }
+                                },
+                                required: ["title", "description", "ingredients", "steps"]
+                            }
+                        }
                     }
                 })
             });
@@ -60,26 +77,25 @@ export class AIService {
             const data: any = await response.json();
 
             if (!response.ok || !data.candidates?.[0]?.content?.parts?.[0]?.text) {
-                console.error("Gemini API Error or Empty Response");
+                console.error("AI Error:", data.error || "Invalid response");
                 return null;
             }
 
-            let text = data.candidates[0].content.parts[0].text.trim();
+            const rawText = data.candidates[0].content.parts[0].text;
+            const parsedRecipes = JSON.parse(rawText);
 
-            const start = text.indexOf('[');
-            const end = text.lastIndexOf(']');
-            
-            if (start === -1 || end === -1) {
-                console.error("AI response is not a JSON array");
-                return null;
-            }
+            return parsedRecipes.map((recipe: any) => ({
+                ...recipe,
+                Id: new Types.ObjectId().toString(),
+                createdAt: new Date().toISOString(),
+                likesCount: 0,
+                commentsCount: 0,
+                isUserLiked: false,
+                sourceType: 'ai'
+            })) as RecipeDTO[];
 
-            text = text.substring(start, end + 1);
-
-            return JSON.parse(text);
-
-        } catch (error) {
-            console.error("AIService JSON Parse Error:", error);
+        } catch (error: any) {
+            console.error("AI Generation Failed at Parsing:", error.message);
             return null;
         }
     }
