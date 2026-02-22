@@ -16,7 +16,6 @@ export class RecipeController extends Controller {
             const { query } = body;
             const userId = req.user?.id || req.user?.sub;
             
-            // שימוש ב-Service המעודכן שגם שומר וגם מביא תמונות
             const recipes = await this.service.generateAndSaveAIRecipes(query, userId);
             
             if (!recipes || recipes.length === 0) {
