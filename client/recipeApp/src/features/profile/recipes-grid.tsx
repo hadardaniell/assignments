@@ -5,11 +5,14 @@ import { useNavigate } from "react-router-dom";
 type Props = {
   recipes: RecipeCardModel[];
   onRecipeClick?: (id: string) => void;
+
+  onLiked?: (recipe: RecipeCardModel) => void;
+  onUnliked?: (recipeId: string) => void;
 };
 
-export function RecipesGrid({ recipes, onRecipeClick }: Props) {
+export function RecipesGrid({ recipes, onRecipeClick, onLiked, onUnliked }: Props) {
   const navigate = useNavigate();
-  
+
   return (
     <>
       <Typography variant="h6" sx={{ fontWeight: 800, mb: 1.5 }}>
@@ -36,7 +39,11 @@ export function RecipesGrid({ recipes, onRecipeClick }: Props) {
       ) : (
         <Grid container spacing={2}>
           {recipes.map((r) => (
-            <RecipeCard key={r.Id} recipe={r} onClick={(id) => onRecipeClick?.(id)} sx={{ width: "160px", direction: "rtl" }} />
+            <RecipeCard key={r.Id} recipe={r} 
+            onClick={(id) => onRecipeClick?.(id)} 
+            onLiked={() => onLiked?.(r)} 
+            onUnliked={(id) => onUnliked?.(id)} 
+            sx={{ width: "160px", direction: "rtl" }} />
           ))}
         </Grid>
       )}

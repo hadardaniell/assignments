@@ -9,6 +9,9 @@ type LikeProps = {
   recipeId: string;
   userId: string;
   isUserLike: boolean;
+
+  onLiked?: () => void;
+  onUnliked?: () => void;
 };
 
 async function like(params: LikeDTO) {
@@ -27,7 +30,13 @@ async function unlike(params: LikeDTO) {
   }
 }
 
-export function LikeComponent({ userId, recipeId, isUserLike }: LikeProps) {
+export function LikeComponent({
+  userId,
+  recipeId,
+  isUserLike,
+  onLiked,
+  onUnliked,
+}: LikeProps) {
   const [liked, setLiked] = useState(isUserLike);
 
   const dto: LikeDTO = {
@@ -41,16 +50,18 @@ export function LikeComponent({ userId, recipeId, isUserLike }: LikeProps) {
     if (liked) {
       await unlike(dto);
       setLiked(false);
+      onUnliked?.();
     } else {
       await like(dto);
       setLiked(true);
+      onLiked?.();
     }
   };
 
   return (
     <span onClick={onToggleLike} style={{ cursor: 'pointer', height: 24 }}>
       {liked ? (
-        <FavoriteIcon sx={{ color: colors.COLORFUL.crimson_red}} />
+        <FavoriteIcon sx={{ color: colors.COLORFUL.crimson_red }} />
       ) : (
         <FavoriteBorderIcon />
       )}
