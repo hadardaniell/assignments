@@ -86,7 +86,7 @@ export function CommentItem({
             <Typography sx={{ fontWeight: 800, display: "flex", alignItems: "center", gap: 1 }} component="span">
               {comment.username || "משתמש"}
               <Typography component="span" variant="caption" color="text.secondary">
-                {fmtDate(comment.createdAt)}
+                {fmtDate(comment?.updatedAt ?? comment?.createdAt)}
               </Typography>
             </Typography>
 
