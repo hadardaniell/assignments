@@ -11,21 +11,24 @@ import { initHttpClient } from './services/http-client.service.ts';
 import { router } from './router/index.tsx';
 import { RouterProvider } from 'react-router-dom';
 import { AuthProvider } from './context/auth.context.tsx';
+import { GoogleOAuthProvider } from "@react-oauth/google";
 import './App.css'
 
 async function bootstrap() {
   await initHttpClient();
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
-      <CacheProvider value={cacheRtl}>
-        <ThemeProvider theme={theme}>
-          <ConfigProvider>
-            <AuthProvider>
-             <RouterProvider router={router} />
-            </AuthProvider>
-          </ConfigProvider>
-        </ThemeProvider>
-      </CacheProvider>
+      <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID}>
+        <CacheProvider value={cacheRtl}>
+          <ThemeProvider theme={theme}>
+            <ConfigProvider>
+              <AuthProvider>
+                <RouterProvider router={router} />
+              </AuthProvider>
+            </ConfigProvider>
+          </ThemeProvider>
+        </CacheProvider>
+      </GoogleOAuthProvider>
     </StrictMode>
   );
 }

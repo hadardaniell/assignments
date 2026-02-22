@@ -175,4 +175,24 @@ export class RecipeService {
         await this.recipeRepo.updateById(recipeId, { coverImageUrl: imageUrl });
         return imageUrl;
     }
+
+    async getRecipesByIds(ids: string[], userId?: string): Promise<RecipeDTO[]> {
+        const recipes = await this.recipeRepo.findByIds(ids);
+
+        const viewerObjectId = userId ? new Types.ObjectId(userId) : null;
+        return Promise.all(
+            recipes.map(async (recipe) => {
+                const dto = toRecipeDTO(recipe);
+
+                dto.likesCount = await this.likesRepo.countByRecipe(recipe._id);
+                dto.commentsCount = await this.commentsDal.countByRecipeId(recipe._id);
+
+                dto.isUserLiked = viewerObjectId
+                    ? await this.likesRepo.exists(viewerObjectId, recipe._id)
+                    : false;
+
+                return dto;
+            })
+        );
+    }
 }

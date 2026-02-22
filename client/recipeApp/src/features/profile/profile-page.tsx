@@ -1,33 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import {
-    Avatar,
-    Box,
-    Card,
-    CardContent,
-    IconButton,
-    Typography,
-    Grid,
-    Divider,
-    Button,
-} from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-
-import { RecipeCard, type RecipeCardModel } from "../../shared/recipe-card";
-import { RecipesGrid } from "./recipes-grid";
+import { useEffect, useState } from "react";
+import { Box } from "@mui/material";
 import { ProfileCard } from "./profile-card";
-import type { User } from "../../types/auth.types";
 import { useAuth } from "../../context/auth.context";
 import { recipesApi } from "../../data-access/recipe.api";
 import { useNavigate } from "react-router-dom";
+import type { RecipeCardModel } from "../../shared/recipe-card";
+import { ProfileRecipesTabs } from "./profiles-recipes-tabs";
+import { likesApi } from "../../data-access/likes.api";
 
 export function ProfilePage() {
-    const { user } = useAuth();
-    const { setUser } = useAuth();
+    const { user, setUser } = useAuth();
     const navigate = useNavigate();
 
-    // const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
     const [loading, setLoading] = useState(false);
-    const [recipes, setRecipes] = useState<RecipeCardModel[]>([]);
+    const [myRecipes, setMyRecipes] = useState<RecipeCardModel[]>([]);
+    const [likedRecipes, setLikedRecipes] = useState<RecipeCardModel[]>([]);
 
     useEffect(() => {
         if (!user?._id) return;
@@ -35,33 +22,63 @@ export function ProfilePage() {
         (async () => {
             setLoading(true);
             try {
-                const data = await recipesApi.getRecipesByUser(user._id);
-                setRecipes(data);
+                const myRes = await recipesApi.getRecipesByUser(user._id);
+                setMyRecipes(myRes ?? []);
+
+                const likesRes = await likesApi.getUserLikes(user._id);
+                const ids = Array.from(
+                    new Set(likesRes.map((l: any) => l.recipeId).filter(Boolean))
+                );
+
+                if (ids.length === 0) {
+                    setLikedRecipes([]);
+                } else {
+                    const likedRes = await recipesApi.getRecipesByIds(ids);
+                    setLikedRecipes(likedRes ?? []);
+                }
             } catch (e) {
-                console.error("failed to load user recipes", e);
+                console.error("failed to load profile recipes", e);
             } finally {
                 setLoading(false);
             }
         })();
     }, [user?._id]);
 
-    if (!user) {
-        return <Box dir="rtl">לא מחובר/ת</Box>;
-    }
-    const recipeCount = recipes.length;
+    const onLiked = (recipe: RecipeCardModel) => {
+        setLikedRecipes((prev) => {
+            if (prev.some((r) => r.Id === recipe.Id)) return prev;
+            const updatedRecipe = { ...recipe, isUserLiked: true };
+            return [updatedRecipe, ...prev];
+        });
 
-    const onRecipeClick = (id: string) => {
-        navigate('/recipe/' + id)
+        setMyRecipes((prev) =>
+            prev.map((r) => (r.Id === recipe.Id ? { ...r, isUserLiked: true } : r))
+        );
     };
+
+    const onUnliked = (recipeId: string) => {
+        setLikedRecipes((prev) => prev.filter((r) => r.Id !== recipeId));
+
+        setMyRecipes((prev) =>
+            prev.map((r) => (r.Id === recipeId ? { ...r, isUserLiked: false } : r))
+        );
+    };
+
+    if (!user) return <Box dir="rtl">לא מחובר/ת</Box>;
+
+    const onRecipeClick = (id: string) => navigate("/recipe/" + id);
 
     return (
         <Box dir="rtl" sx={{ p: 3 }}>
-            <ProfileCard
-                user={user}
-                recipeCount={recipeCount}
-                onUserUpdated={(updated) => setUser(updated)}
+            <ProfileCard user={user} recipeCount={myRecipes.length} onUserUpdated={(updated) => setUser(updated)} />
+
+            <ProfileRecipesTabs
+                myRecipes={myRecipes}
+                likedRecipes={likedRecipes}
+                onRecipeClick={onRecipeClick}
+                onLiked={onLiked}
+                onUnliked={onUnliked}
             />
-            <RecipesGrid recipes={recipes} onRecipeClick={(id) => onRecipeClick(id)} />
         </Box>
     );
 }

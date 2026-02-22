@@ -10,4 +10,6 @@ export const authApi = {
     getApi().post<AuthResponse>("/auth/refresh", {
       refreshToken: localStorage.getItem("refreshToken"),
     }),
+  googleLogin: (idToken: string) =>
+    getApi().post<AuthResponse>("/auth/google-login", { idToken }),
 };

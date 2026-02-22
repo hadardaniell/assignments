@@ -136,4 +136,19 @@ export class RecipeController extends Controller {
             throw err;
         }
     }
+
+    @Security("jwt")
+    @Post("byIds")
+    public async getByIds(
+        @Request() req: any,
+        @Body() body: { ids: string[] }
+    ): Promise<RecipeDTO[]> {
+        try {
+            const userId = req.user?.id;
+            return await this.service.getRecipesByIds(body.ids, userId);
+        } catch (err: any) {
+            this.setStatus(500);
+            throw err;
+        }
+    }
 }
