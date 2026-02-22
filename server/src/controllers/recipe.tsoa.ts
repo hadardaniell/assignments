@@ -2,9 +2,8 @@ import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, Upl
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
-import type { Request as ExpressRequest } from 'express';
 
-@Route('recipes')
+@Route('api/recipes')
 @Tags('Recipes')
 export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
@@ -15,7 +14,6 @@ export class RecipeController extends Controller {
         try {
             const { query } = body;
             const userId = req.user?.id || req.user?.sub;
-            
             const recipes = await this.service.generateAndSaveAIRecipes(query, userId);
             
             if (!recipes || recipes.length === 0) {
@@ -65,11 +63,23 @@ export class RecipeController extends Controller {
     @Get('getRecipes')
     public async getRecipes(
         @Request() req: any,
-        @Query() search?: string
+        @Query() recipeBookId?: string,
+        @Query() status?: any,
+        @Query() difficulty?: any,
+        @Query() search?: string,
+        @Query() skip?: number,
+        @Query() limit?: number
     ): Promise<RecipeDTO[]> {
         try {
             const userId = req.user?.id || req.user?.sub;
-            const filter: RecipeFilterDTO = { search };
+            const filter: RecipeFilterDTO = { 
+                recipeBookId, 
+                status, 
+                difficulty, 
+                search, 
+                skip, 
+                limit 
+            };
             return await this.service.listRecipes(filter, userId);
         } catch (err: any) {
             this.setStatus(500);
