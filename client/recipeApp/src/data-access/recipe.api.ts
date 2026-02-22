@@ -15,7 +15,7 @@ export const recipesApi = {
   updateRecipe: (id: string, body: Partial<RecipeDTO>) =>
     getApi().put<RecipeDTO>(`/recipes/updateRecipe/${id}`, body),
   searchAIRecipes: (query: string) =>
-    getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", { body: { query } }),
+    getApi().post<RecipeDTO[]>("/recipes/generateAIRecipes", {query} ),
   uploadRecipeImage: (id: string, file: File) => {
     const fd = new FormData();
     fd.append("recipe_image", file); 

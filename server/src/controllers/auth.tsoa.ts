@@ -1,5 +1,4 @@
 import { Body, Controller, Get, Post, Request, Route, Security, Tags } from "tsoa";
-
 import { AppError } from "../common";
 import { AuthService } from "../modules/auth/auth.service";
 import { AuthResponse, LoginDTO, RegisterDTO } from "../modules/auth/auth.types";
@@ -17,8 +16,19 @@ export class AuthController extends Controller {
             this.setStatus(201);
             return result;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
+            throw err;
+        }
+    }
+
+    @Post("google-login")
+    public async googleLogin(@Body() body: { idToken: string }): Promise<AuthResponse> {
+        try {
+            const result = await this.service.googleLogin(body.idToken);
+            this.setStatus(200);
+            return result;
+        } catch (err: any) {
+            this.setStatus(err.statusCode || 401);
             throw err;
         }
     }
@@ -30,8 +40,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -45,8 +54,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return user;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -57,17 +65,14 @@ export class AuthController extends Controller {
         try {
             const header = req.headers?.authorization;
             if (!header?.startsWith("Bearer ")) {
-                throw new AppError(401, "Unauthorized", "UNAUTHORIZED");
+                throw new AppError(401, "Unauthorized");
             }
-
             const token = header.slice("Bearer ".length).trim();
             await this.service.logout(token);
-
             this.setStatus(200);
             return { message: "Logged out successfully" };
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }
@@ -78,14 +83,11 @@ export class AuthController extends Controller {
             if (!body.refreshToken) {
                 throw new AppError(400, "Refresh token is required");
             }
-
             const result = await this.service.refresh(body.refreshToken);
-
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            const status = err.statusCode || err.status || 500;
-            this.setStatus(status);
+            this.setStatus(err.statusCode || 500);
             throw err;
         }
     }

@@ -393,6 +393,9 @@
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
+					},
+					"username": {
+						"type": "string"
 					}
 				},
 				"required": [
@@ -460,6 +463,9 @@
 			},
 			"RegisterDTO": {
 				"properties": {
+					"googleId": {
+						"type": "string"
+					},
 					"language": {
 						"type": "string"
 					},
@@ -479,7 +485,6 @@
 				},
 				"required": [
 					"name",
-					"password",
 					"email"
 				],
 				"type": "object"
@@ -494,7 +499,6 @@
 					}
 				},
 				"required": [
-					"password",
 					"email"
 				],
 				"type": "object"
@@ -751,6 +755,30 @@
 						}
 					}
 				}
+			}
+		},
+		"/users/deleteUser/{id}": {
+			"delete": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"Users"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			}
 		},
 		"/recipes/generateAIRecipes": {
@@ -1506,6 +1534,46 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/RegisterDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/auth/google-login": {
+			"post": {
+				"operationId": "GoogleLogin",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AuthResponse"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"Auth"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"idToken": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"idToken"
+								],
+								"type": "object"
 							}
 						}
 					}

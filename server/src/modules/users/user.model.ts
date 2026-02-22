@@ -6,11 +6,12 @@ export interface UserSettings {
 
 export interface User extends Document {
   email: string;
-  passwordHash?: string; // הפיכת השדה לאופציונלי כדי לאפשר delete ב-transform
+  passwordHash?: string;
   name: string;
   avatarUrl?: string | null;
   role: 'admin' | 'user';
   settings?: UserSettings;
+  googleId?: string;
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -27,12 +28,17 @@ const userSchema = new Schema<User>(
     },
     passwordHash: {
       type: String,
-      required: true,
+      required: false,
     },
     name: {
       type: String,
       required: true,
       trim: true,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
     },
     avatarUrl: {
       type: String,
