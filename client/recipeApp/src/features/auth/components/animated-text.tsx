@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, keyframes } from '@mui/material';
-import { colors } from '../../../assets/_colors'; // הפלטה שלך
-import { grey } from '@mui/material/colors';
+import { colors } from '../../../assets/_colors'; 
 
   const wobble = keyframes`
     0% { transform: translateX(0); }
@@ -46,7 +45,7 @@ export const AnimatedLetters: React.FC<AnimatedLettersProps> = ({ text }) => {
                         fontVariationSettings: '"wght" 800',
                         '&:hover': {
                             color: getRandomColor(),
-                            animation: `${wobble} 1s ease`, // wobble קל לאורך זמן
+                            animation: `${wobble} 1s ease`, 
                         },
                     }}
                 >

@@ -1,12 +1,9 @@
 import { Box, Card, CardContent, Typography } from '@mui/material';
-import { Routes, Route, useNavigate, Outlet } from 'react-router-dom';
-import { LoginComponent } from './login';
-import { RegisterComponent } from './register';
-import { colors } from '../../../assets/_colors'; // הפלטה שהגדרת
+import { Outlet } from 'react-router-dom';
+import { colors } from '../../../assets/_colors';
 import { AnimatedLetters } from './animated-text';
 
 export const AuthPage = () => {
-    const navigate = useNavigate();
 
     return (
         <Box
@@ -18,7 +15,6 @@ export const AuthPage = () => {
                 width: '100%'
             }}
         >
-            {/* צד שמאל - כרטיס */}
             <Box
                 flex={1}
                 display="flex"
@@ -32,7 +28,6 @@ export const AuthPage = () => {
                 </Card>
             </Box>
 
-            {/* צד ימין - כיתוב */}
             <Box
                 flex={1}
                 display="flex"
