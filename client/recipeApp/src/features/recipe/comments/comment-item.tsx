@@ -12,6 +12,8 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import SaveRoundedIcon from "@mui/icons-material/SaveRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import type { CommentDTO } from "../../../types/comments.types";
+import { useAuth } from "../../../context/auth.context";
+import { colors } from "../../../assets/_colors";
 
 function fmtDate(iso?: string) {
   if (!iso) return "";
@@ -51,6 +53,7 @@ export function CommentItem({
   onDelete: () => void;
 }) {
   const isMine = comment.createdBy === currentUserId;
+  const { user } = useAuth();
 
   return (
     <Paper
@@ -63,16 +66,25 @@ export function CommentItem({
       }}
     >
       <Stack direction="row" spacing={1.25} alignItems="flex-start" dir="rtl">
-        <Avatar sx={{ width: 34, height: 34 }}>
-          {(comment.createdBy ?? "?").slice(0, 1).toUpperCase()}
+        <Avatar
+          src={`http://localhost:3000${comment?.avatarUrl}`}
+          sx={{
+            width: 34,
+            height: 34,
+            fontSize: 28,
+            color: colors.BROWNKITCHEN.cream,
+            backgroundColor: colors.BROWNKITCHEN.coffee,
+          }}
+        >
+          {user?.name?.[0] ?? "U"}
         </Avatar>
 
         <Box sx={{ flex: 1 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" gap="2em">
-            <Typography sx={{ fontWeight: 800 }}>
-              {isMine ? "את" : "משתמש"}{" "}
+            <Typography sx={{ fontWeight: 800, display: "flex", alignItems: "center", gap: 1 }} component="span">
+              {comment.username || "משתמש"}
               <Typography component="span" variant="caption" color="text.secondary">
-                  {fmtDate(comment.createdAt)}
+                {fmtDate(comment.createdAt)}
               </Typography>
             </Typography>
 
