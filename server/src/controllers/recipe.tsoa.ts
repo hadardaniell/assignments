@@ -2,21 +2,23 @@ import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, Upl
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
 import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
-import { AIService } from '../modules/recipes/ai.service';
 import type { Request as ExpressRequest } from 'express';
 
 @Route('recipes')
 @Tags('Recipes')
 export class RecipeController extends Controller {
     private readonly service: RecipeService = new RecipeService();
-    private readonly aiService: AIService = new AIService();
 
+    @Security('jwt')
     @Post('generateAIRecipes')
-    public async generateAIRecipes(@Body() body: { query: string }): Promise<any[]> {
+    public async generateAIRecipes(@Body() body: { query: string }, @Request() req: any): Promise<RecipeDTO[]> {
         try {
             const { query } = body;
-            const recipes = await this.aiService.generateFullRecipe(query);
-            if (!recipes) {
+            const userId = req.user?.id || req.user?.sub;
+            
+            const recipes = await this.service.generateAndSaveAIRecipes(query, userId);
+            
+            if (!recipes || recipes.length === 0) {
                 throw new AppError(500, 'Failed to generate recipes from AI');
             }
             return recipes;
@@ -47,12 +49,8 @@ export class RecipeController extends Controller {
     @Get('getRecipeById/{id}')
     public async getRecipeById(@Path() id: string, @Request() req: ExpressRequest): Promise<RecipeDTO> {
         try {
-
             const userId = (req as { user?: { id: string } }).user?.id ?? null;
-            console.log(userId);
-
-            const recipe = await this.service.
-                getRecipeById(id, userId);
+            const recipe = await this.service.getRecipeById(id, userId);
             if (!recipe) {
                 throw new AppError(404, 'Recipe not found');
             }
@@ -75,7 +73,7 @@ export class RecipeController extends Controller {
         @Query() limit?: number
     ): Promise<RecipeDTO[]> {
         try {
-            const userId = req.user?.id;
+            const userId = req.user?.id || req.user?.sub;
             const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
             return await this.service.listRecipes(filter, userId);
         } catch (err: any) {

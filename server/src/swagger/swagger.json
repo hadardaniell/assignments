@@ -790,7 +790,9 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {},
+									"items": {
+										"$ref": "#/components/schemas/RecipeDTO"
+									},
 									"type": "array"
 								}
 							}
@@ -800,7 +802,11 @@
 				"tags": [
 					"Recipes"
 				],
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -816,38 +822,6 @@
 									"query"
 								],
 								"type": "object"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/recipes/createRecipe": {
-			"post": {
-				"operationId": "CreateRecipe",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/RecipeDTO"
-								}
-							}
-						}
-					}
-				},
-				"tags": [
-					"Recipes"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/RecipeDTO"
 							}
 						}
 					}
@@ -918,52 +892,10 @@
 				"parameters": [
 					{
 						"in": "query",
-						"name": "recipeBookId",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "status",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "difficulty",
-						"required": false,
-						"schema": {
-							"type": "string"
-						}
-					},
-					{
-						"in": "query",
 						"name": "search",
 						"required": false,
 						"schema": {
 							"type": "string"
-						}
-					},
-					{
-						"in": "query",
-						"name": "skip",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					},
-					{
-						"in": "query",
-						"name": "limit",
-						"required": false,
-						"schema": {
-							"format": "double",
-							"type": "number"
 						}
 					}
 				]
