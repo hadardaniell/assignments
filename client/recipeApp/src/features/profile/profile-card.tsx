@@ -4,6 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import type { User } from "../../types/auth.types";
 import { colors } from "../../assets/_colors";
 import { UpdateProfileDialog } from "../dialog-models/update-profile-dialog";
+import { getConfig } from "../../services";
 
 type ProfileCardProps = {
   user: User;
@@ -13,13 +14,14 @@ type ProfileCardProps = {
 
 export function ProfileCard({ user, recipeCount, onUserUpdated }: ProfileCardProps) {
   const [isEditing, setIsEditing] = useState(false);
+  const { serverFields } = getConfig();
 
   return (
     <>
       <Card sx={{ borderRadius: 3, mb: 3, boxShadow: "none", border: "1px solid #e0e0e0" }}>
         <CardContent sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           <Avatar
-          src={`http://localhost:3000${user.avatarUrl}`}
+          src={`${serverFields}${user.avatarUrl}`}
           sx={{
             width: 72,
             height: 72,

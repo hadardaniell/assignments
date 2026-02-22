@@ -14,6 +14,7 @@ import {
 import type { SafeUser } from "../../types/user.types";
 import { usersApi } from "../../data-access/user.api";
 import { useAuth } from "../../context/auth.context";
+import { getConfig } from "../../services";
 
 type UpdateProfileDialogProps = {
     open: boolean;
@@ -45,6 +46,7 @@ export function UpdateProfileDialog({
     const [avatarPreview, setAvatarPreview] = React.useState<string | null>(null);
 
     const { user: authUser, setUser } = useAuth();
+    const { serverFields } = getConfig();
 
     // כשפותחים/משתנה user — נטען נתונים לטופס
     React.useEffect(() => {
@@ -55,7 +57,7 @@ export function UpdateProfileDialog({
             avatarUrl: user.avatarUrl ?? "",
         });
         setAvatarFile(null);
-        setAvatarPreview(user.avatarUrl ? `http://localhost:3000${user.avatarUrl}` : null);
+        setAvatarPreview(user.avatarUrl ? `${serverFields}${user.avatarUrl}` : null);
     }, [open, user]);
 
     const canSave = React.useMemo(() => {
