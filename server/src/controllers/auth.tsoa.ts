@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Route, Security, Tags } from "tsoa";
+import { Body, Controller, Get, Post, Query, Request, Route, Security, Tags } from "tsoa";
 import { AppError } from "../common";
 import { AuthService } from "../modules/auth/auth.service";
 import { AuthResponse, LoginDTO, RegisterDTO } from "../modules/auth/auth.types";
@@ -8,6 +8,24 @@ import { SafeUser } from "../modules/users/users.types";
 @Tags("Auth")
 export class AuthController extends Controller {
     private readonly service: AuthService = new AuthService();
+
+    @Get("google")
+    public async getGoogleUrl(): Promise<{ url: string }> {
+        const url = this.service.getGoogleAuthUrl();
+        return { url };
+    }
+
+    @Get("google-callback")
+    public async googleCallback(@Query() code: string): Promise<AuthResponse> {
+        try {
+            const result = await this.service.authenticateWithCode(code);
+            this.setStatus(200);
+            return result;
+        } catch (err: any) {
+            this.setStatus(401);
+            throw err;
+        }
+    }
 
     @Post("register")
     public async register(@Body() body: RegisterDTO): Promise<AuthResponse> {

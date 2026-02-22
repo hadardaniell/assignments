@@ -1,9 +1,9 @@
+import 'dotenv/config';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { RegisterRoutes } from "./routes-tsoa/routes"; 
 import swaggerDoc from './swagger/swagger.json';
 import { errorMiddleware } from './common';
-import { upload } from './common/multer';
 import cors from 'cors';
 import path from 'path';
 
