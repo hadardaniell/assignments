@@ -10,6 +10,7 @@ import '@fontsource/heebo/600.css';
 import { useAuth } from '../../../context/auth.context.tsx';
 import type { AuthResponse, LoginDTO } from '../../../types/auth.types.ts';
 import { authApi } from '../../../data-access/auth.api';
+import { GoogleLoginButton } from './google-login-button.tsx';
 
 export const LoginComponent = () => {
     const navigate = useNavigate();
@@ -30,10 +31,10 @@ export const LoginComponent = () => {
             localStorage.setItem("token", res.token);
             localStorage.setItem("refreshToken", res?.refreshToken);
             console.log('user:', res);
-            setUser(res.user); 
+            setUser(res.user);
             navigate('/profile');
         } catch (error) {
-            if(error.response?.data?.code === 'INVALID_CREDENTIALS') {
+            if (error.response?.data?.code === 'INVALID_CREDENTIALS') {
                 setErrorMessage("אימייל או סיסמה שגויים");
             }
             console.error('login failed', error);
@@ -65,15 +66,24 @@ export const LoginComponent = () => {
                 }
             />
 
-            <Button variant="outlined" fullWidth sx={{ height: 48 }}>
+            {/* <Button variant="outlined" fullWidth sx={{ height: 48 }}>
                 התחברות בעזרת Google <FcGoogle size={20} style={{ marginRight: 8 }} />
-            </Button>
+            </Button> */}
+            <GoogleLoginButton
+                onSuccess={(res) => {
+                    localStorage.setItem("token", res.token);
+                    localStorage.setItem("refreshToken", res.refreshToken);
+                    setUser(res.user);
+                    navigate("/profile");
+                }}
+                onError={(msg) => setErrorMessage(msg)}
+            />
             {errorMessage && (<Typography color="error" variant="body2">{errorMessage}</Typography>)}
             <Button
                 variant="contained"
                 fullWidth
                 color="primary"
-                sx={{height: 48 }}
+                sx={{ height: 48 }}
                 onClick={handleLogin}
             >
                 התחברות

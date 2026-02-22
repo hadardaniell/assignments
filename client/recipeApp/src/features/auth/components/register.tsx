@@ -1,16 +1,16 @@
 import { Button, TextField, Typography, Box } from '@mui/material';
-// import { useNavigate } from 'react-router-dom';
 import type { AuthResponse, RegisterDTO } from '../../../types/auth.types';
 import { authApi } from '../../../data-access/auth.api';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/auth.context';
+import { GoogleLoginButton } from './google-login-button';
 
 
 export const RegisterComponent = () => {
     const navigate = useNavigate();
     const { setUser } = useAuth();
-    
+
     const [form, setForm] = useState<RegisterDTO>({
         name: "",
         email: "",
@@ -49,18 +49,63 @@ export const RegisterComponent = () => {
                 fontSize: 22, fontWeight: 600
             }}>הרשמה</Typography>
             <TextField label="שם משתמש" variant="outlined" fullWidth
+                sx={{
+                    "& .MuiInputLabel-root": {
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-shrink": {
+                        fontSize: "16px",
+                    },
+                }}
+                size="small"
                 value={form.name}
                 onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))} />
             <TextField label="אימייל" variant="outlined" fullWidth
+                sx={{
+                    "& .MuiInputLabel-root": {
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-shrink": {
+                        fontSize: "16px",
+                    },
+                }}
+                size="small"
                 value={form.email}
                 onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))} />
-            <TextField label="סיסימה" type="password" variant="outlined" fullWidth
+            <TextField label="סיסמה" type="password" variant="outlined" fullWidth
+                sx={{
+                    "& .MuiInputLabel-root": {
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-shrink": {
+                        fontSize: "16px",
+                    },
+                }}
+                size="small"
                 value={form.password}
                 onChange={(e) => setForm((prev) => ({ ...prev, password: e.target.value }))} />
-            <TextField label="אימות סיסימה" type="password" variant="outlined" fullWidth
+            <TextField label="אימות סיסמה" type="password" variant="outlined" fullWidth
+                sx={{
+                    "& .MuiInputLabel-root": {
+                        fontSize: "14px",
+                    },
+                    "& .MuiInputLabel-shrink": {
+                        fontSize: "16px",
+                    },
+                }}
+                size="small"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)} />
             {errorMessage && (<Typography color="error" variant="body2">{errorMessage}</Typography>)}
+            <GoogleLoginButton
+                onSuccess={(res) => {
+                    localStorage.setItem("token", res.token);
+                    localStorage.setItem("refreshToken", res.refreshToken);
+                    setUser(res.user);
+                    navigate("/profile");
+                }}
+                onError={(msg) => setErrorMessage(msg)}
+            />
             <Button variant="contained" color="primary" fullWidth
                 onClick={handleRegister}
                 sx={{ height: 48 }}>
