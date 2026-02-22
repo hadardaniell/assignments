@@ -15,6 +15,7 @@ export function ProfilePage() {
     const [loading, setLoading] = useState(false);
     const [myRecipes, setMyRecipes] = useState<RecipeCardModel[]>([]);
     const [likedRecipes, setLikedRecipes] = useState<RecipeCardModel[]>([]);
+    const [likedLoading, setLikedLoading] = useState(false);
 
     useEffect(() => {
         if (!user?._id) return;
@@ -24,11 +25,16 @@ export function ProfilePage() {
             try {
                 const myRes = await recipesApi.getRecipesByUser(user._id);
                 setMyRecipes(myRes ?? []);
+            } catch (e) {
+                console.error("failed to load my recipes", e);
+            } finally {
+                setLoading(false);
+            }
 
+            setLikedLoading(true);
+            try {
                 const likesRes = await likesApi.getUserLikes(user._id);
-                const ids = Array.from(
-                    new Set(likesRes.map((l: any) => l.recipeId).filter(Boolean))
-                );
+                const ids = Array.from(new Set(likesRes.map((l: any) => l.recipeId).filter(Boolean)));
 
                 if (ids.length === 0) {
                     setLikedRecipes([]);
@@ -37,9 +43,9 @@ export function ProfilePage() {
                     setLikedRecipes(likedRes ?? []);
                 }
             } catch (e) {
-                console.error("failed to load profile recipes", e);
+                console.error("failed to load liked recipes", e);
             } finally {
-                setLoading(false);
+                setLikedLoading(false);
             }
         })();
     }, [user?._id]);
@@ -64,7 +70,7 @@ export function ProfilePage() {
         );
     };
 
-    if (!user) return <Box dir="rtl">לא מחובר/ת</Box>;
+    if (!user) return navigate("/auth/login");
 
     const onRecipeClick = (id: string) => navigate("/recipe/" + id);
 
@@ -75,6 +81,8 @@ export function ProfilePage() {
             <ProfileRecipesTabs
                 myRecipes={myRecipes}
                 likedRecipes={likedRecipes}
+                likedLoading={likedLoading}
+                myRecipesLoading={loading} 
                 onRecipeClick={onRecipeClick}
                 onLiked={onLiked}
                 onUnliked={onUnliked}
