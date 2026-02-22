@@ -14,6 +14,7 @@ import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import type { CommentDTO } from "../../../types/comments.types";
 import { useAuth } from "../../../context/auth.context";
 import { colors } from "../../../assets/_colors";
+import { getConfig } from "../../../services";
 
 function fmtDate(iso?: string) {
   if (!iso) return "";
@@ -54,7 +55,8 @@ export function CommentItem({
 }) {
   const isMine = comment.createdBy === currentUserId;
   const { user } = useAuth();
-
+  const { serverFields } = getConfig();
+  
   return (
     <Paper
       elevation={0}
@@ -67,7 +69,7 @@ export function CommentItem({
     >
       <Stack direction="row" spacing={1.25} alignItems="flex-start" dir="rtl">
         <Avatar
-          src={`http://localhost:3000${comment?.avatarUrl}`}
+          src={`${serverFields}${comment?.avatarUrl}`}
           sx={{
             width: 34,
             height: 34,
