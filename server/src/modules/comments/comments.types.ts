@@ -14,6 +14,7 @@ export interface CreateCommentRequest {
 export interface CommentDTO extends CreateCommentRequest {
   id: string;
   createdAt: Date;
+  username?: string;
 }
 
 /**

@@ -152,6 +152,7 @@ const models: TsoaRoute.Models = {
             "createdBy": {"dataType":"string","required":true},
             "id": {"dataType":"string","required":true},
             "createdAt": {"dataType":"datetime","required":true},
+            "username": {"dataType":"string"},
         },
         "additionalProperties": false,
     },

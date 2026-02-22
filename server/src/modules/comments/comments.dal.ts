@@ -4,19 +4,24 @@ import { Types, UpdateQuery } from 'mongoose';
 export class CommentsDAL {
   async create(data: Partial<Comment>): Promise<Comment> {
     const comment = new CommentModel(data);
-    return comment.save();
+    const saved = await comment.save();
+    return saved.populate('userId', 'name');
   }
 
   async findById(id: string): Promise<Comment | null> {
-    return CommentModel.findById(id).exec();
+    return CommentModel.findById(id).populate('userId', 'name').exec();
   }
 
   async findByRecipeId(recipeId: string): Promise<Comment[]> {
-    return CommentModel.find({ recipeId: new Types.ObjectId(recipeId) }).exec();
+    return CommentModel.find({ recipeId: new Types.ObjectId(recipeId) })
+      .populate('userId', 'name')
+      .exec();
   }
 
   async updateById(id: string, data: UpdateQuery<Comment>): Promise<Comment | null> {
-    return CommentModel.findByIdAndUpdate(id, data, { new: true }).exec();
+    return CommentModel.findByIdAndUpdate(id, data, { new: true })
+      .populate('userId', 'name')
+      .exec();
   }
 
   async deleteById(id: string): Promise<Comment | null> {
