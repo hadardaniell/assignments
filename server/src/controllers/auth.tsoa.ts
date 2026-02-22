@@ -16,7 +16,7 @@ export class AuthController extends Controller {
             this.setStatus(201);
             return result;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            this.setStatus(err.status || err.statusCode || 500);
             throw err;
         }
     }
@@ -28,7 +28,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 401);
+            this.setStatus(err.status || err.statusCode || 401);
             throw err;
         }
     }
@@ -40,7 +40,8 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            const status = err.status || err.statusCode || 500;
+            this.setStatus(status);
             throw err;
         }
     }
@@ -54,7 +55,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return user;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            this.setStatus(err.status || err.statusCode || 500);
             throw err;
         }
     }
@@ -72,7 +73,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return { message: "Logged out successfully" };
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            this.setStatus(err.status || err.statusCode || 500);
             throw err;
         }
     }
@@ -87,7 +88,7 @@ export class AuthController extends Controller {
             this.setStatus(200);
             return result;
         } catch (err: any) {
-            this.setStatus(err.statusCode || 500);
+            this.setStatus(err.status || err.statusCode || 500);
             throw err;
         }
     }
