@@ -11,6 +11,7 @@ export function toCommentDTO(comment: Comment): CommentDTO {
     createdBy: user?._id?.toString() ?? user?.toString() ?? comment.userId,
     username: user?.name || 'Unknown User',
     avatarUrl: user?.avatarUrl || null,
-    createdAt: comment.createdAt
+    createdAt: comment.createdAt,
+    updatedAt: comment.updatedAt
   };
 }
