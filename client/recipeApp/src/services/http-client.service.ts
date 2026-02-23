@@ -13,18 +13,48 @@ await loadConfig();
 function createApi(client: AxiosInstance) {
   return {
     get<T>(url: string, params?: any, config?: AxiosRequestConfig) {
-      return client.get<T>(url, { ...(config ?? {}), params }).then(r => r.data);
+      return client.get<T>(url, { ...(config ?? {}), params }).then((r) => r.data);
     },
     post<T>(url: string, data?: any, config?: AxiosRequestConfig) {
-      return client.post<T>(url, data, config).then(r => r.data);
+      return client.post<T>(url, data, config).then((r) => r.data);
     },
     put<T>(url: string, data?: RequestData, config?: AxiosRequestConfig) {
-      return client.put<T>(url, data, config).then(r => r.data);
+      return client.put<T>(url, data, config).then((r) => r.data);
     },
     delete<T>(url: string, config?: AxiosRequestConfig) {
-      return client.delete<T>(url, config).then(r => r.data);
+      return client.delete<T>(url, config).then((r) => r.data);
     },
   };
+}
+
+const TOKEN_KEY = "token";
+const REFRESH_KEY = "refreshToken";
+const REMEMBER_KEY = "rememberMe";
+
+function preferredStorage() {
+  return localStorage.getItem(REMEMBER_KEY) === "1" ? localStorage : sessionStorage;
+}
+
+function readFromAnyStorage(key: string) {
+  return (
+    preferredStorage().getItem(key) ??
+    localStorage.getItem(key) ??
+    sessionStorage.getItem(key)
+  );
+}
+
+function clearTokensEverywhere() {
+  localStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(REFRESH_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(REFRESH_KEY);
+}
+
+function saveTokens(token: string, refreshToken: string) {
+  clearTokensEverywhere();
+  const s = preferredStorage();
+  s.setItem(TOKEN_KEY, token);
+  s.setItem(REFRESH_KEY, refreshToken);
 }
 
 export async function initHttpClient() {
@@ -34,10 +64,10 @@ export async function initHttpClient() {
 
   const client = axios.create({
     baseURL: apiBaseUrl,
-    // headers: { "Content-Type": "application/json" },
   });
 
   client.interceptors.request.use((config) => {
+    // Content-Type
     if (config.data instanceof FormData) {
       if (config.headers) {
         delete (config.headers as any)["Content-Type"];
@@ -48,11 +78,13 @@ export async function initHttpClient() {
       (config.headers as any)["Content-Type"] = "application/json";
     }
 
-    const token = localStorage.getItem("token");
+    // Authorization
+    const token = readFromAnyStorage(TOKEN_KEY);
     if (token) {
       config.headers = config.headers ?? {};
       (config.headers as any).Authorization = `Bearer ${token}`;
     }
+
     return config;
   });
 
@@ -61,12 +93,13 @@ export async function initHttpClient() {
     async (error) => {
       const originalRequest = error.config;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
+      if (error.response?.status === 401 && !originalRequest?._retry) {
         originalRequest._retry = true;
 
         if (isRefreshing) {
           return new Promise((resolve) => {
             pendingRequests.push((token) => {
+              originalRequest.headers = originalRequest.headers ?? {};
               originalRequest.headers.Authorization = `Bearer ${token}`;
               resolve(client(originalRequest));
             });
@@ -76,25 +109,27 @@ export async function initHttpClient() {
         isRefreshing = true;
 
         try {
-          const refreshToken = localStorage.getItem("refreshToken");
+          const refreshToken = readFromAnyStorage(REFRESH_KEY);
           if (!refreshToken) throw new Error("No refresh token");
 
           const res = await client.post("/auth/refresh", { refreshToken });
 
-          const { accessToken, refreshToken: newRefreshToken } = res.data;
+          // ✅ תומך בשני פורמטים: {token, refreshToken} או {accessToken, refreshToken}
+          const newAccess = res.data?.token ?? res.data?.accessToken;
+          const newRefresh = res.data?.refreshToken;
 
-          localStorage.setItem("token", accessToken);
-          localStorage.setItem("refreshToken", newRefreshToken);
+          if (!newAccess || !newRefresh) throw new Error("Refresh response missing tokens");
 
-          pendingRequests.forEach((cb) => cb(accessToken));
+          saveTokens(newAccess, newRefresh);
+
+          pendingRequests.forEach((cb) => cb(newAccess));
           pendingRequests = [];
 
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+          originalRequest.headers = originalRequest.headers ?? {};
+          originalRequest.headers.Authorization = `Bearer ${newAccess}`;
           return client(originalRequest);
         } catch (e) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("refreshToken");
-          window.location.href = "/login";
+          clearTokensEverywhere();
           return Promise.reject(e);
         } finally {
           isRefreshing = false;
@@ -104,7 +139,6 @@ export async function initHttpClient() {
       return Promise.reject(error);
     }
   );
-
 
   api = createApi(client);
   return api;
