@@ -61,4 +61,5 @@ export type RecipeSearchParams = {
   search?: string;
   skip?: number;
   limit?: number;
+  sourceType?: SourceType;
 };

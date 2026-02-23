@@ -69,4 +69,5 @@ export interface RecipeFilterDTO {
   limit?: number;
   sortBy?: 'createdAt' | 'updatedAt' | 'title';
   sortOrder?: 'asc' | 'desc';
+  sourceType?: SourceType;
 }

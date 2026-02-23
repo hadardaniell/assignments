@@ -154,6 +154,7 @@ const models: TsoaRoute.Models = {
             "createdAt": {"dataType":"datetime","required":true},
             "username": {"dataType":"string"},
             "avatarUrl": {"dataType":"string"},
+            "updatedAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}]},
         },
         "additionalProperties": false,
     },
@@ -529,6 +530,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
                 search: {"in":"query","name":"search","dataType":"string"},
                 skip: {"in":"query","name":"skip","dataType":"double"},
                 limit: {"in":"query","name":"limit","dataType":"double"},
+                sourceType: {"in":"query","name":"sourceType","ref":"SourceType"},
         };
         app.get('/api/recipes/getRecipes',
             authenticateMiddleware([{"jwt":[]}]),

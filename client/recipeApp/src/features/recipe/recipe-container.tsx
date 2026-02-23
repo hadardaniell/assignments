@@ -1,6 +1,6 @@
-import { Alert, Box, Container, Grid, Skeleton, Card, Divider } from "@mui/material";
+import { Alert, Box, Container, Grid, Skeleton, Card, Divider, IconButton, Tooltip } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import type { RecipeDTO, IngredientInput } from "../../types/recipe.types";
 import { colors } from "../../assets/_colors";
 import { RecipeDetailsCard } from "./recipe-details-card";
@@ -9,6 +9,7 @@ import { StepsList } from "./steps-list";
 import { recipesApi } from "../../data-access/recipe.api";
 import { RecipeComments } from "./comments/recipe-comments";
 import { useAuth } from "../../context/auth.context";
+import ArrowForwardIosRoundedIcon from "@mui/icons-material/ArrowForwardIosRounded";
 
 
 function fmtIngredient(i: IngredientInput) {
@@ -26,6 +27,8 @@ export default function RecipePage() {
   const [error, setError] = useState<string | null>(null);
 
   const { user } = useAuth();
+  
+  const navigate = useNavigate();
 
   useEffect(() => {
     let alive = true;
@@ -118,7 +121,20 @@ export default function RecipePage() {
         py: { xs: 3, md: 5 },
       }}
     >
-      <Container maxWidth="lg" sx={{ flexDirection: "column", direction: "rtl", gap: 2, display: "flex" }}>
+      <Container maxWidth="lg" sx={{ flexDirection: "column", direction: "rtl", gap: 2, display: "flex", position: "relative" }}>
+        <Box sx={{ position: "absolute", top: -33, left: 0 }}>
+          <Tooltip title="חזרה">
+            <IconButton
+              onClick={() => navigate(-1)}
+              sx={{
+                border: "none",
+              }}
+            >
+              <ArrowForwardIosRoundedIcon sx={{fontSize: 18}}/>
+            </IconButton>
+          </Tooltip>
+        </Box>
+
         <RecipeDetailsCard recipe={recipe} shareText={shareText} />
 
         <IngredientsChecklist ingredients={recipe.ingredients} />
