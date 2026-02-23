@@ -19,7 +19,10 @@ export function RememberMeCheckbox({
                     onChange={(e) => onChange(e.target.checked)}
                 />
             }
-            sx={{ fontSize: 12 }}
+            sx={{
+                fontSize: 12,
+                height: 14
+            }}
             label={
                 <Typography fontSize={13}>
                     {label}
