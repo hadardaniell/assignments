@@ -399,6 +399,11 @@
 					},
 					"avatarUrl": {
 						"type": "string"
+					},
+					"updatedAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
 					}
 				},
 				"required": [
@@ -973,6 +978,14 @@
 						"schema": {
 							"format": "double",
 							"type": "number"
+						}
+					},
+					{
+						"in": "query",
+						"name": "sourceType",
+						"required": false,
+						"schema": {
+							"$ref": "#/components/schemas/SourceType"
 						}
 					}
 				]

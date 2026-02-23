@@ -28,23 +28,30 @@ export class RecipeRepo {
 
     if (filter.difficulty) query.difficulty = filter.difficulty;
 
+    if (filter.sourceType) {
+      query.sourceType = filter.sourceType;
+    }
+
     if (filter.search) {
       query.$or = [
-        { title: { $regex: filter.search, $options: 'i' } },
-        { description: { $regex: filter.search, $options: 'i' } },
-        { 'ingredients.name': { $regex: filter.search, $options: 'i' } }
+        { title: { $regex: filter.search, $options: "i" } },
+        { description: { $regex: filter.search, $options: "i" } },
+        { "ingredients.name": { $regex: filter.search, $options: "i" } },
       ];
     }
 
-    const skip = filter.skip ?? 0;
-    const limit = filter.limit ?? 10;
-    const sortField = filter.sortBy ?? 'createdAt';
-    const sortOrder = filter.sortOrder === 'asc' ? 1 : -1;
+    const skipRaw = Number(filter.skip ?? 0);
+    const limitRaw = Number(filter.limit ?? 10);
+    const skip = Number.isFinite(skipRaw) ? skipRaw : 0;
+    const limit = Number.isFinite(limitRaw) ? limitRaw : 10;
+
+    const sortField = filter.sortBy ?? "createdAt";
+    const sortOrder = filter.sortOrder === "asc" ? 1 : -1;
 
     return await RecipeModel.find(query)
-      .populate('createdBy', 'firstName lastName name')
-      .sort({ [sortField]: sortOrder })
-      .skip(skip)
+      .populate("createdBy", "firstName lastName name")
+      .sort({ [sortField]: sortOrder, _id: sortOrder }) 
+      .skip(skip)                                       
       .limit(limit)
       .exec();
   }

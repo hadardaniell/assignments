@@ -1,7 +1,7 @@
 import { Route, Tags, Controller, Post, Get, Put, Delete, Body, Path, Query, UploadedFile, Security, Request } from 'tsoa';
 import { RecipeService } from '../modules/recipes/recipe.service';
 import { AppError } from '../common';
-import { RecipeDTO, RecipeFilterDTO } from '../modules/recipes/recipe.types';
+import { RecipeDTO, RecipeFilterDTO, SourceType } from '../modules/recipes/recipe.types';
 import type { Request as ExpressRequest } from 'express';
 
 @Route('recipes')
@@ -70,11 +70,12 @@ export class RecipeController extends Controller {
         @Query() difficulty?: any,
         @Query() search?: string,
         @Query() skip?: number,
-        @Query() limit?: number
+        @Query() limit?: number,
+        @Query() sourceType?: SourceType
     ): Promise<RecipeDTO[]> {
         try {
             const userId = req.user?.id || req.user?.sub;
-            const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit };
+            const filter: RecipeFilterDTO = { recipeBookId, status, difficulty, search, skip, limit, sourceType } as Partial<RecipeFilterDTO>;
             return await this.service.listRecipes(filter, userId);
         } catch (err: any) {
             this.setStatus(500);
