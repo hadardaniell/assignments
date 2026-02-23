@@ -1,8 +1,6 @@
 import { Button, TextField, Typography, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { grey } from '@mui/material/colors';
 import { useState } from 'react';
-import { FcGoogle } from 'react-icons/fc';
 import '@fontsource/heebo/300.css';
 import '@fontsource/heebo/400.css';
 import '@fontsource/heebo/500.css';
@@ -11,11 +9,17 @@ import { useAuth } from '../../../context/auth.context.tsx';
 import type { AuthResponse, LoginDTO } from '../../../types/auth.types.ts';
 import { authApi } from '../../../data-access/auth.api';
 import { GoogleLoginButton } from './google-login-button.tsx';
+import { RememberMeCheckbox } from './remember-me-checkbox.tsx';
+import { saveAuthTokens } from '../../../data-access/token.storage.ts';
 
 export const LoginComponent = () => {
     const navigate = useNavigate();
     const { setUser } = useAuth();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+    const [rememberMe, setRememberMe] = useState<boolean>(() => {
+        return localStorage.getItem("rememberMe") === "1";
+    });
 
 
     const [form, setForm] = useState<LoginDTO>({
@@ -28,9 +32,11 @@ export const LoginComponent = () => {
 
         try {
             const res: AuthResponse = await authApi.login(form);
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("refreshToken", res?.refreshToken);
-            console.log('user:', res);
+            saveAuthTokens({
+                token: res.token,
+                refreshToken: res.refreshToken,
+                rememberMe,
+            });
             setUser(res.user);
             navigate('/profile');
         } catch (error) {
@@ -66,15 +72,23 @@ export const LoginComponent = () => {
                 }
             />
 
-            {/* <Button variant="outlined" fullWidth sx={{ height: 48 }}>
-                התחברות בעזרת Google <FcGoogle size={20} style={{ marginRight: 8 }} />
-            </Button> */}
             <GoogleLoginButton
                 onSuccess={(res) => {
-                    localStorage.setItem("token", res.token);
-                    localStorage.setItem("refreshToken", res.refreshToken);
-                    setUser(res.user);
-                    navigate("/profile");
+                    (async () => {
+                        try {
+                            saveAuthTokens({
+                                token: res.token,
+                                refreshToken: res.refreshToken, // אם אין, זה עדיין בסדר
+                                rememberMe,
+                            });
+
+                            setUser(res.user);
+                            navigate("/profile");
+                        } catch (e) {
+                            console.error("Google auth success but me() failed:", e);
+                            setErrorMessage("התחברות עם Google נכשלה. נסו שוב.");
+                        }
+                    })();
                 }}
                 onError={(msg) => setErrorMessage(msg)}
             />
@@ -88,6 +102,7 @@ export const LoginComponent = () => {
             >
                 התחברות
             </Button>
+            <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
 
             <Button variant="text" onClick={() => navigate('/auth/register')}>
                 אין לכם חשבון? להרשמה לחצו

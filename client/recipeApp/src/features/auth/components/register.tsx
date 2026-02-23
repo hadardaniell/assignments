@@ -5,6 +5,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../context/auth.context';
 import { GoogleLoginButton } from './google-login-button';
+import { RememberMeCheckbox } from './remember-me-checkbox';
+import { saveAuthTokens } from "../../../data-access/token.storage";
 
 
 export const RegisterComponent = () => {
@@ -20,6 +22,10 @@ export const RegisterComponent = () => {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+    const [rememberMe, setRememberMe] = useState<boolean>(() => {
+        return localStorage.getItem("rememberMe") === "1";
+    });
+
     const handleRegister = async () => {
         if (!form.name || !form.email || !form.password || !confirmPassword) return;
         if (form.password !== confirmPassword) {
@@ -30,10 +36,12 @@ export const RegisterComponent = () => {
 
         try {
             const res: AuthResponse = await authApi.register(form);
-            localStorage.setItem("token", res.token);
-            localStorage.setItem("refreshToken", res.refreshToken);
+            saveAuthTokens({
+                token: res.token,
+                refreshToken: res.refreshToken,
+                rememberMe,
+            });
             setUser(res.user);
-            console.log("user:", res);
             navigate("/profile");
         } catch (error: any) {
             if (error.response.data.code === "EMAIL_TAKEN") {
@@ -99,10 +107,21 @@ export const RegisterComponent = () => {
             {errorMessage && (<Typography color="error" variant="body2">{errorMessage}</Typography>)}
             <GoogleLoginButton
                 onSuccess={(res) => {
-                    localStorage.setItem("token", res.token);
-                    localStorage.setItem("refreshToken", res.refreshToken);
-                    setUser(res.user);
-                    navigate("/profile");
+                    (async () => {
+                        try {
+                            saveAuthTokens({
+                                token: res.token,
+                                refreshToken: res.refreshToken, // אם אין, זה עדיין בסדר
+                                rememberMe,
+                            });
+
+                            setUser(res.user);
+                            navigate("/profile");
+                        } catch (e) {
+                            console.error("Google auth success but me() failed:", e);
+                            setErrorMessage("התחברות עם Google נכשלה. נסו שוב.");
+                        }
+                    })();
                 }}
                 onError={(msg) => setErrorMessage(msg)}
             />
@@ -111,6 +130,7 @@ export const RegisterComponent = () => {
                 sx={{ height: 48 }}>
                 הרשמה
             </Button>
+            <RememberMeCheckbox checked={rememberMe} onChange={setRememberMe} />
             <Button variant="text" onClick={() => navigate('/auth/login')}>
                 כבר יש לכם חשבון? להתחברות לחצו
             </Button>
