@@ -72,10 +72,13 @@ export class AIService {
 
             const prompt = `
                 Generate exactly 3 unique recipes for: "${query}". 
-                Constraints:
-                1. Field "difficulty" MUST be "easy", "medium", or "hard" (English).
-                2. All other text MUST be in Hebrew.
-                3. If not food related, set isRelevant: false.
+                
+                Important Guidelines:
+                1. Include ANY food or drink related request (smoothies, shakes, cocktails, desserts, snacks, etc.) as relevant (isRelevant: true).
+                2. "Shakes", "Smoothies", and "Drinks" are considered valid recipes.
+                3. Field "difficulty" MUST be "easy", "medium", or "hard" (English).
+                4. All other text MUST be in Hebrew.
+                5. Set isRelevant: false ONLY if the query is completely unrelated to the culinary world (e.g., "how to fix a car", "math homework").
             `;
 
             const result = await model.generateContent(prompt);
@@ -86,7 +89,7 @@ export class AIService {
             const response = JSON.parse(responseText);
 
             if (!response.isRelevant) {
-                throw new AppError(400, "נראה שהחיפוש שלך לא קשור לעולם הבישול.");
+                throw new AppError(400, "נראה שהחיפוש שלך לא קשור לעולם הבישול או המשקאות.");
             }
 
             return response.recipes;
@@ -94,6 +97,7 @@ export class AIService {
             if (error.status === "RESOURCE_EXHAUSTED" || error.message?.includes("429")) {
                 throw new AppError(429, "חריגה ממכסת הבקשות של Google. נסה שוב בעוד דקה.");
             }
+            if (error instanceof AppError) throw error;
             console.error("Gemini AI Error:", error.message);
             return null;
         }
