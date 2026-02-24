@@ -87,6 +87,7 @@ export default function SearchPage() {
     try {
       const res = await recipesApi.getRecipes({
         search: nextQuery || undefined,
+        sourceType: "manual",
         skip: 0,
         limit: PAGE_SIZE,
       });
@@ -115,6 +116,7 @@ export default function SearchPage() {
     try {
       const res = await recipesApi.getRecipes({
         search: query || undefined,
+        sourceType: "manual",
         skip,
         limit: PAGE_SIZE,
       });

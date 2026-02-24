@@ -52,6 +52,7 @@ export function IngredientsStep({
                         <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "1fr 1fr" }, gap: 2 }}>
                             <TextField
                                 label="כמות"
+                                type="number"
                                 value={ing.quantity ?? ""}
                                 onChange={(e) => updateRow(idx, { quantity: e.target.value ? Number(e.target.value) : undefined })}
                                 fullWidth

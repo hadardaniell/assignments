@@ -26,6 +26,7 @@ export type RecipeCardModel = {
   commentsCount?: number;
   likesCount?: number;
   isUserLiked: boolean;
+  sourceType?: 'ai' | 'manual';
 };
 
 type Props = {

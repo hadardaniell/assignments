@@ -1,6 +1,6 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Box, CircularProgress, Grow, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useNavigationType } from "react-router-dom";
 
 import type { RecipeDTO } from "../../types/recipe.types"; // תעדכני נתיב
 import { AiSearchBar } from "./ai-search-bar";
@@ -20,8 +20,10 @@ function toRecipeCardModel(r: RecipeDTO): RecipeCardModel {
     };
 }
 
+
 export function SearchAiPageContainer() {
     const navigate = useNavigate();
+    const navType = useNavigationType();
 
     const [query, setQuery] = useState("");
     const [loading, setLoading] = useState(false);
@@ -29,6 +31,42 @@ export function SearchAiPageContainer() {
     const [results, setResults] = useState<RecipeDTO[]>([]);
 
     const cards = useMemo(() => results.map(toRecipeCardModel), [results]);
+
+    useEffect(() => {
+        const savedQuery = sessionStorage.getItem("ai_search_query");
+        const savedResults = sessionStorage.getItem("ai_search_results");
+
+        if (navType === "POP") {
+            if (savedQuery && savedResults) {
+                setQuery(savedQuery);
+                try {
+                    setResults(JSON.parse(savedResults));
+                } catch {
+                    setResults([]);
+                }
+            }
+        } else {
+            sessionStorage.removeItem("ai_search_query");
+            sessionStorage.removeItem("ai_search_results");
+            setQuery("");
+            setResults([]);
+            setErrorText(null);
+        }
+    }, [navType]);
+
+    // useEffect(() => {
+    //     const savedQuery = sessionStorage.getItem("ai_search_query");
+    //     const savedResults = sessionStorage.getItem("ai_search_results");
+
+    //     if (savedQuery && savedResults) {
+    //         setQuery(savedQuery);
+    //         try {
+    //             setResults(JSON.parse(savedResults));
+    //         } catch {
+    //             setResults([]);
+    //         }
+    //     }
+    // }, []);
 
     async function onSearch(q: string) {
         setQuery(q);
@@ -39,6 +77,8 @@ export function SearchAiPageContainer() {
             const res = await recipesApi.searchAIRecipes(q);
             const data = (res as any).data ?? res;
             setResults((data ?? []) as RecipeDTO[]);
+            sessionStorage.setItem("ai_search_query", q);
+            sessionStorage.setItem("ai_search_results", JSON.stringify(data ?? []));
         } catch (e: any) {
             if (e?.status === 429) {
                 setErrorText('הגענו למגבלת השימוש היומית של Google. נסו שוב בעוד דקה!');
@@ -99,7 +139,7 @@ export function SearchAiPageContainer() {
                             appear
                             timeout={250 + idx * 90}
                         >
-                            <Box sx={{gap: "2em"}}>
+                            <Box sx={{ gap: "2em" }}>
                                 <RecipeCard
                                     sx={{ width: "160px" }}
                                     recipe={r}
