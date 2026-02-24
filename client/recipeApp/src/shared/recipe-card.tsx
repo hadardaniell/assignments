@@ -15,6 +15,7 @@ import { colors } from "../assets/_colors";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import { LikeComponent } from "./like";
 import { useAuth } from "../context/auth.context";
+import { getConfig } from "../services";
 
 export type RecipeCardModel = {
   Id?: string;
@@ -41,13 +42,15 @@ type Props = {
 export function RecipeCard({ recipe, onClick, sx, onLiked, onUnliked }: Props) {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { serverFields } = getConfig();
+
 
 
   const created = recipe.createdAt
     ? new Date(recipe.createdAt).toLocaleDateString("he-IL")
     : null;
 
-  const imgSrc = recipe.coverImageUrl ? `http://localhost:3000${recipe.coverImageUrl}` : noRecipeImg;
+  const imgSrc = recipe.coverImageUrl ? `${serverFields}${recipe.coverImageUrl}` : noRecipeImg;
 
   function toRecipePage(id: string) {
     if (onClick) return onClick(id);

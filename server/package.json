@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "tsx src/server.ts",
-    "build": "tsc",
+    "build": "vite build",
     "start": "node dist/server.js",
     "tsoa:routes": "tsoa routes",
     "tsoa:spec": "tsoa spec",
